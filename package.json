@@ -1,43 +1,50 @@
 {
-  "name": "final-voxly-frontend",
-  "version": "1.0.0",
+  "name": "voxly-frontend",
   "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "tsc && vite build --mode production",
+    "preview": "vite preview --port 4173",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "preview:production": "vite preview --host --port 3000"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
-    "@react-three/drei": "^9.88.13",
-    "@react-three/fiber": "^8.15.19",
+    "@react-three/postprocessing": "^3.0.4",
     "axios": "^1.12.2",
     "clsx": "^2.0.0",
     "framer-motion": "^10.18.0",
     "gsap": "^3.12.5",
     "jwt-decode": "^4.0.0",
     "lenis": "^1.0.44",
+    "leva": "^0.10.0",
     "lucide-react": "^0.294.0",
-    "next": "^15.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.18.0",
     "tailwind-merge": "^2.0.0",
-    "three": "^0.180.0",
+    "three": "^0.160.1",
     "use-sound": "^4.0.1",
     "wavesurfer.js": "^6.1.0",
     "zustand": "^4.4.6"
   },
   "devDependencies": {
-    "@types/react": "^19.1.13",
-    "@types/react-dom": "^19.1.9",
+    "@react-three/drei": "^9.97.1",
+    "@react-three/fiber": "^8.15.17",
+    "@types/node": "^20.19.17",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "@types/three": "^0.149.0",
     "@types/wavesurfer.js": "^6.0.12",
     "@vitejs/plugin-react": "^5.0.2",
     "autoprefixer": "^10.4.15",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.4.7",
     "typescript": "^5.3.3",
-    "vite": "^7.1.5"
+    "vite": "^7.1.5",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }
