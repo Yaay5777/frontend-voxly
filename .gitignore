@@ -18,4 +18,20 @@ node_modules/
 .next/
 .DS_Store
 
+# build & tool output
+dist/
+build/
+.vite/
+
+out/
+
+
+# local dev
+.env*
+
+
+# other generated files
+index.html
+postcss.config.cjs
+vite.config.ts
 
