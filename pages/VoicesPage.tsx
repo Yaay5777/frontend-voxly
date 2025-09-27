@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { 
   Play, 
   Pause, 
@@ -56,7 +56,7 @@ interface Voice {
 }
 
 const VoicesPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   // const { isAuthenticated } = useAuthStore();
   // const { setCurrentAudio, setPlaying } = useAudioStore();
   // const { setSelectedVoice } = useVoiceStore();
@@ -485,7 +485,7 @@ const VoicesPage: React.FC = () => {
                           <button
                             onClick={() => {
                               // setSelectedVoice(voice);
-                              navigate(`/synthesis?voice=${voice.id}`);
+                              router.push(`/SynthesisPage?voice=${voice.id}`);
                             }}
                             className="flex-1 bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center justify-center"
                           >
@@ -525,13 +525,13 @@ const VoicesPage: React.FC = () => {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
-                  onClick={() => navigate('/signup')}
+                  onClick={() => router.push('/SignUpPage')}
                   className="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
                 >
                   Get Started Free
                 </button>
                 <button
-                  onClick={() => navigate('/login')}
+                  onClick={() => router.push('/LoginPage')}
                   className="bg-white text-indigo-600 border-2 border-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-medium"
                 >
                   Sign In

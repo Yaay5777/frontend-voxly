@@ -1,6 +1,7 @@
 import React, { Suspense, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Canvas } from '@react-three/fiber';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Sparkles, Shield, Clock } from 'lucide-react';
 import { authService } from '../src/services/api';
@@ -9,7 +10,7 @@ import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 const ForgotPasswordPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -156,7 +157,7 @@ const ForgotPasswordPage: React.FC = () => {
               className="mb-6"
             >
               <Link
-                to="/login"
+                href="/LoginPage"
                 className="inline-flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -295,7 +296,7 @@ const ForgotPasswordPage: React.FC = () => {
                   </motion.button>
 
                   <Link
-                    to="/login"
+                    href="/LoginPage"
                     className="block w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 px-4 rounded-xl font-medium hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 text-center"
                   >
                     Back to Sign In
@@ -313,7 +314,7 @@ const ForgotPasswordPage: React.FC = () => {
                 className="mt-6 text-center text-sm text-gray-400"
               >
                 Remember your password?{' '}
-                <Link to="/login" className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+                <Link href="/LoginPage" className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
                   Sign in instead
                 </Link>
               </motion.p>

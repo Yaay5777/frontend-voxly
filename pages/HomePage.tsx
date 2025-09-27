@@ -1,7 +1,8 @@
 import React, { Suspense, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Canvas } from '@react-three/fiber';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { 
   Play, 
   Mic, 
@@ -33,7 +34,7 @@ import { ttsService } from '../src/services/api';
 import { toast } from 'react-hot-toast';
 
 const HomePage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const audioRef = useRef<HTMLAudioElement>(null);
   
   const [demoText, setDemoText] = useState("Welcome to Voxly, where your words come alive with revolutionary AI-powered voice synthesis in stunning 3D environments.");
@@ -297,7 +298,7 @@ const HomePage: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/signup')}
+                  onClick={() => router.push('/SignUpPage')}
                   className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg shadow-purple-500/25 flex items-center space-x-2"
                 >
                   <Rocket className="w-5 h-5" />
@@ -308,7 +309,7 @@ const HomePage: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/voices')}
+                  onClick={() => router.push('/VoicesPage')}
                   className="bg-white/10 text-white px-8 py-4 rounded-xl font-semibold border border-white/20 hover:bg-white/20 transition-all flex items-center space-x-2"
                 >
                   <Globe className="w-5 h-5" />
@@ -434,7 +435,7 @@ const HomePage: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/signup')}
+                  onClick={() => router.push('/SignUpPage')}
                   className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-lg shadow-purple-500/25 flex items-center justify-center space-x-3"
                 >
                   <Star className="w-6 h-6" />
@@ -445,7 +446,7 @@ const HomePage: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/features')}
+                  onClick={() => router.push('/FeaturesPage')}
                   className="bg-white/10 text-white px-10 py-5 rounded-xl font-bold text-lg border border-white/20 hover:bg-white/20 transition-all flex items-center justify-center space-x-3"
                 >
                   <Sparkles className="w-6 h-6" />

@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { Canvas } from '@react-three/fiber';
 import { 
   Play, 
@@ -58,7 +58,7 @@ interface Voice {
 }
 
 const VoicesPage3D: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const audioRef = useRef<HTMLAudioElement>(null);
   
   // State management
@@ -556,7 +556,7 @@ const VoicesPage3D: React.FC = () => {
 
                           {isAuthenticated && (
                             <button
-                              onClick={() => navigate(`/synthesis?voice=${voice.id}`)}
+                              onClick={() => router.push(`/SynthesisPage?voice=${voice.id}`)}
                               className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
                             >
                               <Mic className="w-4 h-4 mr-2" />
@@ -622,7 +622,7 @@ const VoicesPage3D: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/signup')}
+                  onClick={() => router.push('/SignUpPage')}
                   className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg font-medium shadow-lg shadow-purple-500/25"
                 >
                   Get Started Free
@@ -630,7 +630,7 @@ const VoicesPage3D: React.FC = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/login')}
+                  onClick={() => router.push('/LoginPage')}
                   className="bg-white/10 text-white border border-white/20 px-8 py-3 rounded-lg font-medium backdrop-blur-sm hover:bg-white/20 transition-all"
                 >
                   Sign In

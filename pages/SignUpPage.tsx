@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, User, Lock, CheckCircle, XCircle } from 'lucide-react';
 import { authService } from '../src/services/api';
 
 const SignUpPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     fullName: '',
     username: '',
@@ -90,8 +91,9 @@ const SignUpPage: React.FC = () => {
 
       if (data.message) {
         // Redirect to email verification pending page
-        navigate('/verify-email-pending', { 
-          state: { 
+        router.push({
+          pathname: '/EmailVerificationPage',
+          query: { 
             email: formData.email,
             message: data.message 
           } 
@@ -374,7 +376,7 @@ const SignUpPage: React.FC = () => {
           {/* Sign In Link */}
           <p className="mt-6 text-center text-sm text-gray-600">
             Already have an account?{' '}
-            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link href="/LoginPage" className="font-medium text-indigo-600 hover:text-indigo-500">
               Sign in here
             </Link>
           </p>

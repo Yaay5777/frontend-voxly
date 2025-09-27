@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Canvas } from '@react-three/fiber';
 import { Mail, CheckCircle, AlertCircle, RefreshCw, Sparkles, Shield, Clock } from 'lucide-react';
 import { authService } from '../src/services/api';
@@ -9,9 +10,8 @@ import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 const EmailVerificationPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const router = useRouter();
+  const { token } = router.query;
   
   const [loading, setLoading] = useState(true);
   const [verified, setVerified] = useState(false);
@@ -28,14 +28,15 @@ const EmailVerificationPage: React.FC = () => {
     const verifyEmail = async () => {
       try {
         // Get email from URL params or use empty string as fallback
-        const email = searchParams.get('email') || '';
-        await authService.verifyEmail(token, email);
+        const { email: emailParam } = router.query;
+        const email = Array.isArray(emailParam) ? emailParam[0] : emailParam || '';
+        await authService.verifyEmail(Array.isArray(token) ? token[0] : token, email);
         setVerified(true);
         toast.success('Email verified successfully!');
         
         // Redirect to login after 3 seconds
         setTimeout(() => {
-          navigate('/login');
+          router.push('/LoginPage');
         }, 3000);
       } catch (error: any) {
         const errorMessage = error.response?.data?.error || 'Email verification failed';
@@ -47,7 +48,7 @@ const EmailVerificationPage: React.FC = () => {
     };
 
     verifyEmail();
-  }, [token, navigate]);
+  }, [token, router]);
 
   const handleResendVerification = async () => {
     setResending(true);
@@ -59,7 +60,7 @@ const EmailVerificationPage: React.FC = () => {
 
       if (!email) {
         toast.error('Please sign up again to receive a new verification email');
-        navigate('/signup');
+        router.push('/SignUpPage');
         return;
       }
 
@@ -292,7 +293,7 @@ const EmailVerificationPage: React.FC = () => {
                   </div>
 
                   <Link
-                    to="/login"
+                    href="/LoginPage"
                     className="block w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-4 rounded-xl font-medium hover:from-emerald-700 hover:to-green-700 transition-all duration-200 text-center"
                   >
                     Sign In Now
@@ -351,7 +352,7 @@ const EmailVerificationPage: React.FC = () => {
                   </motion.button>
 
                   <Link
-                    to="/signup"
+                    href="/SignUpPage"
                     className="block w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-xl font-medium hover:bg-white/20 hover:border-white/30 transition-all duration-200 text-center"
                   >
                     Sign Up Again
@@ -369,7 +370,7 @@ const EmailVerificationPage: React.FC = () => {
                 className="mt-6 text-center text-sm text-gray-400"
               >
                 Need help?{' '}
-                <Link to="/contact" className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                <Link href="/ContactPage" className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
                   Contact Support
                 </Link>
               </motion.p>

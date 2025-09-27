@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Canvas } from '@react-three/fiber';
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle, Shield, Key, Zap } from 'lucide-react';
 import { authService } from '../src/services/api';
@@ -9,9 +10,8 @@ import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 const ResetPasswordPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const router = useRouter();
+  const { token } = router.query;
   
   const [formData, setFormData] = useState({
     password: '',
@@ -34,7 +34,7 @@ const ResetPasswordPage: React.FC = () => {
     // Verify token validity
     const verifyToken = async () => {
       try {
-        await authService.verifyResetToken(token);
+        await authService.verifyResetToken(Array.isArray(token) ? token[0] : token);
         setTokenValid(true);
       } catch (error) {
         setTokenValid(false);
@@ -83,8 +83,9 @@ const ResetPasswordPage: React.FC = () => {
 
     try {
       // Get email from URL params or use empty string as fallback
-      const email = searchParams.get('email') || '';
-      await authService.resetPassword(token!, email, formData.password);
+      const { email: emailParam } = router.query;
+      const email = Array.isArray(emailParam) ? emailParam[0] : emailParam || '';
+      await authService.resetPassword(Array.isArray(token) ? token[0] : token!, email, formData.password);
       setSuccess(true);
       toast.success('Password reset successfully!');
     } catch (error: any) {
@@ -155,7 +156,7 @@ const ResetPasswordPage: React.FC = () => {
             This password reset link is invalid or has expired. Please request a new one.
           </p>
           <Link
-            to="/forgot-password"
+            href="/ForgotPasswordPage"
             className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
           >
             Request New Reset Link
@@ -469,7 +470,7 @@ const ResetPasswordPage: React.FC = () => {
                   </p>
 
                   <Link
-                    to="/login"
+                    href="/LoginPage"
                     className="block w-full bg-gradient-to-r from-purple-600 to-violet-600 text-white py-4 px-4 rounded-xl font-medium hover:from-purple-700 hover:to-violet-700 transition-all duration-200 text-center"
                   >
                     Sign In Now

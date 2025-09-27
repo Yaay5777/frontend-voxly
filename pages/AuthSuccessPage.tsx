@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Canvas } from '@react-three/fiber';
 import { CheckCircle, Sparkles, Zap, Shield, ArrowRight, Home, User } from 'lucide-react';
 import { Scene3D } from '../src/3d/Scene3D';
@@ -8,25 +9,24 @@ import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 const AuthSuccessPage: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { message, type, redirectTo } = location.state || {};
+  const router = useRouter();
+  const { message, type, redirectTo } = router.query;
 
   useEffect(() => {
     // Show success toast
     if (message) {
-      toast.success(message);
+      toast.success(Array.isArray(message) ? message[0] : message);
     }
 
     // Auto-redirect after 5 seconds if redirectTo is specified
     if (redirectTo) {
       const timer = setTimeout(() => {
-        navigate(redirectTo);
+        router.push(redirectTo as string);
       }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [message, redirectTo, navigate]);
+  }, [message, redirectTo, router]);
 
   const getSuccessContent = () => {
     switch (type) {
@@ -269,7 +269,7 @@ const AuthSuccessPage: React.FC = () => {
                     whileTap={{ scale: 0.98 }}
                   >
                     <Link
-                      to={action.path}
+                      href={action.path}
                       className={`block w-full py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
                         action.primary
                           ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white hover:from-emerald-700 hover:to-green-700 shadow-lg'
@@ -313,7 +313,7 @@ const AuthSuccessPage: React.FC = () => {
                 className="mt-6 text-center text-sm text-gray-400"
               >
                 Need help getting started?{' '}
-                <Link to="/features" className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+                <Link href="/FeaturesPage" className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
                   View Features
                 </Link>
               </motion.p>

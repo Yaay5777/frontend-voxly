@@ -1,6 +1,7 @@
 import React, { Suspense, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Canvas } from '@react-three/fiber';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, Sparkles, Zap, Shield, Globe } from 'lucide-react';
 import { authService } from '../src/services/api';
@@ -9,7 +10,7 @@ import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   
   const [formData, setFormData] = useState({
     usernameOrEmail: '',
@@ -39,12 +40,13 @@ const LoginPage: React.FC = () => {
         
         toast.success('Welcome back to Voxly!');
         // Navigate to dashboard
-        navigate('/dashboard');
+        router.push('/DashboardPage');
       } else {
         if (data.error === 'Email not verified') {
           // Redirect to email verification pending page
-          navigate('/verify-email-pending', { 
-            state: { 
+          router.push({
+            pathname: '/EmailVerificationPage',
+            query: { 
               email: data.email,
               message: 'Please verify your email before logging in.' 
             } 
@@ -79,7 +81,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleForgotPassword = () => {
-    navigate('/forgot-password');
+    router.push('/ForgotPasswordPage');
   };
 
   return (
@@ -358,7 +360,7 @@ const LoginPage: React.FC = () => {
               className="mt-8 text-center text-sm text-gray-300"
             >
               Don't have an account?{' '}
-              <Link to="/signup" className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
+              <Link href="/SignUpPage" className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
                 Create account
               </Link>
             </motion.p>
