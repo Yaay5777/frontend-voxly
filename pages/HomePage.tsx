@@ -136,33 +136,35 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* 3D Background Scene */}
       <div className="fixed inset-0 z-0">
-        <Scene3D environment="space" performance="high">
-          <AudioVisualizer3D
-            isPlaying={isPlaying}
-            type="sphere"
-            color="#8b5cf6"
-            intensity={2}
-            size={3}
-          />
-          
-          {/* Floating 3D Elements */}
-          <Suspense fallback={null}>
-            {demoVoices.map((voice, index) => (
-              <Avatar3D
-                key={voice.id}
-                voice={voice}
-                position={[
-                  Math.cos((index / demoVoices.length) * Math.PI * 2) * 8,
-                  Math.sin(index * 0.5) * 2,
-                  Math.sin((index / demoVoices.length) * Math.PI * 2) * 8
-                ]}
-                isActive={selectedDemoVoice === voice.id}
-                isSpeaking={isPlaying && selectedDemoVoice === voice.id}
-                onSelect={() => setSelectedDemoVoice(voice.id)}
-              />
-            ))}
-          </Suspense>
-        </Scene3D>
+        <Canvas>
+          <Scene3D environment="space" performance="high">
+            <AudioVisualizer3D
+              isPlaying={isPlaying}
+              type="sphere"
+              color="#8b5cf6"
+              intensity={2}
+              size={3}
+            />
+            
+            {/* Floating 3D Elements */}
+            <Suspense fallback={null}>
+              {demoVoices.map((voice, index) => (
+                <Avatar3D
+                  key={voice.id}
+                  voice={voice}
+                  position={[
+                    Math.cos((index / demoVoices.length) * Math.PI * 2) * 8,
+                    Math.sin(index * 0.5) * 2,
+                    Math.sin((index / demoVoices.length) * Math.PI * 2) * 8
+                  ]}
+                  isActive={selectedDemoVoice === voice.id}
+                  isSpeaking={isPlaying && selectedDemoVoice === voice.id}
+                  onSelect={() => setSelectedDemoVoice(voice.id)}
+                />
+              ))}
+            </Suspense>
+          </Scene3D>
+        </Canvas>
       </div>
 
       {/* Content Overlay */}

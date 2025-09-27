@@ -88,15 +88,17 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* 3D Background Scene */}
       <div className="fixed inset-0 z-0">
-        <Scene3D environment="cyber" performance="high">
-          <AudioVisualizer3D
-            isPlaying={false}
-            type="waveform"
-            color="#3b82f6"
-            intensity={0.7}
-            size={1.5}
-          />
-        </Scene3D>
+        <Canvas>
+          <Scene3D environment="cyber" performance="high">
+            <AudioVisualizer3D
+              isPlaying={false}
+              type="waveform"
+              color="#3b82f6"
+              intensity={0.7}
+              size={1.5}
+            />
+          </Scene3D>
+        </Canvas>
       </div>
 
       {/* Content Overlay */}

@@ -161,24 +161,26 @@ const SynthesisPage: React.FC = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* 3D Background Scene */}
       <div className="fixed inset-0 z-0">
-        <Scene3D environment="studio" performance="high">
-          <AudioVisualizer3D
-            isPlaying={isPlaying}
-            type="waveform"
-            color={selectedVoice?.color || "#3b82f6"}
-            intensity={0.9}
-            size={2}
-          />
-          
-          {selectedVoice && (
-            <Avatar3D
-              voice={selectedVoice}
-              position={[0, 0, 0]}
-              isActive={true}
-              isSpeaking={isPlaying}
+        <Canvas>
+          <Scene3D environment="studio" performance="high">
+            <AudioVisualizer3D
+              isPlaying={isPlaying}
+              type="waveform"
+              color={selectedVoice?.color || "#3b82f6"}
+              intensity={0.9}
+              size={2}
             />
-          )}
-        </Scene3D>
+            
+            {selectedVoice && (
+              <Avatar3D
+                voice={selectedVoice}
+                position={[0, 0, 0]}
+                isActive={true}
+                isSpeaking={isPlaying}
+              />
+            )}
+          </Scene3D>
+        </Canvas>
       </div>
 
       {/* Content Overlay */}

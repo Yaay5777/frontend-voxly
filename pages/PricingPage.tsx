@@ -209,15 +209,17 @@ const PricingPage: React.FC = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* 3D Background Scene */}
       <div className="fixed inset-0 z-0">
-        <Scene3D environment="studio" performance="high">
-          <AudioVisualizer3D
-            isPlaying={false}
-            type="circular"
-            color="#f59e0b"
-            intensity={0.7}
-            size={1.8}
-          />
-        </Scene3D>
+        <Canvas>
+          <Scene3D environment="studio" performance="high">
+            <AudioVisualizer3D
+              isPlaying={false}
+              type="circular"
+              color="#f59e0b"
+              intensity={0.7}
+              size={1.8}
+            />
+          </Scene3D>
+        </Canvas>
       </div>
 
       {/* Content Overlay */}
