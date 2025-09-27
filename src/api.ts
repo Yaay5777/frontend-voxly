@@ -2,8 +2,8 @@
 import axios from "axios";
 
 // Service URLs - Updated for Final-Voxly Backend
-const AUTH_API = import.meta.env.VITE_AUTH_URL || "https://auth-service-ancient-frost-8646.fly.dev";
-const TTS_API = import.meta.env.VITE_TTS_URL || "https://voxly-tts-api.hf.space";
+const AUTH_API = import.meta.env.VITE_AUTH_URL || "https://yaya5777-voxly-auth.hf.space";
+const TTS_API = import.meta.env.VITE_TTS_URL || "https://yaya5777-voxly-tts.hf.space";
 
 // Configure axios defaults
 axios.defaults.timeout = 30000; // 30 second timeout

@@ -64,7 +64,7 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ v, onSelect, onAudition }) => {
       }
 
       // Generate demo audio URL
-      const demoUrl = `https://huggingface.co/spaces/Yaya5777/voxly-tts-api/demo/${v.id}`;
+      const demoUrl = `https://yaya5777-voxly-tts.hf.space/demo/${v.id}`;
       
       // Create new audio element
       const audio = new Audio(demoUrl);

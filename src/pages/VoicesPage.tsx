@@ -88,7 +88,7 @@ const VoicesPage: React.FC = () => {
       
       // Try direct fetch first to bypass any axios issues
       try {
-        const response = await fetch('https://huggingface.co/spaces/Yaya5777/voxly-tts-api/speakers', {
+        const response = await fetch('https://yaya5777-voxly-tts.hf.space/voices', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ const VoicesPage: React.FC = () => {
       formData.append('speaker_id', voice.id);  // Fixed: use speaker_id instead of speaker_idx
       formData.append('language', 'en');
       
-      const response = await fetch('https://huggingface.co/spaces/Yaya5777/voxly-tts-api/demo', {
+      const response = await fetch('https://yaya5777-voxly-tts.hf.space/demo', {
         method: 'POST',
         body: formData,
       });
