@@ -132,15 +132,33 @@ const ResetPasswordPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
         <div className="fixed inset-0 z-0">
-          <Scene3D environment="space" performance="high">
-            <AudioVisualizer3D
-              isPlaying={false}
-              type="particles"
-              color="#ef4444"
-              intensity={0.5}
-              size={1.0}
-            />
-          </Scene3D>
+          <Canvas
+            shadows
+            dpr={Math.min(window.devicePixelRatio, 2)}
+            gl={{ 
+              antialias: true,
+              powerPreference: 'high-performance',
+              alpha: true,
+              stencil: false,
+              depth: true
+            }}
+            camera={{
+              position: [0, 5, 15],
+              fov: 60,
+              near: 0.1,
+              far: 1000
+            }}
+          >
+            <Scene3D environment="space" performance="high">
+              <AudioVisualizer3D
+                isPlaying={false}
+                type="particles"
+                color="#ef4444"
+                intensity={0.5}
+                size={1.0}
+              />
+            </Scene3D>
+          </Canvas>
         </div>
         
         <motion.div
@@ -182,15 +200,33 @@ const ResetPasswordPage: React.FC = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* 3D Background Scene */}
       <div className="fixed inset-0 z-0">
-        <Scene3D environment="cyber" performance="high">
-          <AudioVisualizer3D
-            isPlaying={false}
-            type="spectrum"
-            color="#8b5cf6"
-            intensity={0.8}
-            size={1.3}
-          />
-        </Scene3D>
+        <Canvas
+          shadows
+          dpr={Math.min(window.devicePixelRatio, 2)}
+          gl={{ 
+            antialias: true,
+            powerPreference: 'high-performance',
+            alpha: true,
+            stencil: false,
+            depth: true
+          }}
+          camera={{
+            position: [0, 5, 15],
+            fov: 60,
+            near: 0.1,
+            far: 1000
+          }}
+        >
+          <Scene3D environment="cyber" performance="high">
+            <AudioVisualizer3D
+              isPlaying={false}
+              type="spectrum"
+              color="#8b5cf6"
+              intensity={0.8}
+              size={1.3}
+            />
+          </Scene3D>
+        </Canvas>
       </div>
 
       {/* Content Overlay */}

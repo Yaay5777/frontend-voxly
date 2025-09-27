@@ -209,7 +209,23 @@ const PricingPage: React.FC = () => {
     <div className="min-h-screen bg-black relative overflow-hidden">
       {/* 3D Background Scene */}
       <div className="fixed inset-0 z-0">
-        <Canvas>
+        <Canvas
+          shadows
+          dpr={Math.min(window.devicePixelRatio, 2)}
+          gl={{ 
+            antialias: true,
+            powerPreference: 'high-performance',
+            alpha: true,
+            stencil: false,
+            depth: true
+          }}
+          camera={{
+            position: [0, 5, 15],
+            fov: 60,
+            near: 0.1,
+            far: 1000
+          }}
+        >
           <Scene3D environment="studio" performance="high">
             <AudioVisualizer3D
               isPlaying={false}

@@ -1,5 +1,5 @@
 import React, { Suspense, useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
   Environment, 
@@ -269,71 +269,35 @@ export const Scene3D: React.FC<Scene3DProps> = ({
   const settings = getPerformanceSettings();
 
   return (
-    <div className="w-full h-full relative">
-      <Canvas
-        shadows={settings.shadows}
-        dpr={settings.pixelRatio}
-        gl={{ 
-          antialias: settings.antialias,
-          powerPreference: settings.powerPreference,
-          alpha: true,
-          stencil: false,
-          depth: true
-        }}
-        camera={{
-          position: [0, 5, 15],
-          fov: 60,
-          near: 0.1,
-          far: 1000
-        }}
-        onCreated={({ gl }) => {
-          gl.setClearColor('#000000', 0);
-          if (settings.shadows) {
-            gl.shadowMap.enabled = true;
-            gl.shadowMap.type = THREE.PCFSoftShadowMap;
-          }
-        }}
-      >
-        <Suspense fallback={<Scene3DLoader />}>
-          {/* Environment and lighting */}
-          <AnimatedEnvironment type={environment} />
-          
-          {/* Soft shadows for better visual quality */}
-          {settings.shadows && performance !== 'low' && <SoftShadows />}
-          
-          {/* Camera controls */}
-          <OrbitControls
-            enablePan={true}
-            enableZoom={true}
-            enableRotate={true}
-            minDistance={5}
-            maxDistance={50}
-            autoRotate={false}
-            autoRotateSpeed={0.5}
-            dampingFactor={0.05}
-            enableDamping
-          />
-          
-          {/* Scene content */}
-          {children}
-          
-          {/* Post-processing effects */}
-          <PostProcessingEffects performance={performance} />
-          
-          {/* Bake shadows for better performance */}
-          {settings.shadows && <BakeShadows />}
-        </Suspense>
-      </Canvas>
+    <Suspense fallback={<Scene3DLoader />}>
+      {/* Environment and lighting */}
+      <AnimatedEnvironment type={environment} />
       
-      {/* Performance monitor (only in development) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded text-xs font-mono">
-          <div>FPS: {fps}</div>
-          <div>Calls: {drawCalls}</div>
-          <div>Triangles: {triangles}</div>
-        </div>
-      )}
-    </div>
+      {/* Soft shadows for better visual quality */}
+      {settings.shadows && performance !== 'low' && <SoftShadows />}
+      
+      {/* Camera controls */}
+      <OrbitControls
+        enablePan={true}
+        enableZoom={true}
+        enableRotate={true}
+        minDistance={5}
+        maxDistance={50}
+        autoRotate={false}
+        autoRotateSpeed={0.5}
+        dampingFactor={0.05}
+        enableDamping
+      />
+      
+      {/* Scene content */}
+      {children}
+      
+      {/* Post-processing effects */}
+      <PostProcessingEffects performance={performance} />
+      
+      {/* Bake shadows for better performance */}
+      {settings.shadows && <BakeShadows />}
+    </Suspense>
   );
 };
 
