@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Sparkles, Shield, Clock } from 'lucide-react';
-import { authService } from '../services/api';
-import { Scene3D } from '../3d/Scene3D';
-import { AudioVisualizer3D } from '../3d/AudioVisualizer3D';
+import { authService } from '../src/services/api';
+import { Scene3D } from '../src/3d/Scene3D';
+import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 const ForgotPasswordPage: React.FC = () => {

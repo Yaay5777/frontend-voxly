@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { CheckCircle, Sparkles, Zap, Shield, ArrowRight, Home, User } from 'lucide-react';
-import { Scene3D } from '../3d/Scene3D';
-import { AudioVisualizer3D } from '../3d/AudioVisualizer3D';
+import { Scene3D } from '../src/3d/Scene3D';
+import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 const AuthSuccessPage: React.FC = () => {

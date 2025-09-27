@@ -31,11 +31,11 @@ import {
   Orbit,
   Palette
 } from 'lucide-react';
-import { Scene3D, SpaceScene3D, CyberScene3D, StudioScene3D, NatureScene3D } from '../3d/Scene3D';
-import { AvatarGallery3D } from '../3d/Avatar3D';
-import { AudioVisualizer3D, VoiceWaveform3D, AudioReactiveBackground } from '../3d/AudioVisualizer3D';
-import { useScene3DStore, useAudio3DStore } from '../hooks/use3D';
-import { ttsService } from '../services/api';
+import { Scene3D, SpaceScene3D, CyberScene3D, StudioScene3D, NatureScene3D } from '../src/3d/Scene3D';
+import { AvatarGallery3D } from '../src/3d/Avatar3D';
+import { AudioVisualizer3D, VoiceWaveform3D, AudioReactiveBackground } from '../src/3d/AudioVisualizer3D';
+import { useScene3DStore, useAudio3DStore } from '../src/hooks/use3D';
+import { ttsService } from '../src/services/api';
 import { toast } from 'react-hot-toast';
 
 interface Voice {

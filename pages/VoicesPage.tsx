@@ -33,7 +33,7 @@ import {
 // import { useVoiceStore } from '../store/useVoiceStore';
 
 // Services
-import { ttsService } from '../services/api';
+import { ttsService } from '../src/services/api';
 
 // Types
 interface Voice {

@@ -21,8 +21,8 @@ import {
   BarChart3
 } from 'lucide-react';
 
-import { Scene3D } from '../3d/Scene3D';
-import { AudioVisualizer3D } from '../3d/AudioVisualizer3D';
+import { Scene3D } from '../src/3d/Scene3D';
+import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
 import { toast } from 'react-hot-toast';
 
 interface PricingPlan {

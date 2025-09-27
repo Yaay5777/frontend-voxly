@@ -21,10 +21,10 @@ import {
   Github
 } from 'lucide-react';
 
-import { Scene3D } from '../3d/Scene3D';
-import { AudioVisualizer3D } from '../3d/AudioVisualizer3D';
-import { Avatar3D } from '../3d/Avatar3D';
-import { useScene3DStore } from '../hooks/use3D';
+import { Scene3D } from '../src/3d/Scene3D';
+import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
+import { Avatar3D } from '../src/3d/Avatar3D';
+import { useScene3DStore } from '../src/hooks/use3D';
 
 const AboutPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState('story');

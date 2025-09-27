@@ -25,11 +25,11 @@ import {
   CheckCircle
 } from 'lucide-react';
 
-import { Scene3D } from '../3d/Scene3D';
-import { AudioVisualizer3D } from '../3d/AudioVisualizer3D';
-import { Avatar3D } from '../3d/Avatar3D';
-import { useScene3DStore, useAudio3DStore } from '../hooks/use3D';
-import { ttsService } from '../services/api';
+import { Scene3D } from '../src/3d/Scene3D';
+import { AudioVisualizer3D } from '../src/3d/AudioVisualizer3D';
+import { Avatar3D } from '../src/3d/Avatar3D';
+import { useScene3DStore, useAudio3DStore } from '../src/hooks/use3D';
+import { ttsService } from '../src/services/api';
 import { toast } from 'react-hot-toast';
 
 const HomePage: React.FC = () => {
