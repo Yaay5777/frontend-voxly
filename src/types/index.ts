@@ -2,12 +2,18 @@
 export interface User {
   id: number;
   username: string;
-  email?: string;
+  email: string;
+  name: string;
+  fullName?: string;
+  is_premium: boolean;
+  created_at: string;
   tier: 'free' | 'premium';
   weekly_quota: number;
   weekly_used: number;
-  quota_cycle_start: number;
+  quota_cycle_start: string;
   avatar?: string;
+  is_active?: boolean;
+  last_login?: string;
 }
 
 export interface Voice {
@@ -26,6 +32,7 @@ export interface Voice {
   accent?: string;
   category?: string;
   personality?: string;
+  flag?: string;
 }
 
 export interface AudioFile {
@@ -59,6 +66,8 @@ export interface SynthesisResponse {
 
 export interface QuotaInfo {
   current_usage: number;
+  weekly_used: number;
+  weekly_quota: number;
   weekly_limit: number;
   reset_date: string;
   tier: 'free' | 'premium';

@@ -80,18 +80,19 @@ const Footer: React.FC = () => {
                 {socialLinks.map((social) => {
                   const Icon = social.icon;
                   return (
-                    <motion.a
+                    <motion.div
                       key={social.name}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors group"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.open(social.href, '_blank', 'noopener,noreferrer');
+                      }}
                       aria-label={social.name}
                     >
                       <Icon className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
-                    </motion.a>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -174,6 +175,10 @@ const Footer: React.FC = () => {
                 className="font-semibold bg-gradient-to-r from-voxly-400 to-accent-400 bg-clip-text text-transparent hover:from-voxly-300 hover:to-accent-300 transition-all duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open('https://github.com/yahiaelahmar', '_blank', 'noopener,noreferrer');
+                }}
               >
                 Yahia
               </motion.a>

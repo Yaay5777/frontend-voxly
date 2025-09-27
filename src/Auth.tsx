@@ -12,7 +12,7 @@ export default function Auth({ onAuth }: { onAuth: () => void }) {
     try {
       const res = tab === "login"
         ? await login(username, password)
-        : await register(username, password);
+        : await register(username, password, username + '@example.com', 'true');
       const token = res.data?.access_token;
       if (token) {
         localStorage.setItem("voxly_token", token);

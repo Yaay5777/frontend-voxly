@@ -46,14 +46,22 @@ const VoicesPage: React.FC = () => {
   
   const [voices, setVoices] = useState<Voice[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedVoice, setSelectedVoiceLocal] = useState<Voice | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [volume, setVolume] = useState(0.8);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedGender, setSelectedGender] = useState<string>('all');
   const [selectedAccent, setSelectedAccent] = useState<string>('all');
   const [playingVoice, setPlayingVoice] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [generatingDemo, setGeneratingDemo] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Voice categories with icons and descriptions
   const categories = [

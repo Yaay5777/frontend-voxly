@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 interface GlowButtonProps {
   children: React.ReactNode;
   className?: string;
-  variant?: 'primary' | 'secondary' | 'accent' | 'neon' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'accent' | 'neon' | 'ghost' | 'outline';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   loading?: boolean;
   disabled?: boolean;
@@ -40,6 +40,7 @@ const GlowButton: React.FC<GlowButtonProps> = ({
     accent: 'bg-gradient-to-r from-accent-500 to-accent-600 text-white hover:from-accent-600 hover:to-accent-700 focus:ring-accent-500 shadow-lg hover:shadow-accent-500/25',
     neon: 'bg-gradient-to-r from-neon-blue to-neon-purple text-white hover:from-neon-purple hover:to-neon-pink focus:ring-neon-blue shadow-neon hover:shadow-neon-lg',
     ghost: 'bg-glass-100 text-gray-700 dark:text-gray-200 hover:bg-glass-200 focus:ring-voxly-500 border border-glass-200 backdrop-blur-md',
+    outline: 'bg-transparent text-voxly-500 dark:text-voxly-400 hover:bg-voxly-500/10 focus:ring-voxly-500 border-2 border-voxly-500 dark:border-voxly-400',
   };
 
   const sizeClasses = {

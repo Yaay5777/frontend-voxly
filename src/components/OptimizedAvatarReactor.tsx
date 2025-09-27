@@ -80,7 +80,7 @@ const AvatarGeometry: React.FC<{
   isPlaying: boolean;
   quality: 'low' | 'medium' | 'high';
 }> = ({ voiceId, audioData, isPlaying, quality }) => {
-  const meshRef = React.useRef<THREE.Mesh>(null);
+  const meshRef = React.useRef<any>(null);
   
   // Geometry complexity based on quality
   const geometryProps = useMemo(() => {
@@ -167,7 +167,7 @@ const OptimizedParticles: React.FC<{
   isPlaying: boolean;
   quality: 'low' | 'medium' | 'high';
 }> = ({ voiceId, audioData, isPlaying, quality }) => {
-  const particlesRef = React.useRef<THREE.Points>(null);
+  const particlesRef = React.useRef<any>(null);
   
   // Particle count based on quality
   const particleCount = useMemo(() => {
@@ -361,7 +361,7 @@ export const OptimizedAvatarReactor: React.FC<OptimizedAvatarReactorProps> = ({
         </div>
       )}
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false}>
         {shouldUse3D ? (
           <motion.div
             key="3d-avatar"

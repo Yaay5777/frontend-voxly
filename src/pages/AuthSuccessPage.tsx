@@ -15,6 +15,8 @@ export default function AuthSuccessPage() {
       try {
         const token = searchParams.get('token')
         const username = searchParams.get('username')
+        const email = searchParams.get('email')
+        const name = searchParams.get('name')
         const tier = searchParams.get('tier')
 
         if (!token || !username) {
@@ -25,10 +27,15 @@ export default function AuthSuccessPage() {
         const user = {
           id: Date.now(),
           username: username,
-          email: `${username}@oauth.user`,
-          name: username,
+          email: email || '',
+          name: name || username,
+          fullName: name || username,
           is_premium: tier === 'premium',
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          tier: 'free' as const,
+          weekly_quota: 1000,
+          weekly_used: 0,
+          quota_cycle_start: new Date().toISOString(),
         }
 
         // Update auth store with token and user

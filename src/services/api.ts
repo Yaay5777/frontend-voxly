@@ -258,18 +258,17 @@ class ApiService {
 
   // User quota and usage
   async getQuotaInfo(): Promise<QuotaInfo> {
-    const user = await this.getCurrentUser();
-    
-    const resetDate = new Date();
-    resetDate.setDate(resetDate.getDate() + (7 - resetDate.getDay())); // Next Sunday
-    
-    return {
-      current_usage: user.weekly_used || 0,
-      weekly_limit: user.weekly_quota || 10000,
-      reset_date: resetDate.toISOString(),
-      tier: user.tier,
-      percentage_used: ((user.weekly_used || 0) / (user.weekly_quota || 10000)) * 100,
+    const quotaResponse = await this.api.get('/quota');
+    const quotaInfo: QuotaInfo = {
+      current_usage: quotaResponse.data.current_usage,
+      weekly_used: quotaResponse.data.weekly_limit - quotaResponse.data.current_usage,
+      weekly_quota: quotaResponse.data.weekly_limit,
+      weekly_limit: quotaResponse.data.weekly_limit,
+      reset_date: quotaResponse.data.reset_date,
+      tier: quotaResponse.data.tier,
+      percentage_used: quotaResponse.data.percentage_used,
     };
+    return quotaInfo;
   }
 
   // Admin endpoints (for development/testing)

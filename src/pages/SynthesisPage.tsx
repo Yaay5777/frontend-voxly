@@ -96,19 +96,34 @@ const SynthesisPage: React.FC = () => {
       const audioBlob = await synthesizeText({
         text: text.trim(),
         voice_id: currentVoice.id,
-        language: 'en'
+        language: currentVoice.languages?.[0] || 'en'
       });
 
       // Create AudioFile object from blob
       const audioUrl = URL.createObjectURL(audioBlob);
-      const audioFile = {
+      
+      // Create an audio element to get the duration
+      const audio = new Audio(audioUrl);
+      const duration = await new Promise<number>((resolve) => {
+        audio.onloadedmetadata = () => {
+          resolve(audio.duration);
+        };
+        audio.onerror = () => {
+          console.warn('Could not determine audio duration');
+          resolve(0);
+        };
+      });
+      
+      const audioFile: AudioFile = {
         id: `synthesis_${Date.now()}`,
         filename: `${currentVoice.id}_${Date.now()}.wav`,
         url: audioUrl,
         size: audioBlob.size,
+        duration: duration,
         created_at: new Date().toISOString(),
         voice_id: currentVoice.id,
-        text: text.trim()
+        text: text.trim(),
+        language: currentVoice.languages?.[0] || 'en'
       };
 
       console.log('✅ Synthesis completed:', audioFile);
@@ -161,7 +176,8 @@ const SynthesisPage: React.FC = () => {
   };
 
   const characterCount = text.length;
-  const remainingQuota = quotaInfo ? quotaInfo.weekly_quota - quotaInfo.weekly_used : 0;
+  // Calculate remaining quota based on the QuotaInfo properties
+  const remainingQuota = quotaInfo ? quotaInfo.weekly_limit - quotaInfo.current_usage : 0;
   const canGenerate = characterCount > 0 && characterCount <= remainingQuota;
 
   if (!currentVoice) {
@@ -386,21 +402,6 @@ const SynthesisPage: React.FC = () => {
                         <span>Download</span>
                       </GlowButton>
                     </div>
-                  </div>
-
-                  {/* Waveform Visualizer */}
-                  <div className="h-16 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-                    <WaveformVisualizer
-                      audioUrl={generatedAudio.url}
-                      isPlaying={isPlaying}
-                      height={64}
-                    />
-                  </div>
-
-                  {/* Audio Info */}
-                  <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                    <span>Duration: {Math.round(generatedAudio.duration || 0)}s</span>
-                    <span>Size: {(generatedAudio.size / 1024).toFixed(1)} KB</span>
                   </div>
                 </div>
               </GlassCard>

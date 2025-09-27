@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Check } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User as UserIcon, ArrowRight, Check } from 'lucide-react';
 
 // Component imports
 import GlassCard from '../components/ui/GlassCard';
@@ -9,6 +9,9 @@ import GlowButton from '../components/ui/GlowButton';
 
 // Store imports
 import { useAuthStore } from '../store/useAuthStore';
+
+// Types
+import { User } from '../types';
 
 // Services
 import { register, initiateGoogleOAuth, appleOAuth } from '../services/api';
@@ -52,12 +55,17 @@ const RegisterPage: React.FC = () => {
       
       // Create user object from response (backend returns {access_token, token_type, username})
       const user = {
-        id: Date.now(), // Generate unique ID
+        id: Date.now(),
         username: response.username || formData.username,
         email: formData.email,
         name: formData.username,
+        fullName: formData.username,
         is_premium: false,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        tier: 'free' as const,
+        weekly_quota: 1000,
+        weekly_used: 0,
+        quota_cycle_start: new Date().toISOString(),
       };
       
       console.log('🔐 Logging in user after registration:', user);
@@ -121,7 +129,7 @@ const RegisterPage: React.FC = () => {
       const response = await appleOAuth(mockAppleUser.id_token, mockAppleUser.email, mockAppleUser.name);
       console.log('✅ Apple OAuth successful:', response);
       
-      login(response.access_token, response.user);
+      login(response.access_token, response as unknown as User);
       navigate('/dashboard');
     } catch (err: any) {
       console.error('❌ Apple OAuth failed:', err);
@@ -265,7 +273,7 @@ const RegisterPage: React.FC = () => {
                   Username
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
                     name="username"

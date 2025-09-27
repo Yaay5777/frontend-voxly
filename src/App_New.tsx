@@ -112,7 +112,7 @@ const App: React.FC = () => {
 
           {/* Main Content */}
           <main className="min-h-screen">
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               <Suspense fallback={<AppLoadingScreen />}>
                 <Routes>
                   {/* Public Routes */}

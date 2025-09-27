@@ -118,7 +118,7 @@ const GlobalAudioPlayer: React.FC = () => {
 
 // Main App Component
 const App: React.FC = () => {
-  const { theme, initializeTheme } = useThemeStore();
+  const { isDark, initializeTheme } = useThemeStore();
   const { initializeAuth } = useAuthStore();
   const { currentAudio } = useAudioStore();
 
@@ -150,7 +150,7 @@ const App: React.FC = () => {
 
   return (
     <AdvancedErrorBoundary>
-      <div className={`min-h-screen ${theme === 'dark' ? 'dark' : ''}`}>
+      <div className={`min-h-screen ${isDark ? 'dark' : ''}`}>
         <div className="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-voxly-900 dark:to-purple-900 min-h-screen">
           <Router>
           {/* Particle Background */}

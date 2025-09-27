@@ -20,8 +20,8 @@ const Avatar3D: React.FC<Avatar3DProps> = ({
   scale = 1,
   position = [0, 0, 0],
 }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const particlesRef = useRef<THREE.Points>(null);
+  const meshRef = useRef<any>(null);
+  const particlesRef = useRef<any>(null);
 
   // Calculate audio-reactive intensity
   const audioIntensity = useMemo(() => {
@@ -64,13 +64,16 @@ const Avatar3D: React.FC<Avatar3DProps> = ({
     // Animate particles
     if (particlesRef.current && config.particles) {
       particlesRef.current.rotation.y = time * 0.1;
-      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-      
-      for (let i = 0; i < positions.length; i += 3) {
-        positions[i + 1] += Math.sin(time + i) * 0.01 * intensity;
+      const positionAttribute = particlesRef.current.geometry.attributes.position;
+      if ('array' in positionAttribute) {
+        const positions = (positionAttribute as THREE.BufferAttribute).array as Float32Array;
+        
+        for (let i = 0; i < positions.length; i += 3) {
+          positions[i + 1] += Math.sin(time + i) * 0.01 * intensity;
+        }
+        
+        particlesRef.current.geometry.attributes.position.needsUpdate = true;
       }
-      
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
     }
   });
 

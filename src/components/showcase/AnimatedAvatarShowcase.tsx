@@ -39,7 +39,7 @@ const Avatar3DShowcase: React.FC<{
   onClick: () => void;
   animationPhase: number;
 }> = ({ avatar, isActive, onClick, animationPhase }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<any>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
@@ -113,7 +113,7 @@ const AnimatedAvatarShowcase: React.FC = () => {
         }
         
         // Check if we can create more contexts
-        const info = gl.getExtension('WEBGL_debug_renderer_info');
+        const info = (gl as any).getExtension ? (gl as any).getExtension('WEBGL_debug_renderer_info') : null;
         const contexts = document.querySelectorAll('canvas').length;
         
         if (contexts > 8) { // Limit WebGL contexts
@@ -193,8 +193,8 @@ const AnimatedAvatarShowcase: React.FC = () => {
           onCreated={({ gl }) => {
             // Optimize WebGL context
             gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            gl.outputEncoding = THREE.sRGBEncoding;
-            gl.toneMapping = THREE.ACESFilmicToneMapping;
+            gl.outputColorSpace = (THREE as any).SRGBColorSpace;
+            gl.toneMapping = (THREE as any).ACESFilmicToneMapping;
             gl.toneMappingExposure = 1;
           }}
         >

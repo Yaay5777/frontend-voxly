@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from './ui/Button';
 
 interface Step {
   id: number;
@@ -51,6 +52,18 @@ export const VoiceCloningStepper: React.FC<VoiceCloneStepperProps> = ({
   const isStepCompleted = (stepId: number) => stepId < currentStep;
   const isStepActive = (stepId: number) => stepId === currentStep;
   const isStepAccessible = (stepId: number) => stepId <= currentStep;
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      onStepChange(currentStep - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentStep < steps.length) {
+      onStepChange(currentStep + 1);
+    }
+  };
 
   return (
     <div className={`w-full ${className}`}>
@@ -163,47 +176,47 @@ export const VoiceCloningStepper: React.FC<VoiceCloneStepperProps> = ({
         ))}
       </div>
 
-      {/* Step Navigation */}
-      <div className="flex justify-between items-center mt-6">
-        <motion.button
-          onClick={() => currentStep > 1 && onStepChange(currentStep - 1)}
-          disabled={currentStep <= 1}
-          className={`
-            px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-            ${currentStep > 1
-              ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              : 'bg-gray-50 text-gray-400 cursor-not-allowed'
-            }
-          `}
-          whileHover={currentStep > 1 ? { x: -2 } : {}}
-          whileTap={currentStep > 1 ? { scale: 0.98 } : {}}
+      {/* Navigation Buttons */}
+      <div className="mt-8 flex justify-between gap-4">
+        <motion.div
+          className={currentStep === 1 ? 'opacity-50' : ''}
+          whileHover={currentStep > 1 ? { x: -5 } : {}}
+          whileTap={currentStep > 1 ? { scale: 0.95 } : {}}
         >
-          ← Previous
-        </motion.button>
-
-        <div className="text-xs text-gray-500">
-          Step {currentStep} of {steps.length}
-        </div>
-
-        <motion.button
-          onClick={() => currentStep < steps.length && onStepChange(currentStep + 1)}
-          disabled={currentStep >= steps.length}
-          className={`
-            px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-            ${currentStep < steps.length
-              ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
-              : 'bg-gray-50 text-gray-400 cursor-not-allowed'
-            }
-          `}
-          whileHover={currentStep < steps.length ? { x: 2 } : {}}
-          whileTap={currentStep < steps.length ? { scale: 0.98 } : {}}
+          <Button
+            onClick={handleBack}
+            disabled={currentStep === 1}
+            variant="outline"
+            className="flex items-center"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </Button>
+        </motion.div>
+        
+        <motion.div
+          className={currentStep === steps.length ? 'opacity-50' : ''}
+          whileHover={currentStep < steps.length ? { x: 5 } : {}}
+          whileTap={currentStep < steps.length ? { scale: 0.95 } : {}}
         >
-          Next →
-        </motion.button>
+          <Button
+            onClick={handleNext}
+            disabled={currentStep === steps.length}
+            variant="primary"
+            className="flex items-center"
+          >
+            {currentStep === steps.length ? 'Finish' : 'Next'}
+            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Button>
+        </motion.div>
       </div>
 
       {/* Helpful Tips */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false}>
         <motion.div
           key={currentStep}
           initial={{ opacity: 0, y: 10 }}

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+    <meta name="description" content="Professional Text-to-Speech platform with 3D avatars and voice cloning technology" />
+    <meta name="keywords" content="TTS, voice cloning, text-to-speech, AI voice, 3D avatars" />
+    <meta name="author" content="Yahia Elahmar" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="color-scheme" content="dark light" />
+    
+    <!-- iOS Safari specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Voxly TTS" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Microsoft Edge/IE -->
+    <meta name="msapplication-TileColor" content="#3b82f6" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Voxly TTS - Voice Cloning Platform" />
+    <meta property="og:description" content="Professional Text-to-Speech platform with 3D avatars and voice cloning" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/assets/og-image.png" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Voxly TTS - Voice Cloning Platform" />
+    <meta name="twitter:description" content="Professional Text-to-Speech platform with 3D avatars" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- DNS prefetch for performance -->
+    <link rel="dns-prefetch" href="//your-backend-domain.com" />
+    
+    <title>Voxly — Cinematic Voice Cloning</title>
+    
+    <!-- Browser compatibility CSS -->
+    <style>
+      /* Critical CSS for cross-browser compatibility */
+      * {
+        box-sizing: border-box;
+      }
+      
+      html {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: #0f172a;
+        color: #ffffff;
+        overflow-x: hidden;
+      }
+      
+      #root {
+        min-height: 100vh;
+        min-height: 100dvh; /* Dynamic viewport height for mobile */
+      }
+      
+      /* Loading spinner for better UX */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid #374151;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 9999;
+      }
+      
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+      
+      /* Hide spinner when React loads */
+      #root:not(:empty) + .loading-spinner {
+        display: none;
+      }
+      
+      /* Safari-specific fixes */
+      @supports (-webkit-appearance: none) {
+        body {
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+      
+      /* Edge-specific fixes */
+      @supports (-ms-ime-align: auto) {
+        body {
+          -ms-overflow-style: scrollbar;
+        }
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+    <div class="loading-spinner"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+              console.log('SW registered: ', registration);
+            })
+            .catch(registrationError => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
+    <!-- Browser compatibility polyfills -->
+    <script>
+      // Polyfill for older browsers
+      if (!window.ResizeObserver) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/resize-observer-polyfill@1.5.1/dist/ResizeObserver.min.js';
+        document.head.appendChild(script);
+      }
+      
+      // WebGL detection and fallback
+      function detectWebGL() {
+        try {
+          const canvas = document.createElement('canvas');
+          const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+          return !!gl;
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      // Set WebGL capability flag
+      window.WEBGL_SUPPORTED = detectWebGL();
+      
+      // iOS Safari audio context fix
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.addEventListener('touchstart', function() {
+          if (window.AudioContext || window.webkitAudioContext) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') {
+              audioContext.resume();
+            }
+          }
+        }, { once: true });
+      }
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

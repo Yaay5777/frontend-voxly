@@ -43,9 +43,11 @@ const GlassCard: React.FC<GlassCardProps> = ({
   const glowClasses = glow ? 'shadow-neon animate-glow' : '';
   const clickableClasses = onClick ? 'cursor-pointer' : '';
 
+  // Create a motion component with the specified element type
+  const MotionComponent = motion[Component as keyof typeof motion] || motion.div;
+  
   return (
-    <motion.div
-      as={Component}
+    <MotionComponent
       className={clsx(
         baseClasses,
         variantClasses[variant],
@@ -58,9 +60,9 @@ const GlassCard: React.FC<GlassCardProps> = ({
       onClick={onClick}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      whileHover={hover ? { scale: 1.02 } : undefined}
-      whileTap={onClick ? { scale: 0.98 } : undefined}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      whileHover={hover ? { scale: 1.02, boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)' } : {}}
+      whileTap={onClick ? { scale: 0.98 } : {}}
     >
       {/* Inner glow effect */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
@@ -74,7 +76,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
       {variant === 'neon' && (
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink opacity-30 blur-sm animate-gradient" />
       )}
-    </motion.div>
+    </MotionComponent>
   );
 };
 

@@ -103,7 +103,8 @@ const Navbar: React.FC = () => {
                     <motion.div
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-voxly-500 to-accent-500 rounded-full"
                       layoutId="activeTab"
-                      initial={false}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   )}
@@ -122,7 +123,7 @@ const Navbar: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               aria-label="Toggle theme"
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence initial={false}>
                 {isDark ? (
                   <motion.div
                     key="sun"
@@ -230,7 +231,7 @@ const Navbar: React.FC = () => {
               whileTap={{ scale: 0.9 }}
               aria-label="Toggle menu"
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence initial={false}>
                 {isMenuOpen ? (
                   <motion.div
                     key="close"

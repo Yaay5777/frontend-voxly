@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle, Loader2, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { User } from '../types';
 
 const AuthSuccessPage = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ const AuthSuccessPage = () => {
 
         {user && (
           <p className="mt-2 text-lg text-gray-600">
-            Successfully verified and logged in as <span className="font-semibold text-indigo-600">{user.fullName}</span>
+            Successfully verified and logged in as <span className="font-semibold text-indigo-600">{user.fullName || user.name}</span>
           </p>
         )}
 

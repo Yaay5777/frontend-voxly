@@ -56,8 +56,13 @@ export default function AuthModal({ open, onClose, onAuth }: { open: boolean; on
             username: data.username || username,
             email: `${username}@example.com`,
             name: username,
-            is_premium: data.tier === 'premium',
-            created_at: new Date().toISOString()
+            fullName: username,
+            is_premium: (data as any).tier === 'premium',
+            created_at: new Date().toISOString(),
+            tier: ((data as any).tier || 'free') as 'free' | 'premium',
+            weekly_quota: 1000,
+            weekly_used: 0,
+            quota_cycle_start: new Date().toISOString()
           }
           
           // Update auth store with token and user
@@ -99,8 +104,13 @@ export default function AuthModal({ open, onClose, onAuth }: { open: boolean; on
               username: data.username || username,
               email: email,
               name: username,
+              fullName: username,
               is_premium: data.tier === 'premium',
-              created_at: new Date().toISOString()
+              created_at: new Date().toISOString(),
+              tier: 'free' as const,
+              weekly_quota: 1000,
+              weekly_used: 0,
+              quota_cycle_start: new Date().toISOString(),
             }
             
             authLogin(data.access_token, user)
@@ -137,8 +147,13 @@ export default function AuthModal({ open, onClose, onAuth }: { open: boolean; on
           username: data.username || 'testuser',
           email: 'testuser@example.com',
           name: 'Test User',
+          fullName: 'Test User',
           is_premium: false,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          tier: 'free' as const,
+          weekly_quota: 1000,
+          weekly_used: 0,
+          quota_cycle_start: new Date().toISOString(),
         }
         
         // Update auth store with token and user
