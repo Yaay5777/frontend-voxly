@@ -13,7 +13,12 @@
   "dependencies": {
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
+    "@react-three/drei": "^9.97.1",
+    "@react-three/fiber": "^8.18.0",
     "@react-three/postprocessing": "^2.19.1",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "@types/wavesurfer.js": "^6.0.12",
     "axios": "^1.12.2",
     "clsx": "^2.0.0",
     "framer-motion": "^10.18.0",
@@ -34,13 +39,8 @@
     "zustand": "^4.4.6"
   },
   "devDependencies": {
-    "@react-three/drei": "^9.97.1",
-    "@react-three/fiber": "^8.18.0",
     "@types/node": "^20.19.17",
-    "@types/react": "^18.3.24",
-    "@types/react-dom": "^18.3.7",
     "@types/three": "^0.149.0",
-    "@types/wavesurfer.js": "^6.0.12",
     "@vitejs/plugin-react": "^5.0.2",
     "autoprefixer": "^10.4.15",
     "postcss": "^8.4.31",
