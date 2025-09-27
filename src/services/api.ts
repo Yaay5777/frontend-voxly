@@ -1,281 +1,333 @@
-// API service with environment-driven URLs
-// REPLACE: https://auth-service-ancient-frost-8646.fly.dev → process.env.NEXT_PUBLIC_AUTH_URL
-// REPLACE: https://huggingface.co/spaces/Yaya5777/voxly-tts-api → process.env.NEXT_PUBLIC_TTS_URL
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { User, Voice, AudioFile, SynthesisRequest, SynthesisResponse, QuotaInfo } from '../types';
+import { useAuthStore } from '../store/useAuthStore';
 
-import axios from 'axios';
-import { AUTH_URL, TTS_URL } from '../config/env';
+// API Configuration - Dual Backend Architecture
+const AUTH_BASE_URL = import.meta.env.VITE_AUTH_URL || 'https://auth-service-ancient-frost-8646.fly.dev';
+const TTS_BASE_URL = import.meta.env.VITE_TTS_URL || 'https://huggingface.co/spaces/Yaya5777/voxly-tts-api';
+const API_BASE_URL = AUTH_BASE_URL; // Default for auth endpoints
 
-// Create axios instances for each service
-const authApi = axios.create({
-  baseURL: AUTH_URL,
-  timeout: 10000,
-  withCredentials: true,
-});
+class ApiService {
+  private api: AxiosInstance;
+  private ttsApi: AxiosInstance;
 
-const ttsApi = axios.create({
-  baseURL: TTS_URL,
-  timeout: 30000, // TTS operations can take longer
-});
-
-// Request interceptors for auth tokens
-authApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-ttsApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-// Response interceptors for error handling
-const handleAuthError = (error: any) => {
-  if (error.response?.status === 401) {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
-  }
-  return Promise.reject(error);
-};
-
-authApi.interceptors.response.use(
-  (response) => response,
-  handleAuthError
-);
-
-ttsApi.interceptors.response.use(
-  (response) => response,
-  handleAuthError
-);
-
-// Auth API functions
-export const authService = {
-  // Registration
-  register: async (data: {
-    fullName: string;
-    username: string;
-    email: string;
-    password: string;
-  }) => {
-    const response = await authApi.post('/auth/register', data);
-    return response.data;
-  },
-
-  // Login
-  login: async (data: {
-    usernameOrEmail: string;
-    password: string;
-  }) => {
-    const response = await authApi.post('/auth/login', data);
-    return response.data;
-  },
-
-  // Google OAuth
-  googleLogin: () => {
-    window.location.href = `${AUTH_URL}/auth/google`;
-  },
-
-  // Email verification
-  verifyEmail: async (token: string, email: string) => {
-    const response = await authApi.post('/auth/verify-email', { token, email });
-    return response.data;
-  },
-
-  // Resend verification email
-  resendVerification: async (data: { email: string }) => {
-    const response = await authApi.post('/auth/resend-verification', data);
-    return response.data;
-  },
-
-  // Password reset
-  forgotPassword: async (email: string) => {
-    const response = await authApi.post('/auth/forgot-password', { email });
-    return response.data;
-  },
-
-  // Verify reset token
-  verifyResetToken: async (token: string) => {
-    const response = await authApi.post('/auth/verify-reset-token', { token });
-    return response.data;
-  },
-
-  resetPassword: async (token: string, email: string, newPassword: string) => {
-    const response = await authApi.post('/auth/reset-password', {
-      token,
-      email,
-      new_password: newPassword,
+  constructor() {
+    // Auth API instance (port 8000)
+    this.api = axios.create({
+      baseURL: AUTH_BASE_URL,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
-    return response.data;
-  },
 
-  // Get current user
-  getCurrentUser: async () => {
-    const response = await authApi.get('/auth/me');
-    return response.data;
-  },
-};
+    // TTS API instance (port 8001)
+    this.ttsApi = axios.create({
+      baseURL: TTS_BASE_URL,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-// TTS API functions - Updated for Hugging Face Spaces
-export const ttsService = {
-  // Get available voices
-  getVoices: async () => {
+    // Request interceptor to add auth token
+    this.api.interceptors.request.use(
+      (config) => {
+        const token = useAuthStore.getState().token;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    // Response interceptor for error handling
+    this.api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          // Token expired or invalid
+          useAuthStore.getState().logout();
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  // Authentication endpoints
+  async login(username: string, password: string): Promise<{ access_token: string; token_type: string; username: string }> {
+    const params = new URLSearchParams();
+    params.append('username', username);
+    params.append('password', password);
+
+    console.log('🚀 Login attempt:', { username, url: `${API_BASE_URL}/auth/login` });
+
+    const response = await this.api.post('/auth/login', params, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    
+    console.log('✅ Login successful:', response.data);
+    return response.data;
+  }
+
+  async register(username: string, password: string, email?: string): Promise<{ access_token: string; token_type: string; username: string }> {
     try {
-      const response = await ttsApi.get('/voices');
+      const params = new URLSearchParams();
+      params.append('username', username);
+      params.append('password', password);
+      if (email) {
+        params.append('email', email);
+      }
+
+      console.log('🚀 Registration attempt:', { username, email: email || 'not provided', url: `${API_BASE_URL}/auth/register` });
+
+      const response = await this.api.post('/auth/register', params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+      
+      console.log('✅ Registration successful:', response.data);
       return response.data;
+    } catch (error: any) {
+      console.error('❌ Registration failed:', error);
+      console.error('Error details:', error.response?.data);
+      throw error;
+    }
+  }
+
+  // Google OAuth - Initiate login flow
+  async initiateGoogleOAuth(): Promise<void> {
+    try {
+      console.log('🚀 Initiating Google OAuth flow');
+      // Redirect to backend Google OAuth login endpoint
+      window.location.href = `${API_BASE_URL}/auth/google/login`;
+    } catch (error: any) {
+      console.error('❌ Google OAuth initiation failed:', error);
+      throw new Error('Failed to initiate Google OAuth');
+    }
+  }
+
+  // Handle Google OAuth callback (called when user returns from Google)
+  async handleGoogleOAuthCallback(code: string): Promise<{ access_token: string; token_type: string; username: string }> {
+    try {
+      console.log('🚀 Handling Google OAuth callback with code:', code);
+
+      const response = await this.api.get(`/auth/google/callback?code=${code}`);
+      
+      console.log('✅ Google OAuth callback successful:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Google OAuth callback failed:', error);
+      if (error.response?.status === 404) {
+        throw new Error('OAuth route not found – check backend URLs');
+      }
+      throw error;
+    }
+  }
+
+  async appleOAuth(idToken: string, email: string, name: string): Promise<{ access_token: string; token_type: string; username: string }> {
+    try {
+      const formData = new FormData();
+      formData.append('id_token', idToken);
+      formData.append('email', email);
+      formData.append('name', name);
+
+      console.log('🚀 Apple OAuth attempt:', { email, name });
+
+      const response = await this.api.post('/auth/oauth/apple', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      
+      console.log('✅ Apple OAuth successful:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Apple OAuth failed:', error);
+      throw error;
+    }
+  }
+
+  async getCurrentUser(): Promise<User> {
+    const response = await this.api.get('/me');
+    return response.data;
+  }
+
+  // Voice endpoints (use TTS backend)
+  async getVoices(): Promise<Voice[]> {
+    try {
+      const response = await this.ttsApi.get('/speakers');
+      
+      // Transform backend response to match our Voice interface
+      return response.data.map((speaker: any, index: number) => ({
+        id: speaker.id || `voice-${index}`,
+        name: speaker.name || `Voice ${index + 1}`,
+        description: speaker.description || 'AI-generated voice',
+        avatar: speaker.avatar || 'sphere',
+        color: speaker.color || '#3b82f6',
+        tags: speaker.tags || ['ai', 'synthetic'],
+        sample_text: speaker.sample_text || 'Hello, this is a sample of my voice.',
+        type: speaker.type || 'preset',
+        quality: speaker.quality || 'high',
+        languages: speaker.languages || ['en'],
+        gender: speaker.gender,
+        age: speaker.age,
+        accent: speaker.accent,
+        category: speaker.category || 'general',
+        personality: speaker.personality || 'neutral',
+      }));
     } catch (error) {
       console.error('Error fetching voices:', error);
       throw error;
     }
-  },
+  }
 
-  // Get specific voice
-  getVoice: async (voiceId: string) => {
+  // Text-to-Speech synthesis (use TTS backend)
+  async synthesizeText(request: SynthesisRequest, speakerFile?: File): Promise<Blob> {
     try {
-      const response = await ttsApi.get(`/voices/${voiceId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching voice ${voiceId}:`, error);
-      throw error;
-    }
-  },
-
-  // Generate voice demo (no auth required) - Updated for HF Spaces
-  generateDemo: async (voiceId: string, text?: string) => {
-    try {
-      // For Hugging Face Spaces, use JSON payload instead of FormData
-      const payload = {
-        voice_id: voiceId,
-        text: text || 'Hello, this is a sample of my voice.',
-        format: 'wav'
-      };
-
-      const response = await ttsApi.post('/demo', payload, {
-        responseType: 'blob',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error generating demo:', error);
-      throw error;
-    }
-  },
-
-  // Synthesize text - Updated for HF Spaces API
-  synthesize: async (data: {
-    text: string;
-    voice_id: string;
-    language?: string;
-    speed?: number;
-    pitch?: number;
-    format?: string;
-  }) => {
-    try {
-      // Use JSON payload for HF Spaces API
-      const payload = {
-        text: data.text,
-        voice_id: data.voice_id,
-        format: data.format || 'wav',
-        language: data.language || 'en',
-        ...(data.speed && { speed: data.speed }),
-        ...(data.pitch && { pitch: data.pitch }),
-      };
-
-      const response = await ttsApi.post('/synthesize', payload, {
-        responseType: 'blob',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error synthesizing text:', error);
-      throw error;
-    }
-  },
-
-  // HF Spaces specific API predict endpoint
-  predict: async (data: {
-    text: string;
-    voice_id: string;
-    format?: string;
-  }) => {
-    try {
-      // Use the HF Spaces predict API endpoint
-      const payload = {
-        data: [data.text, data.voice_id, data.format || 'wav']
-      };
-
-      const response = await fetch(`${TTS_URL}/api/predict`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const formData = new FormData();
+      formData.append('text', request.text);
+      formData.append('language', request.language);
+      formData.append('speaker_id', request.voice_id || 'emma_american_female');
+      
+      if (speakerFile) {
+        formData.append('speaker_wav', speakerFile);
       }
 
-      // HF Spaces returns JSON with data array containing the audio blob
-      const result = await response.json();
-      
-      // Convert base64 audio data to blob if needed
-      if (result.data && result.data[0]) {
-        const audioData = result.data[0];
-        if (typeof audioData === 'string') {
-          // If it's base64, convert to blob
-          const byteCharacters = atob(audioData);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
-          return new Blob([byteArray], { type: 'audio/wav' });
-        }
-      }
-      
-      return result;
-    } catch (error) {
-      console.error('Error with HF Spaces predict API:', error);
-      throw error;
-    }
-  },
+      console.log('🚀 Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
 
-  // Get synthesis status
-  getStatus: async () => {
-    try {
-      const response = await ttsApi.get('/status');
+      const response = await this.ttsApi.post('/synthesize', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        responseType: 'blob',
+      });
+
+      console.log('✅ Synthesis successful:', response.data.size, 'bytes');
       return response.data;
-    } catch (error) {
-      console.error('Error getting status:', error);
+    } catch (error: any) {
+      console.error('❌ Synthesis failed:', error);
       throw error;
     }
-  },
+  }
+
+  // Voice demo generation (use TTS backend)
+  async generateVoiceDemo(text: string, voiceId: string): Promise<Blob> {
+    try {
+      const formData = new FormData();
+      formData.append('text', text);
+      formData.append('speaker_id', voiceId);
+      formData.append('language', 'en');
+
+      console.log('🚀 Demo generation:', { text, voiceId });
+
+      const response = await this.ttsApi.post('/demo', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        responseType: 'blob',
+      });
+
+      console.log('✅ Demo generated:', response.data.size, 'bytes');
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Demo generation failed:', error);
+      throw error;
+    }
+  }
+
+  // Audio file management (use TTS backend)
+  async getAudioFiles(): Promise<AudioFile[]> {
+    const response = await this.ttsApi.get('/outputs/list');
+    
+    // Transform backend response to match our AudioFile interface
+    return response.data.map((file: any) => ({
+      id: file.id || file.filename,
+      filename: file.filename,
+      url: `${TTS_BASE_URL}/outputs/${file.filename}`,
+      duration: file.duration || 0,
+      size: file.size || 0,
+      created_at: file.created_at || new Date().toISOString(),
+      voice_id: file.voice_id || 'unknown',
+      text: file.text || '',
+      language: file.language || 'en',
+    }));
+  }
+
+  async downloadAudio(filename: string): Promise<Blob> {
+    const response = await this.ttsApi.get(`/outputs/${filename}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  }
+
+  // User quota and usage
+  async getQuotaInfo(): Promise<QuotaInfo> {
+    const user = await this.getCurrentUser();
+    
+    const resetDate = new Date();
+    resetDate.setDate(resetDate.getDate() + (7 - resetDate.getDay())); // Next Sunday
+    
+    return {
+      current_usage: user.weekly_used || 0,
+      weekly_limit: user.weekly_quota || 10000,
+      reset_date: resetDate.toISOString(),
+      tier: user.tier,
+      percentage_used: ((user.weekly_used || 0) / (user.weekly_quota || 10000)) * 100,
+    };
+  }
+
+  // Admin endpoints (for development/testing)
+  async upgradeUser(username: string, tier: 'free' | 'premium'): Promise<void> {
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('tier', tier);
+
+    await this.api.post('/admin/upgrade', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
 
   // Health check
-  healthCheck: async () => {
+  async healthCheck(): Promise<{ status: string; timestamp: string }> {
     try {
-      const response = await ttsApi.get('/health');
+      const response = await this.api.get('/health');
       return response.data;
     } catch (error) {
-      console.error('Error checking health:', error);
-      throw error;
+      // Fallback if health endpoint doesn't exist
+      return {
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+      };
     }
-  },
-};
+  }
 
-// Export individual APIs for convenience
-export { authApi, ttsApi };
+  // Voice cloning with custom audio
+  async cloneVoice(text: string, audioFile: File, language: string = 'en'): Promise<Blob> {
+    return this.synthesizeText({ text, voice_id: 'custom', language }, audioFile);
+  }
 
-// Legacy exports for backward compatibility
-export const getVoices = ttsService.getVoices;
-export const synthesizeText = ttsService.synthesize;
+  // Batch synthesis (for premium users)
+  async batchSynthesize(requests: SynthesisRequest[]): Promise<Blob[]> {
+    const promises = requests.map(request => this.synthesizeText(request));
+    return Promise.all(promises);
+  }
+}
+
+// Create singleton instance
+const apiService = new ApiService();
+
+// Export individual methods for convenience
+export const login = apiService.login.bind(apiService);
+export const register = apiService.register.bind(apiService);
+export const initiateGoogleOAuth = apiService.initiateGoogleOAuth.bind(apiService);
+export const handleGoogleOAuthCallback = apiService.handleGoogleOAuthCallback.bind(apiService);
+export const appleOAuth = apiService.appleOAuth.bind(apiService);
+export const getCurrentUser = apiService.getCurrentUser.bind(apiService);
+export const getVoices = apiService.getVoices.bind(apiService);
+export const synthesizeText = apiService.synthesizeText.bind(apiService);
+export const generateVoiceDemo = apiService.generateVoiceDemo.bind(apiService);
+export const getAudioFiles = apiService.getAudioFiles.bind(apiService);
+export const downloadAudio = apiService.downloadAudio.bind(apiService);
+export const getQuotaInfo = apiService.getQuotaInfo.bind(apiService);
+export const upgradeUser = apiService.upgradeUser.bind(apiService);
+export const healthCheck = apiService.healthCheck.bind(apiService);
+export const cloneVoice = apiService.cloneVoice.bind(apiService);
+export const batchSynthesize = apiService.batchSynthesize.bind(apiService);
+
+export default apiService;

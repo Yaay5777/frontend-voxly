@@ -1,37 +1,65 @@
 {
-  "name": "Voxly - AI Voice Synthesis",
-  "short_name": "Voxly",
-  "description": "Advanced AI-powered text-to-speech synthesis with 3D audio visualization",
+  "name": "Voxly TTS - Voice Cloning Platform",
+  "short_name": "Voxly TTS",
+  "description": "Professional Text-to-Speech platform with 3D avatars and voice cloning",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#8b5cf6",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
   "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["productivity", "multimedia", "utilities"],
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "32x32",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-192.png",
+      "src": "/assets/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/assets/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity", "utilities", "multimedia"],
-  "lang": "en-US",
-  "dir": "ltr"
+  "screenshots": [
+    {
+      "src": "/assets/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Voxly TTS Desktop Interface"
+    },
+    {
+      "src": "/assets/screenshot-narrow.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Voxly TTS Mobile Interface"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick TTS",
+      "short_name": "TTS",
+      "description": "Start text-to-speech conversion",
+      "url": "/?action=tts",
+      "icons": [
+        {
+          "src": "/assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }
