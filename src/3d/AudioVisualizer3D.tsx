@@ -9,6 +9,7 @@ import {
   Float
 } from '@react-three/drei';
 import * as THREE from 'three';
+import type { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { useAudioVisualization, useParticles3D } from '../hooks/use3D';
 
 interface AudioVisualizer3DProps {
@@ -26,7 +27,7 @@ const WaveformVisualizer3D: React.FC<{
   color: string; 
   intensity: number;
 }> = ({ audioData, color, intensity }) => {
-  const lineRef = useRef<THREE.Line>(null);
+  const lineRef = useRef<Line2>(null);
   const points = useMemo(() => {
     const pts = [];
     for (let i = 0; i < 128; i++) {
@@ -38,12 +39,16 @@ const WaveformVisualizer3D: React.FC<{
   useFrame(() => {
     if (!lineRef.current || !audioData) return;
 
-    const positions = lineRef.current.geometry.attributes.position;
-    for (let i = 0; i < Math.min(128, audioData.length); i++) {
-      const amplitude = (audioData[i] + 140) / 140; // Normalize
-      positions.setY(i, amplitude * intensity * 5);
+    // Line2 uses different geometry structure
+    const geometry = lineRef.current.geometry;
+    if (geometry && geometry.attributes.position) {
+      const positions = geometry.attributes.position;
+      for (let i = 0; i < Math.min(128, audioData.length); i++) {
+        const amplitude = (audioData[i] + 140) / 140; // Normalize
+        positions.setY(i, amplitude * intensity * 5);
+      }
+      positions.needsUpdate = true;
     }
-    positions.needsUpdate = true;
   });
 
   return (
