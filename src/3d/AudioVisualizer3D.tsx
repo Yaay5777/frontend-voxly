@@ -5,8 +5,7 @@ import React, {
   useCallback, 
   Suspense, 
   useState,
-  memo,
-  ErrorBoundary
+  memo
 } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useSpring, animated, config } from '@react-spring/three';
@@ -720,10 +719,10 @@ const SphereVisualizer3D: React.FC<{
 
   const sphereDetail = useMemo(() => {
     switch (quality) {
-      case 'low': return [1.5, 32, 32];
-      case 'medium': return [2, 64, 64];
-      case 'high': return [2.5, 128, 128];
-      default: return [2, 64, 64];
+      case 'low': return [1.5, 32, 32] as [number, number, number];
+      case 'medium': return [2, 64, 64] as [number, number, number];
+      case 'high': return [2.5, 128, 128] as [number, number, number];
+      default: return [2, 64, 64] as [number, number, number];
     }
   }, [quality]);
 
@@ -747,7 +746,7 @@ const SphereVisualizer3D: React.FC<{
         <Sphere args={sphereDetail}>
           <MeshDistortMaterial
             color={color}
-            distort={distortion}
+            distort={0.5}
             speed={3}
             roughness={0.1}
             metalness={0.9}
@@ -961,18 +960,18 @@ export const AudioVisualizer3D: React.FC<AudioVisualizer3DProps> = memo(({
       case 'particles':
         return <ParticleVisualizer3D {...commonProps} />;
       case 'neural':
-        return <NeuralNetworkVisualizer3D {...commonProps} />;
+        return <NeuralVisualizer3D {...commonProps} />;
       case 'galaxy':
         return <GalaxyVisualizer3D {...commonProps} />;
       case 'dna':
-        return <DNAHelixVisualizer3D {...commonProps} />;
+        return <DNAVisualizer3D {...commonProps} />;
       default:
         return <SphereVisualizer3D {...commonProps} />;
     }
   };
 
   return (
-    <ErrorBoundary fallback={<VisualizerErrorFallback color={color} />}>
+    <AudioVisualizerErrorBoundary fallback={<VisualizerErrorFallback color={color} />}>
       <Suspense fallback={<VisualizerLoadingFallback color={color} />}>
         <group scale={[size, size, size]}>
           {renderVisualizer()}
@@ -1017,7 +1016,7 @@ export const AudioVisualizer3D: React.FC<AudioVisualizer3DProps> = memo(({
           )}
         </group>
       </Suspense>
-    </ErrorBoundary>
+    </AudioVisualizerErrorBoundary>
   );
 });
 

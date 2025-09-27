@@ -9,7 +9,6 @@ import {
   Center,
   Sparkles,
   Trail,
-  Clone,
   useTexture
 } from '@react-three/drei';
 import * as THREE from 'three';
@@ -119,45 +118,45 @@ export const Avatar3D: React.FC<Avatar3DProps> = ({
     switch (voice.gender) {
       case 'female':
         return (
-          <Sphere ref={meshRef} args={[1, 32, 32]} {...bind()}>
+          <Sphere ref={meshRef} args={[1, 32, 32]} onClick={onSelect}>
             <MeshDistortMaterial
               color={avatarColors.primary}
-              distort={distortion}
+              distort={0.4}
               speed={isSpeaking ? 5 : 2}
               roughness={0.2}
               metalness={0.8}
               emissive={avatarColors.secondary}
-              emissiveIntensity={glowIntensity.to(i => i * 0.3)}
+              emissiveIntensity={isSpeaking ? 0.6 : 0.3}
             />
           </Sphere>
         );
       case 'male':
         return (
-          <mesh ref={meshRef} {...bind()}>
+          <mesh ref={meshRef} onClick={onSelect}>
             <boxGeometry args={[1.8, 1.8, 1.8]} />
             <MeshDistortMaterial
               color={avatarColors.primary}
-              distort={distortion}
+              distort={0.4}
               speed={isSpeaking ? 4 : 1.5}
               roughness={0.3}
               metalness={0.6}
               emissive={avatarColors.secondary}
-              emissiveIntensity={glowIntensity.to(i => i * 0.2)}
+              emissiveIntensity={isSpeaking ? 0.4 : 0.2}
             />
           </mesh>
         );
       default:
         return (
-          <mesh ref={meshRef} {...bind()}>
+          <mesh ref={meshRef} onClick={onSelect}>
             <octahedronGeometry args={[1.2, 2]} />
             <MeshDistortMaterial
               color={avatarColors.primary}
-              distort={distortion}
+              distort={0.4}
               speed={isSpeaking ? 6 : 3}
               roughness={0.1}
               metalness={0.9}
               emissive={avatarColors.accent}
-              emissiveIntensity={glowIntensity.to(i => i * 0.4)}
+              emissiveIntensity={isSpeaking ? 0.8 : 0.4}
             />
           </mesh>
         );
@@ -278,7 +277,7 @@ export const Avatar3D: React.FC<Avatar3DProps> = ({
         <>
           <pointLight 
             color={avatarColors.primary} 
-            intensity={glowIntensity} 
+            intensity={isSpeaking ? 2 : 1} 
             distance={8} 
             decay={2}
           />

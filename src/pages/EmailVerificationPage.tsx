@@ -27,7 +27,9 @@ const EmailVerificationPage: React.FC = () => {
 
     const verifyEmail = async () => {
       try {
-        await authService.verifyEmail(token);
+        // Get email from URL params or use empty string as fallback
+        const email = searchParams.get('email') || '';
+        await authService.verifyEmail(token, email);
         setVerified(true);
         toast.success('Email verified successfully!');
         
@@ -146,7 +148,7 @@ const EmailVerificationPage: React.FC = () => {
               </p>
               
               <div className="space-y-6 text-left max-w-md">
-                {verified ? [
+                {(verified ? [
                   { icon: <CheckCircle className="w-5 h-5" />, text: "Email verified successfully", color: "#10b981" },
                   { icon: <Shield className="w-5 h-5" />, text: "Account fully activated", color: "#059669" },
                   { icon: <Sparkles className="w-5 h-5" />, text: "Ready to use Voxly", color: "#047857" }
@@ -378,5 +380,12 @@ const EmailVerificationPage: React.FC = () => {
     </div>
   );
 };
+
+// Force server-side rendering to prevent prerendering errors
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
 
 export default EmailVerificationPage;

@@ -18,7 +18,7 @@ import {
   Sparkles,
   Brain,
   Headphones,
-  Waveform
+  Radio
 } from 'lucide-react';
 
 import { Scene3D } from '../3d/Scene3D';
@@ -197,8 +197,9 @@ const FeaturesPage: React.FC = () => {
                 color: '#3b82f6',
                 tags: ['demo', 'professional']
               }}
-              isPlaying={isPlaying}
               position={[0, 0, 0]}
+              isActive={true}
+              isSpeaking={isPlaying}
             />
           )}
         </Scene3D>
@@ -474,7 +475,7 @@ const FeaturesPage: React.FC = () => {
                                 <div className="text-sm text-gray-400">Models</div>
                               </div>
                               <div className="text-center">
-                                <Waveform className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
+                                <Radio className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
                                 <div className="text-lg font-bold text-white">Audio Processing</div>
                                 <div className="text-sm text-gray-400">Pipeline</div>
                               </div>
@@ -607,5 +608,12 @@ const FeaturesPage: React.FC = () => {
     </div>
   );
 };
+
+// Force server-side rendering to prevent prerendering errors
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
 
 export default FeaturesPage;

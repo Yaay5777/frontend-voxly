@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState, Component, ErrorInfo, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
@@ -7,6 +7,43 @@ import Navigation3D from './Navigation3D';
 import { Scene3D } from '../3d/Scene3D';
 import { AudioVisualizer3D } from '../3d/AudioVisualizer3D';
 import { toast, Toaster } from 'react-hot-toast';
+
+// Error Boundary Component
+class Layout3DErrorBoundary extends Component<
+  { children: ReactNode; fallback?: ReactNode; onError?: (error: Error, errorInfo: ErrorInfo) => void },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Layout3D Error:', error, errorInfo);
+    if (this.props.onError) {
+      this.props.onError(error, errorInfo);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || (
+        <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Something went wrong</h2>
+            <p className="text-gray-400">Please refresh the page to try again.</p>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 interface Layout3DProps {
   children: React.ReactNode;
@@ -279,15 +316,15 @@ const Layout3D: React.FC<Layout3DProps> = ({
                 </div>
               }
             >
-              <React.ErrorBoundary
-                fallback={ErrorFallback}
+              <Layout3DErrorBoundary
+                fallback={<ErrorFallback error={new Error('Layout rendering failed')} />}
                 onError={(error) => {
                   console.error('Layout3D Error:', error);
                   toast.error('An error occurred while rendering the page');
                 }}
               >
                 {children}
-              </React.ErrorBoundary>
+              </Layout3DErrorBoundary>
             </Suspense>
           </div>
         </motion.main>

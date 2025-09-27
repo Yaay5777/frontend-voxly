@@ -384,4 +384,11 @@ const SignUpPage: React.FC = () => {
   );
 };
 
+// Force server-side rendering to prevent prerendering errors
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default SignUpPage;

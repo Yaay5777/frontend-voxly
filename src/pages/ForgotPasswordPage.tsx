@@ -22,7 +22,7 @@ const ForgotPasswordPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await authService.forgotPassword({ email });
+      await authService.forgotPassword(email);
       setSent(true);
       toast.success('Password reset email sent!');
     } catch (error: any) {
@@ -316,7 +316,7 @@ const ForgotPasswordPage: React.FC = () => {
                 <Link to="/login" className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
                   Sign in instead
                 </Link>
-              </p>
+              </motion.p>
             )}
           </motion.div>
         </div>
@@ -324,5 +324,12 @@ const ForgotPasswordPage: React.FC = () => {
     </div>
   );
 };
+
+// Force server-side rendering to prevent prerendering errors
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
 
 export default ForgotPasswordPage;

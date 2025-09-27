@@ -3,6 +3,23 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   
+  // Webpack configuration to handle three-mesh-bvh dependency issue
+  webpack: (config, { isServer }) => {
+    // Ignore three-mesh-bvh to prevent BatchedMesh import error
+    config.externals = config.externals || [];
+    config.externals.push({
+      'three-mesh-bvh': 'three-mesh-bvh'
+    });
+    
+    // Fallback for missing modules
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      'three-mesh-bvh': false,
+    };
+    
+    return config;
+  },
+  
   // Environment variables validation
   env: {
     NEXT_PUBLIC_TTS_URL: process.env.NEXT_PUBLIC_TTS_URL,

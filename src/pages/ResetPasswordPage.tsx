@@ -82,10 +82,9 @@ const ResetPasswordPage: React.FC = () => {
     }
 
     try {
-      await authService.resetPassword({
-        token: token!,
-        password: formData.password
-      });
+      // Get email from URL params or use empty string as fallback
+      const email = searchParams.get('email') || '';
+      await authService.resetPassword(token!, email, formData.password);
       setSuccess(true);
       toast.success('Password reset successfully!');
     } catch (error: any) {
@@ -484,5 +483,12 @@ const ResetPasswordPage: React.FC = () => {
     </div>
   );
 };
+
+// Force server-side rendering to prevent prerendering errors
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
 
 export default ResetPasswordPage;

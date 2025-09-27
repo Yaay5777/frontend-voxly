@@ -3,6 +3,8 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useSpring, useSpringValue } from '@react-spring/three';
 import { useGesture } from '@use-gesture/react';
 import * as THREE from 'three';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import type { 
@@ -70,7 +72,8 @@ export const useAudio3DStore = create<AudioStore3D>()(
       
       analyser.fftSize = 256;
       const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Float32Array(bufferLength);
+      const buffer = new ArrayBuffer(bufferLength * 4); // 4 bytes per float
+      const dataArray = new Float32Array(buffer);
       
       source.connect(analyser);
       analyser.connect(audioContext.destination);
@@ -81,9 +84,16 @@ export const useAudio3DStore = create<AudioStore3D>()(
     updateAudioData: () => {
       const { analyser, dataArray } = get();
       if (analyser && dataArray) {
-        analyser.getFloatFrequencyData(dataArray);
-        const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
-        set({ frequency: Math.abs(average) });
+        try {
+          // Create a new Float32Array with proper ArrayBuffer type for Web Audio API
+          const bufferLength = analyser.frequencyBinCount;
+          const audioData = new Float32Array(new ArrayBuffer(bufferLength * 4));
+          analyser.getFloatFrequencyData(audioData);
+          const average = audioData.reduce((sum, value) => sum + value, 0) / audioData.length;
+          set({ frequency: Math.abs(average) });
+        } catch (error) {
+          console.warn('Audio data update failed:', error);
+        }
       }
     },
 
@@ -211,9 +221,8 @@ export const useScene3D = () => {
       gl.shadowMap.type = THREE.PCFSoftShadowMap;
     }
     
-    if (performance.antialiasing.enabled) {
-      gl.antialias = true;
-    }
+    // Note: antialias is set during renderer creation, not runtime
+    // This is handled in the Canvas component's gl prop
   }, [gl, performance]);
 
   // LOD Management
@@ -303,13 +312,13 @@ export const useParticles3D = (count: number, config: any) => {
 // Hook for 3D Text Animation
 export const useText3D = (text: string, config: any) => {
   const meshRef = useRef<THREE.Mesh>(null);
-  const [geometry, setGeometry] = useState<THREE.TextGeometry | null>(null);
+  const [geometry, setGeometry] = useState<TextGeometry | null>(null);
 
   useEffect(() => {
     // Load font and create text geometry
-    const loader = new THREE.FontLoader();
+    const loader = new FontLoader();
     loader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
-      const textGeometry = new THREE.TextGeometry(text, {
+      const textGeometry = new TextGeometry(text, {
         font: font,
         size: config.size || 1,
         height: config.height || 0.1,

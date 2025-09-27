@@ -1,11 +1,12 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { ReactThreeFiber } from '@react-three/fiber';
 
 // Extend Three.js types for React Three Fiber
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      orbitControls: ReactThreeFiber.Object3DNode<THREE.OrbitControls, typeof THREE.OrbitControls>;
+      orbitControls: ReactThreeFiber.Object3DNode<OrbitControls, typeof OrbitControls>;
     }
   }
 }

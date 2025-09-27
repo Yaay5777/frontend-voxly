@@ -173,8 +173,9 @@ const SynthesisPage: React.FC = () => {
           {selectedVoice && (
             <Avatar3D
               voice={selectedVoice}
-              isPlaying={isPlaying}
               position={[0, 0, 0]}
+              isActive={true}
+              isSpeaking={isPlaying}
             />
           )}
         </Scene3D>
@@ -545,5 +546,12 @@ const SynthesisPage: React.FC = () => {
     </div>
   );
 };
+
+// Force server-side rendering to prevent prerendering errors
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
 
 export default SynthesisPage;

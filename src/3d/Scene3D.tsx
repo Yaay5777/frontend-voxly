@@ -6,17 +6,31 @@ import {
   Stars, 
   Float, 
   Sparkles,
-  EffectComposer,
-  Bloom,
-  ChromaticAberration,
-  Vignette,
-  Noise,
   BakeShadows,
   SoftShadows,
   ContactShadows,
   Sky,
   Cloud
 } from '@react-three/drei';
+
+// Safe imports with fallbacks for production
+let EffectComposer: any, Bloom: any, ChromaticAberration: any, Vignette: any, Noise: any;
+try {
+  const postprocessing = require('@react-three/postprocessing');
+  EffectComposer = postprocessing.EffectComposer;
+  Bloom = postprocessing.Bloom;
+  ChromaticAberration = postprocessing.ChromaticAberration;
+  Vignette = postprocessing.Vignette;
+  Noise = postprocessing.Noise;
+} catch (error) {
+  console.warn('Postprocessing effects not available:', error);
+  // Fallback components
+  EffectComposer = ({ children }: any) => <>{children}</>;
+  Bloom = () => null;
+  ChromaticAberration = () => null;
+  Vignette = () => null;
+  Noise = () => null;
+}
 import { useSpring, animated } from '@react-spring/three';
 import * as THREE from 'three';
 import { useScene3D, usePerformance3D } from '../hooks/use3D';

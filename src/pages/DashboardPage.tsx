@@ -527,4 +527,11 @@ const DashboardPage: React.FC = () => {
   );
 };
 
+// Force server-side rendering to prevent prerendering errors
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
+}
+
 export default DashboardPage;

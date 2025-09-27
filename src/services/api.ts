@@ -87,9 +87,21 @@ export const authService = {
     return response.data;
   },
 
+  // Resend verification email
+  resendVerification: async (data: { email: string }) => {
+    const response = await authApi.post('/auth/resend-verification', data);
+    return response.data;
+  },
+
   // Password reset
   forgotPassword: async (email: string) => {
     const response = await authApi.post('/auth/forgot-password', { email });
+    return response.data;
+  },
+
+  // Verify reset token
+  verifyResetToken: async (token: string) => {
+    const response = await authApi.post('/auth/verify-reset-token', { token });
     return response.data;
   },
 
