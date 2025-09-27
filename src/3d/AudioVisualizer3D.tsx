@@ -191,7 +191,6 @@ const WaveformVisualizer3D: React.FC<{
   intensity: number;
   quality: 'low' | 'medium' | 'high';
 }> = memo(({ audioData, color, intensity, quality }) => {
-  const lineRef = useRef<Line2 | null>(null);
   const trailRef = useRef<THREE.Group>(null);
   const [colorPalette] = useState(() => generateColorPalette(color));
   
@@ -216,29 +215,21 @@ const WaveformVisualizer3D: React.FC<{
     return Array.from({ length: 5 }, () => [...points]);
   }, [points]);
 
+  // Update points based on audio data
+  const animatedPoints = useMemo(() => {
+    if (!audioData) return points;
+    
+    return points.map((point, i) => {
+      const amplitude = i < audioData.length ? Math.max(0, (audioData[i] + 140) / 140) : 0;
+      return new THREE.Vector3(point.x, amplitude * intensity * 3, point.z);
+    });
+  }, [audioData, points, intensity]);
+
   useFrame((state) => {
-    if (!lineRef.current || !audioData) return;
+    if (!audioData) return;
 
     try {
       const time = state.clock.elapsedTime;
-      const geometry = lineRef.current.geometry;
-      
-      if (geometry?.attributes?.position) {
-        const positions = geometry.attributes.position;
-        const array = positions.array as Float32Array;
-        
-        for (let i = 0; i < Math.min(pointCount, audioData.length); i++) {
-          const amplitude = Math.max(0, (audioData[i] + 140) / 140);
-          const wave = Math.sin(time * 2 + i * 0.1) * 0.2;
-          const finalY = (amplitude * intensity * 3) + wave;
-          
-          // Update Y position (every 3rd element in the array)
-          if (array && i * 3 + 1 < array.length) {
-            array[i * 3 + 1] = finalY;
-          }
-        }
-        positions.needsUpdate = true;
-      }
 
       // Animate trail effect
       if (trailRef.current) {
@@ -258,8 +249,7 @@ const WaveformVisualizer3D: React.FC<{
         attenuation={(t) => t * t}
       >
         <Line
-          ref={lineRef}
-          points={points}
+          points={animatedPoints}
           color={color}
           lineWidth={quality === 'high' ? 4 : 3}
           transparent
@@ -269,7 +259,7 @@ const WaveformVisualizer3D: React.FC<{
       
       {/* Additional glow effect */}
       <Line
-        points={points}
+        points={animatedPoints}
         color={color}
         lineWidth={quality === 'high' ? 8 : 6}
         transparent
