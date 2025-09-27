@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Make Next.js look for pages inside src/
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   
   // Webpack configuration to handle three-mesh-bvh dependency issue
   webpack: (config, { isServer }) => {
