@@ -95,11 +95,10 @@ const Avatar3D: React.FC<Avatar3DProps> = ({
                 {...materialProps}
                 distort={0.3}
                 speed={2}
-                roughness={0}
-                metalness={0.1}
+                {...({ roughness: 0, metalness: 0.1 } as any)}
               />
             ) : (
-              <meshStandardMaterial {...materialProps} />
+              <meshStandardMaterial {...(materialProps as any)} />
             )}
           </Sphere>
         );
@@ -160,7 +159,7 @@ const Avatar3D: React.FC<Avatar3DProps> = ({
         
         {/* Particle system */}
         {config.particles && (
-          <points ref={particlesRef}>
+          <points ref={particlesRef as any}>
             <bufferGeometry>
               <bufferAttribute
                 attach="attributes-position"
@@ -170,11 +169,7 @@ const Avatar3D: React.FC<Avatar3DProps> = ({
               />
             </bufferGeometry>
             <pointsMaterial
-              size={0.05}
-              color={config.color}
-              transparent
-              opacity={0.6}
-              sizeAttenuation
+              {...({ size: 0.05, color: config.color, transparent: true, opacity: 0.6, sizeAttenuation: true } as any)}
             />
           </points>
         )}

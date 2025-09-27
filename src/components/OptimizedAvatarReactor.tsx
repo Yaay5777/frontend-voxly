@@ -150,11 +150,7 @@ const AvatarGeometry: React.FC<{
     <mesh ref={meshRef}>
       {getGeometry()}
       <meshStandardMaterial
-        color={voiceColors[voiceId as keyof typeof voiceColors] || '#8B5CF6'}
-        metalness={0.3}
-        roughness={0.4}
-        transparent
-        opacity={0.8}
+        {...({ color: voiceColors[voiceId as keyof typeof voiceColors] || '#8B5CF6', metalness: 0.3, roughness: 0.4, transparent: true, opacity: 0.8 } as any)}
       />
     </mesh>
   );
@@ -207,7 +203,7 @@ const OptimizedParticles: React.FC<{
   }, [audioData, isPlaying]);
 
   return (
-    <points ref={particlesRef}>
+    <points ref={particlesRef as any}>
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
@@ -217,11 +213,7 @@ const OptimizedParticles: React.FC<{
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.05}
-        color="#8B5CF6"
-        transparent
-        opacity={0.6}
-        sizeAttenuation
+        {...({ size: 0.05, color: "#8B5CF6", transparent: true, opacity: 0.6, sizeAttenuation: true } as any)}
       />
     </points>
   );

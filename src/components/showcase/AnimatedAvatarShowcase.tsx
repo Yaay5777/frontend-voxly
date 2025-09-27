@@ -71,20 +71,20 @@ const Avatar3DShowcase: React.FC<{
         {/* Avatar Sphere */}
         <sphereGeometry args={[0.3, 32, 32]} />
         <meshStandardMaterial 
-          color={avatar.color}
-          emissive={isActive ? avatar.color : '#000000'}
-          emissiveIntensity={isActive ? 0.3 : 0}
-          metalness={0.1}
-          roughness={0.1}
+          {...({ 
+            color: avatar.color,
+            emissive: isActive ? avatar.color : '#000000',
+            emissiveIntensity: isActive ? 0.3 : 0,
+            metalness: 0.1,
+            roughness: 0.1
+          } as any)}
         />
         
         {/* Country Flag Indicator */}
         <mesh position={[0, -0.6, 0]}>
           <planeGeometry args={[0.4, 0.3]} />
           <meshStandardMaterial 
-            color={avatar.color}
-            transparent
-            opacity={0.7}
+            {...({ color: avatar.color, transparent: true, opacity: 0.7 } as any)}
           />
         </mesh>
       </mesh>
@@ -217,9 +217,7 @@ const AnimatedAvatarShowcase: React.FC = () => {
             <mesh position={[0, 0, 0]}>
               <sphereGeometry args={[0.2, 16, 16]} />
               <meshStandardMaterial 
-                color="#4ECDC4"
-                emissive="#4ECDC4"
-                emissiveIntensity={0.3}
+                {...({ color: "#4ECDC4", emissive: "#4ECDC4", emissiveIntensity: 0.3 } as any)}
               />
             </mesh>
             
