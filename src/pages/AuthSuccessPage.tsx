@@ -14,20 +14,22 @@ export default function AuthSuccessPage() {
     const handleOAuthSuccess = async () => {
       try {
         const token = searchParams.get('token')
-        const username = searchParams.get('username')
         const email = searchParams.get('email')
         const name = searchParams.get('name')
         const tier = searchParams.get('tier')
 
-        if (!token || !username) {
+        if (!token || !email) {
           throw new Error('Missing authentication parameters')
         }
+
+        // Extract username from email (before @ symbol)
+        const username = email.split('@')[0]
 
         // Create user object
         const user = {
           id: Date.now(),
           username: username,
-          email: email || '',
+          email: email,
           name: name || username,
           fullName: name || username,
           is_premium: tier === 'premium',
