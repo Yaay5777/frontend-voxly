@@ -14,7 +14,8 @@ import { useAuthStore } from '../store/useAuthStore';
 import { User } from '../types';
 
 // Services
-import { register, initiateGoogleOAuth, appleOAuth } from '../services/api';
+import { register } from '../api';
+import { initiateGoogleOAuth, appleOAuth } from '../services/api';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
