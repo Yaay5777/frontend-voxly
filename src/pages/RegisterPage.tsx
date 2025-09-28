@@ -50,7 +50,7 @@ const RegisterPage: React.FC = () => {
 
     try {
       console.log('🚀 Manual registration attempt:', { username: formData.username, email: formData.email });
-      const response = await register(formData.username, formData.password, formData.email);
+      const response = await register(formData.username, formData.username, formData.email, formData.password);
       console.log('✅ Manual registration successful:', response);
       
       // Create user object from response (backend returns {access_token, token_type, username})
