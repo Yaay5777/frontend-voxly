@@ -13,13 +13,20 @@ export default function AuthSuccessPage() {
   useEffect(() => {
     const handleOAuthSuccess = async () => {
       try {
+        // Debug: Log all URL parameters
+        const allParams = Object.fromEntries(searchParams.entries())
+        console.log('OAuth Success - All URL parameters:', allParams)
+        
         const token = searchParams.get('token')
         const email = searchParams.get('email')
         const name = searchParams.get('name')
         const tier = searchParams.get('tier')
 
+        console.log('OAuth Success - Extracted params:', { token: token?.substring(0, 20) + '...', email, name, tier })
+
         if (!token || !email) {
-          throw new Error('Missing authentication parameters')
+          console.error('OAuth Success - Missing parameters:', { hasToken: !!token, hasEmail: !!email })
+          throw new Error(`Missing authentication parameters: token=${!!token}, email=${!!email}`)
         }
 
         // Extract username from email (before @ symbol)
@@ -40,19 +47,23 @@ export default function AuthSuccessPage() {
           quota_cycle_start: new Date().toISOString(),
         }
 
+        console.log('OAuth Success - Created user object:', user)
+
         // Update auth store with token and user
         authLogin(token, user)
+        console.log('OAuth Success - Auth store updated')
 
         show('Successfully signed in with Google!', 'success')
 
         // Redirect to home page after successful authentication
         setTimeout(() => {
+          console.log('OAuth Success - Redirecting to homepage')
           navigate('/')
         }, 2000)
 
       } catch (error) {
         console.error('OAuth success handling error:', error)
-        show('Authentication failed. Please try again.', 'error')
+        show(`Authentication failed: ${error.message}`, 'error')
         
         // Redirect to home page with error
         setTimeout(() => {
