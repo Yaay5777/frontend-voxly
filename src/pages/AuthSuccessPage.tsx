@@ -63,7 +63,8 @@ export default function AuthSuccessPage() {
 
       } catch (error) {
         console.error('OAuth success handling error:', error)
-        show(`Authentication failed: ${error.message}`, 'error')
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+        show(`Authentication failed: ${errorMessage}`, 'error')
         
         // Redirect to home page with error
         setTimeout(() => {
