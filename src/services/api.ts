@@ -101,7 +101,7 @@ class ApiService {
     try {
       console.log('🚀 Initiating Google OAuth flow');
       // Redirect to backend Google OAuth login endpoint
-      window.location.href = `${API_BASE_URL}/auth/google/login`;
+      window.location.href = `${API_BASE_URL}/auth/google`;
     } catch (error: any) {
       console.error('❌ Google OAuth initiation failed:', error);
       throw new Error('Failed to initiate Google OAuth');
