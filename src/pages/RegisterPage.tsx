@@ -37,13 +37,23 @@ const RegisterPage: React.FC = () => {
     setError('');
 
     // Validation
+    if (formData.username.length < 3) {
+      setError('Username must be at least 3 characters long');
+      return;
+    }
+
+    if (!formData.email || !formData.email.includes('@')) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long');
       return;
     }
 
@@ -79,7 +89,21 @@ const RegisterPage: React.FC = () => {
       }, 100);
     } catch (err: any) {
       console.error('❌ Manual registration failed:', err);
-      const errorMessage = err.response?.data?.detail || err.message || 'Registration failed. Please try again.';
+      console.error('Error details:', err.response?.data);
+      
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (err.response?.data?.detail) {
+        if (Array.isArray(err.response.data.detail)) {
+          // Handle Pydantic validation errors
+          errorMessage = err.response.data.detail.map((e: any) => e.msg).join(', ');
+        } else {
+          errorMessage = err.response.data.detail;
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
       setError(errorMessage);
     } finally {
       setLoading(false);
