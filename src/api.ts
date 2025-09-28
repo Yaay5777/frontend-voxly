@@ -25,8 +25,8 @@ function authHeaders() {
 // Auth Service API Calls
 export async function register(fullName: string, username: string, email: string, password: string) {
   try {
-    console.log(`Registering user: ${username} to ${AUTH_API}/api/auth/register`);
-    const response = await axios.post(`${AUTH_API}/api/auth/register`, {
+    console.log(`Registering user: ${username} to ${AUTH_API}/auth/register`);
+    const response = await axios.post(`${AUTH_API}/auth/register`, {
       fullName,
       username,
       email,
@@ -49,8 +49,8 @@ export async function register(fullName: string, username: string, email: string
 
 export async function login(login: string, password: string) {
   try {
-    console.log(`Logging in user: ${login} to ${AUTH_API}/api/auth/login`);
-    const response = await axios.post(`${AUTH_API}/api/auth/login`, {
+    console.log(`Logging in user: ${login} to ${AUTH_API}/auth/login`);
+    const response = await axios.post(`${AUTH_API}/auth/login`, {
       login, // Can be username or email
       password
     }, {
@@ -81,7 +81,7 @@ export async function login(login: string, password: string) {
 // Auth Service - User Management
 export async function me() {
   try {
-    const response = await axios.get(`${AUTH_API}/api/auth/me`, { 
+    const response = await axios.get(`${AUTH_API}/auth/me`, { 
       headers: authHeaders() 
     });
     return response.data;
@@ -96,7 +96,7 @@ export async function me() {
 
 export async function logout() {
   try {
-    await axios.post(`${AUTH_API}/api/auth/logout`, {}, {
+    await axios.post(`${AUTH_API}/auth/logout`, {}, {
       headers: authHeaders()
     });
     TokenManager.removeToken();
