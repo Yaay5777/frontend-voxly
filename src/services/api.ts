@@ -3,8 +3,8 @@ import { User, Voice, AudioFile, SynthesisRequest, SynthesisResponse, QuotaInfo 
 import { useAuthStore } from '../store/useAuthStore';
 
 // API Configuration - Dual Backend Architecture
-const AUTH_BASE_URL = import.meta.env.VITE_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
-const TTS_BASE_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
+const AUTH_BASE_URL = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+const TTS_BASE_URL = import.meta.env.VITE_TTS_URL || import.meta.env.NEXT_PUBLIC_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
 const API_BASE_URL = AUTH_BASE_URL; // Default for auth endpoints
 
 class ApiService {
@@ -57,34 +57,35 @@ class ApiService {
   }
 
   // Authentication endpoints
-  async login(username: string, password: string): Promise<{ access_token: string; token_type: string; username: string }> {
-    const params = new URLSearchParams();
-    params.append('username', username);
-    params.append('password', password);
+  async login(username: string, password: string): Promise<{ access_token: string; token_type: string; message: string; user: any }> {
+    const loginData = {
+      usernameOrEmail: username,
+      password: password
+    };
 
     console.log('🚀 Login attempt:', { username, url: `${API_BASE_URL}/auth/login` });
 
-    const response = await this.api.post('/auth/login', params, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    const response = await this.api.post('/auth/login', loginData, {
+      headers: { "Content-Type": "application/json" },
     });
     
     console.log('✅ Login successful:', response.data);
     return response.data;
   }
 
-  async register(username: string, password: string, email?: string): Promise<{ access_token: string; token_type: string; username: string }> {
+  async register(fullName: string, username: string, email: string, password: string): Promise<{ access_token: string; token_type: string; message: string; user: any; verification_email_sent: boolean; warning?: string }> {
     try {
-      const params = new URLSearchParams();
-      params.append('username', username);
-      params.append('password', password);
-      if (email) {
-        params.append('email', email);
-      }
+      const registrationData = {
+        fullName,
+        username,
+        email,
+        password
+      };
 
-      console.log('🚀 Registration attempt:', { username, email: email || 'not provided', url: `${API_BASE_URL}/auth/register` });
+      console.log('🚀 Registration attempt:', { username, email, url: `${API_BASE_URL}/auth/register` });
 
-      const response = await this.api.post('/auth/register', params, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      const response = await this.api.post('/auth/register', registrationData, {
+        headers: { "Content-Type": "application/json" },
       });
       
       console.log('✅ Registration successful:', response.data);
@@ -100,7 +101,7 @@ class ApiService {
   async initiateGoogleOAuth(): Promise<void> {
     try {
       console.log('🚀 Initiating Google OAuth flow');
-      // Redirect to backend Google OAuth login endpoint
+      // Redirect directly to backend Google OAuth endpoint
       window.location.href = `${API_BASE_URL}/auth/google`;
     } catch (error: any) {
       console.error('❌ Google OAuth initiation failed:', error);

@@ -49,26 +49,27 @@ export default function AuthModal({ open, onClose, onAuth }: { open: boolean; on
       if (tab === 'login') {
         const data = await login(username, password)
         console.log('Login response:', data)
-        if (data?.access_token) {
-          // Create user object from response
+        if (data?.access_token && data?.user) {
+          // Use user object from backend response
           const user = {
-            id: Date.now(),
-            username: data.username || username,
-            email: `${username}@example.com`,
-            name: username,
-            fullName: username,
-            is_premium: (data as any).tier === 'premium',
-            created_at: new Date().toISOString(),
-            tier: ((data as any).tier || 'free') as 'free' | 'premium',
+            id: data.user.id || Date.now(),
+            username: data.user.username || username,
+            email: data.user.email || `${username}@example.com`,
+            name: data.user.fullName || username,
+            fullName: data.user.fullName || username,
+            is_premium: data.user.tier === 'premium',
+            created_at: data.user.created_at || new Date().toISOString(),
+            tier: (data.user.tier || 'free') as 'free' | 'premium',
             weekly_quota: 1000,
             weekly_used: 0,
-            quota_cycle_start: new Date().toISOString()
+            quota_cycle_start: new Date().toISOString(),
+            isVerified: data.user.isVerified || false
           }
           
           // Update auth store with token and user
           authLogin(data.access_token, user)
           
-          show('Successfully logged in!', 'success')
+          show(data.message || 'Successfully logged in!', 'success')
           
           // Add small delay to ensure auth state is set
           setTimeout(() => {
@@ -79,50 +80,57 @@ export default function AuthModal({ open, onClose, onAuth }: { open: boolean; on
           show('Login failed - no access token received', 'error')
         }
       } else {
-        // Registration with email verification
-        const formData = new FormData()
-        formData.append('username', username)
-        formData.append('email', email)
-        formData.append('password', password)
+        // Registration with immediate login and email verification
+        const registrationData = {
+          fullName: username, // Use username as fullName for now
+          username: username,
+          email: email,
+          password: password
+        }
         
-        const response = await fetch(`${import.meta.env.VITE_AUTH_URL || "https://auth-service-ancient-frost-8646.fly.dev"}/auth/register`, {
+        const response = await fetch(`${import.meta.env.VITE_AUTH_URL || "https://yaya5777-voxly-auth.hf.space"}/auth/register`, {
           method: 'POST',
-          body: formData
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(registrationData)
         })
         
         const data = await response.json()
         console.log('Register response:', data)
         
-        if (response.ok) {
-          if (data.verification_required) {
-            setShowEmailVerification(true)
-            show('Registration successful! Please check your email to verify your account.', 'success')
-          } else if (data.access_token) {
-            // Immediate login (shouldn't happen with new system, but handle it)
-            const user = {
-              id: Date.now(),
-              username: data.username || username,
-              email: email,
-              name: username,
-              fullName: username,
-              is_premium: data.tier === 'premium',
-              created_at: new Date().toISOString(),
-              tier: 'free' as const,
-              weekly_quota: 1000,
-              weekly_used: 0,
-              quota_cycle_start: new Date().toISOString(),
-            }
-            
-            authLogin(data.access_token, user)
-            show('Successfully registered and logged in!', 'success')
-            
-            setTimeout(() => {
-              onAuth()
-              onClose()
-            }, 100)
+        if (response.ok && data.access_token) {
+          // New backend returns access_token for immediate login
+          const user = {
+            id: data.user?.id || Date.now(),
+            username: data.user?.username || data.username || username,
+            email: data.user?.email || email,
+            name: data.user?.fullName || username,
+            fullName: data.user?.fullName || username,
+            is_premium: data.user?.tier === 'premium',
+            created_at: data.user?.created_at || new Date().toISOString(),
+            tier: (data.user?.tier || 'free') as 'free' | 'premium',
+            weekly_quota: 1000,
+            weekly_used: 0,
+            quota_cycle_start: new Date().toISOString(),
+            isVerified: data.user?.isVerified || false
           }
+          
+          authLogin(data.access_token, user)
+          
+          // Show appropriate message based on email verification status
+          if (data.verification_email_sent) {
+            show('Registration successful! You\'re logged in. Please check your email to verify your account.', 'success')
+          } else {
+            show('Registration successful! You\'re logged in.' + (data.warning ? ` (${data.warning})` : ''), 'success')
+          }
+          
+          setTimeout(() => {
+            onAuth()
+            onClose()
+          }, 100)
         } else {
-          throw new Error(data.detail || 'Registration failed')
+          throw new Error(data.detail || data.message || 'Registration failed')
         }
       }
     } catch (err: any) {
@@ -181,17 +189,10 @@ export default function AuthModal({ open, onClose, onAuth }: { open: boolean; on
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      // Get Google OAuth URL from backend
-      const backendUrl = import.meta.env.VITE_AUTH_URL || "https://auth-service-ancient-frost-8646.fly.dev"
-      const response = await fetch(`${backendUrl}/auth/google/login`)
-      const data = await response.json()
-      
-      if (data.auth_url) {
-        // Redirect to Google OAuth
-        window.location.href = data.auth_url
-      } else {
-        throw new Error('Failed to get Google OAuth URL')
-      }
+      // Redirect directly to backend Google OAuth endpoint
+      const authUrl = import.meta.env.VITE_AUTH_URL || "https://yaya5777-voxly-auth.hf.space"
+      console.log('🚀 Redirecting to Google OAuth:', `${authUrl}/auth/google`)
+      window.location.href = `${authUrl}/auth/google`
     } catch (error) {
       console.error('Google OAuth error:', error)
       show('Failed to initiate Google sign-in', 'error')

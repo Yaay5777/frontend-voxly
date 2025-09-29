@@ -48,46 +48,42 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
     if (accessToken) {
       try {
-        // Verify the token with the backend
-        const response = await fetch('https://auth-service-ancient-frost-8646.fly.dev/api/auth/me', {
-          credentials: 'include',
+        // Verify the token with the correct backend
+        const authUrl = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+        const response = await fetch(`${authUrl}/auth/me`, {
+          headers: {
+            "Authorization": `Bearer ${accessToken}`
+          }
         });
 
         if (response.ok) {
           const data = await response.json();
-          console.log('✅ Valid JWT token found, logging in user:', data.user.email);
+          console.log('✅ Valid JWT token found, logging in user:', data.email);
           set({
             token: accessToken,
-            user: data.user,
+            user: {
+              id: data.id,
+              username: data.username,
+              email: data.email,
+              name: data.fullName,
+              fullName: data.fullName,
+              is_premium: data.tier === 'premium',
+              created_at: data.createdAt,
+              tier: data.tier || 'free',
+              weekly_quota: 1000,
+              weekly_used: 0,
+              quota_cycle_start: new Date().toISOString(),
+              isVerified: data.isVerified
+            },
             isAuthenticated: true,
             isLoading: false,
           });
           return true;
         } else if (response.status === 401) {
           console.log('❌ Token expired or invalid');
-          // Try to refresh token
-          if (refreshToken) {
-            try {
-              const refreshResponse = await fetch('https://auth-service-ancient-frost-8646.fly.dev/api/auth/refresh-token', {
-                method: 'POST',
-                credentials: 'include',
-              });
-
-              if (refreshResponse.ok) {
-                const refreshData = await refreshResponse.json();
-                console.log('✅ Token refreshed successfully for user:', refreshData.user.email);
-                set({
-                  token: getCookie('voxly_at'), // Get new access token
-                  user: refreshData.user,
-                  isAuthenticated: true,
-                  isLoading: false,
-                });
-                return true;
-              }
-            } catch (error) {
-              console.error('❌ Token refresh failed:', error);
-            }
-          }
+          // Clear invalid token
+          deleteCookie('voxly_at');
+          deleteCookie('voxly_rt');
         }
       } catch (error) {
         console.error('❌ Failed to verify token:', error);
@@ -107,11 +103,17 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     console.log('🚪 Logging out user');
 
     try {
-      // Call backend logout endpoint
-      await fetch('https://auth-service-ancient-frost-8646.fly.dev/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      // Call backend logout endpoint if it exists
+      const authUrl = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+      const token = get().token;
+      if (token) {
+        await fetch(`${authUrl}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+      }
     } catch (error) {
       console.error('Logout request failed:', error);
     }
