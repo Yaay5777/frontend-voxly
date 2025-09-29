@@ -14,6 +14,7 @@ export interface User {
   avatar?: string;
   is_active?: boolean;
   last_login?: string;
+  isVerified?: boolean;
 }
 
 export interface Voice {

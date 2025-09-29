@@ -149,10 +149,10 @@ export default function AuthModal({ open, onClose, onAuth }: { open: boolean; on
       const data = await login('testuser', 'testpass123')
       console.log('Demo login response:', data)
       if (data?.access_token) {
-        // Create user object from response (backend returns {access_token, token_type, username})
+        // Create user object from response (backend returns {access_token, token_type, user})
         const user = {
           id: Date.now(),
-          username: data.username || 'testuser',
+          username: data.user?.username || 'testuser',
           email: 'testuser@example.com',
           name: 'Test User',
           fullName: 'Test User',
