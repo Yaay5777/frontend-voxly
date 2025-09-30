@@ -55,14 +55,18 @@ const VoicesPage: React.FC = () => {
   // Expert voice mode state
   const [expertMode, setExpertMode] = useState(false);
   const [expertVoices, setExpertVoices] = useState<any>({});
-  const [selectedAccent, setSelectedAccent] = useState<string>('new_zero');
+  const [expertSelectedAccent, setExpertSelectedAccent] = useState<string>('new_zero');
   const [accentStrength, setAccentStrength] = useState<string>('medium');
   const [multilingualMode, setMultilingualMode] = useState(false);
+  
+  // Voice player state
   const [selectedVoice, setSelectedVoiceLocal] = useState<Voice | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [isFavorite, setIsFavorite] = useState(false);
+  
+  // UI state
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
