@@ -3,8 +3,8 @@ import { User, Voice, AudioFile, SynthesisRequest, SynthesisResponse, QuotaInfo 
 import { useAuthStore } from '../store/useAuthStore';
 
 // API Configuration - Dual Backend Architecture
-const AUTH_BASE_URL = import.meta.env.VITE_DEV_AUTH_URL || import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'http://localhost:8000';
-const TTS_BASE_URL = import.meta.env.VITE_DEV_TTS_URL || import.meta.env.VITE_TTS_URL || import.meta.env.NEXT_PUBLIC_TTS_URL || 'http://localhost:8001';
+const AUTH_BASE_URL = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+const TTS_BASE_URL = import.meta.env.VITE_TTS_URL || import.meta.env.NEXT_PUBLIC_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
 const API_BASE_URL = AUTH_BASE_URL; // Default for auth endpoints
 
 class ApiService {
