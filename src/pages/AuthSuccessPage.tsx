@@ -13,16 +13,22 @@ export default function AuthSuccessPage() {
   useEffect(() => {
     const handleOAuthSuccess = async () => {
       try {
-        // Debug: Log all URL parameters
         const allParams = Object.fromEntries(searchParams.entries())
         console.log('OAuth Success - All URL parameters:', allParams)
         
         const token = searchParams.get('token')
         const email = searchParams.get('email')
-        const name = searchParams.get('name')
-        const tier = searchParams.get('tier')
+        const existingUser = searchParams.get('existing_user') === 'true'
+        const newUser = searchParams.get('new_user') === 'true'
+        const verificationSent = searchParams.get('verification_sent') === 'true'
 
-        console.log('OAuth Success - Extracted params:', { token: token?.substring(0, 20) + '...', email, name, tier })
+        console.log('OAuth Success - Extracted params:', { 
+          token: token?.substring(0, 20) + '...', 
+          email, 
+          existingUser, 
+          newUser, 
+          verificationSent 
+        })
 
         if (!token || !email) {
           console.error('OAuth Success - Missing parameters:', { hasToken: !!token, hasEmail: !!email })
@@ -34,12 +40,12 @@ export default function AuthSuccessPage() {
 
         // Create user object
         const user = {
-          id: Date.now(),
+          id: Date.now(), // Temporary ID until we get real one from API
           username: username,
           email: email,
-          name: name || username,
-          fullName: name || username,
-          is_premium: tier === 'premium',
+          name: username, // Use username as name for now
+          fullName: username,
+          is_premium: false, // Default to free tier
           created_at: new Date().toISOString(),
           tier: 'free' as const,
           weekly_quota: 1000,
@@ -49,26 +55,35 @@ export default function AuthSuccessPage() {
 
         console.log('OAuth Success - Created user object:', user)
 
-        // Update auth store with token and user
+        // Store authentication data
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('isAuthenticated', 'true')
+        
+        // Update auth store
         authLogin(token, user)
-        console.log('OAuth Success - Auth store updated')
+        
+        console.log('OAuth Success - Authentication stored successfully')
 
-        show('Successfully signed in with Google!', 'success')
+        // Show appropriate message based on user type
+        if (newUser) {
+          show('Welcome to Voxly! Your account has been created! Please check your email for verification instructions.', 'success')
+        } else {
+          show('You have been successfully logged in.', 'success')
+        }
 
-        // Redirect to home page after successful authentication
+        // Navigate to dashboard
         setTimeout(() => {
-          console.log('OAuth Success - Redirecting to homepage')
-          navigate('/')
+          navigate('/dashboard')
         }, 2000)
 
       } catch (error) {
-        console.error('OAuth success handling error:', error)
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
-        show(`Authentication failed: ${errorMessage}`, 'error')
+        console.error('OAuth Success - Error:', error)
+        show('There was a problem completing your login. Please try again.', 'error')
         
-        // Redirect to home page with error
+        // Redirect to login after error
         setTimeout(() => {
-          navigate('/')
+          navigate('/login')
         }, 3000)
       } finally {
         setProcessing(false)

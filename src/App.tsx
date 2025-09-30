@@ -169,6 +169,9 @@ const App: React.FC = () => {
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/signup" element={<SignUpPage />} />
                   <Route path="/auth/success" element={<AuthSuccessPage />} />
+                  <Route path="/auth/error" element={<VerificationErrorPage />} />
+                  <Route path="/auth/verified" element={<EmailVerificationSuccess />} />
+                  <Route path="/auth/verify-error" element={<VerificationErrorPage />} />
                   <Route path="/check-inbox" element={<CheckInboxPage />} />
                   <Route path="/verify-email-pending" element={<EmailVerificationPending />} />
                   <Route path="/verification-error" element={<VerificationErrorPage />} />
