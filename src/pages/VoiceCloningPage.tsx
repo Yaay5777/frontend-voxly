@@ -3,7 +3,8 @@ import { Upload, Mic, Play, Pause, Square, Download, Trash2, Settings, Lock, Cro
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-import { useAuthStore } from '../../store/useAuthStore';
+import { useAuthStore } from '../store/useAuthStore';
+import GlowButton from '../components/ui/GlowButton';
 
 interface VoiceClone {
   clone_id: string;
