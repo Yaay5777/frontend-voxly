@@ -156,10 +156,13 @@ class ApiService {
   // Voice endpoints (use TTS backend)
   async getVoices(): Promise<Voice[]> {
     try {
-      const response = await this.ttsApi.get('/speakers');
+      const response = await this.ttsApi.get('/voices');
+      
+      // Handle both direct array and wrapped response formats
+      const speakersArray = Array.isArray(response.data) ? response.data : (response.data.speakers || []);
       
       // Transform backend response to match our Voice interface
-      return response.data.map((speaker: any, index: number) => ({
+      return speakersArray.map((speaker: any, index: number) => ({
         id: speaker.id || `voice-${index}`,
         name: speaker.name || `Voice ${index + 1}`,
         description: speaker.description || 'AI-generated voice',
