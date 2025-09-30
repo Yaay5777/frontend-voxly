@@ -20,7 +20,10 @@ import {
   Coffee,
   BookOpen,
   Gamepad2,
-  Settings
+  Settings,
+  Crown,
+  Zap,
+  Languages
 } from 'lucide-react';
 
 // Component imports
@@ -48,6 +51,13 @@ const VoicesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Expert voice mode state
+  const [expertMode, setExpertMode] = useState(false);
+  const [expertVoices, setExpertVoices] = useState<any>({});
+  const [selectedAccent, setSelectedAccent] = useState<string>('new_zero');
+  const [accentStrength, setAccentStrength] = useState<string>('medium');
+  const [multilingualMode, setMultilingualMode] = useState(false);
   const [selectedVoice, setSelectedVoiceLocal] = useState<Voice | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
