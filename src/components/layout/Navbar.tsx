@@ -42,6 +42,7 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/', icon: Home },
     { name: 'Voices', path: '/voices', icon: Mic },
+    { name: 'Cloning', path: '/cloning', icon: Palette },
     ...(isAuthenticated ? [
       { name: 'Dashboard', path: '/dashboard', icon: BarChart3 }
     ] : [])

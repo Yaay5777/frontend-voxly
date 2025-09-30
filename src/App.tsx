@@ -30,6 +30,7 @@ const VerificationErrorPage = React.lazy(() => import('./pages/VerificationError
 const CheckInboxPage = React.lazy(() => import('./pages/CheckInboxPage'));
 const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage'));
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
+const VoiceCloningPage = React.lazy(() => import('./pages/VoiceCloningPage'));
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 const BlogPage = React.lazy(() => import('./pages/BlogPage'));
 const CareersPage = React.lazy(() => import('./pages/CareersPage'));
@@ -175,6 +176,10 @@ const App: React.FC = () => {
                   <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                   <Route path="/reset-password" element={<ResetPasswordPage />} />
                   <Route path="/voices" element={<VoicesPage />} />
+                  <Route 
+                    path="/cloning" 
+                    element={<VoiceCloningPage />}
+                  />
                   <Route 
                     path="/synthesis" 
                     element={

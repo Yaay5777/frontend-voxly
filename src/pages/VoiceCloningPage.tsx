@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Mic, Play, Pause, Square, Download, Trash2, Settings } from 'lucide-react';
+import { Upload, Mic, Play, Pause, Square, Download, Trash2, Settings, Lock, Crown, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+import { useAuthStore } from '../../store/useAuthStore';
 
 interface VoiceClone {
   clone_id: string;
@@ -24,6 +28,10 @@ const VoiceCloningPage: React.FC = () => {
   const [voiceClones, setVoiceClones] = useState<VoiceClone[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Get authentication status
+  const { isAuthenticated, user } = useAuthStore();
+  const isPremium = user?.is_premium || false;
   
   // Upload state
   const [uploadFile, setUploadFile] = useState<File | null>(null);
@@ -71,6 +79,11 @@ const VoiceCloningPage: React.FC = () => {
     } catch (err) {
       console.error('Failed to load voice clones:', err);
     }
+  };
+
+  // Helper function to check if premium is required
+  const requiresPremium = (feature: string) => {
+    return !isPremium;
   };
 
   const handleFileUpload = async (file: File) => {
@@ -169,6 +182,33 @@ const VoiceCloningPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-6">
       <div className="max-w-6xl mx-auto">
+        {/* Premium Upgrade Banner */}
+        {!isPremium && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6 mb-8"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                  <Crown className="w-6 h-6 text-yellow-500" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Premium Feature</h3>
+                  <p className="text-yellow-200">Voice cloning is available with a premium subscription</p>
+                </div>
+              </div>
+              <Link to="/pricing">
+                <GlowButton variant="primary" className="bg-yellow-500 hover:bg-yellow-600 text-black">
+                  <Star className="w-4 h-4 mr-2" />
+                  Upgrade Now
+                </GlowButton>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
             🎭 Premium Voice Cloning
@@ -291,10 +331,22 @@ const VoiceCloningPage: React.FC = () => {
                 
                 <button
                   onClick={() => uploadFile && handleFileUpload(uploadFile)}
-                  disabled={!uploadFile || !cloneForm.name || loading}
-                  className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors"
+                  disabled={!uploadFile || !cloneForm.name || loading || requiresPremium('upload')}
+                  className={`w-full text-white py-3 rounded-lg font-semibold transition-colors relative ${
+                    requiresPremium('upload') 
+                      ? 'bg-gray-600 cursor-not-allowed' 
+                      : 'bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600'
+                  }`}
                 >
                   {loading ? 'Processing...' : 'Create Voice Clone'}
+                  {requiresPremium('upload') && (
+                    <div className="absolute inset-0 bg-gray-900/50 rounded-lg flex items-center justify-center">
+                      <div className="flex items-center space-x-2 text-white">
+                        <Lock size={16} />
+                        <span className="text-sm">Premium Required</span>
+                      </div>
+                    </div>
+                  )}
                 </button>
               </div>
             </div>
@@ -323,10 +375,23 @@ const VoiceCloningPage: React.FC = () => {
                 {!recording.isRecording ? (
                   <button
                     onClick={startRecording}
-                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center gap-2"
+                    disabled={requiresPremium('record')}
+                    className={`px-6 py-3 rounded-lg flex items-center gap-2 transition-colors relative ${
+                      requiresPremium('record') 
+                        ? 'bg-gray-600 cursor-not-allowed text-gray-400' 
+                        : 'bg-red-600 hover:bg-red-700 text-white'
+                    }`}
                   >
                     <Mic size={20} />
                     Start Recording
+                    {requiresPremium('record') && (
+                      <div className="absolute inset-0 bg-gray-900/50 rounded-lg flex items-center justify-center">
+                        <div className="flex items-center space-x-2 text-white">
+                          <Lock size={16} />
+                          <span className="text-sm">Premium Required</span>
+                        </div>
+                      </div>
+                    )}
                   </button>
                 ) : (
                   <button
@@ -416,8 +481,23 @@ const VoiceCloningPage: React.FC = () => {
             {voiceClones.length === 0 ? (
               <div className="text-center py-12">
                 <Settings size={64} className="mx-auto mb-4 text-purple-400" />
-                <p className="text-white text-xl mb-2">No voice clones yet</p>
-                <p className="text-purple-200">Upload or record your first voice to get started!</p>
+                <p className="text-white text-xl mb-2">{isPremium ? 'No voice clones yet' : 'Voice cloning available with premium'}</p>
+                <p className="text-purple-200">
+                  {isPremium 
+                    ? 'Upload or record your first voice to get started!' 
+                    : 'Upgrade to premium to create and manage your custom voice clones'
+                  }
+                </p>
+                {!isPremium && (
+                  <div className="mt-6">
+                    <Link to="/pricing">
+                      <GlowButton variant="primary" className="bg-yellow-500 hover:bg-yellow-600 text-black">
+                        <Crown className="w-4 h-4 mr-2" />
+                        Upgrade to Premium
+                      </GlowButton>
+                    </Link>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -448,8 +528,22 @@ const VoiceCloningPage: React.FC = () => {
                     </div>
                     
                     <div className="flex gap-2 mt-4">
-                      <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded text-sm">
+                      <button 
+                        className={`flex-1 py-2 px-4 rounded text-sm transition-colors relative ${
+                          requiresPremium('use_clone') 
+                            ? 'bg-gray-600 cursor-not-allowed text-gray-400' 
+                            : 'bg-purple-600 hover:bg-purple-700 text-white'
+                        }`}
+                      >
                         Use Voice
+                        {requiresPremium('use_clone') && (
+                          <div className="absolute inset-0 bg-gray-900/50 rounded flex items-center justify-center">
+                            <div className="flex items-center space-x-2 text-white">
+                              <Lock size={12} />
+                              <span className="text-xs">Premium</span>
+                            </div>
+                          </div>
+                        )}
                       </button>
                       <button className="bg-red-600 hover:bg-red-700 text-white p-2 rounded">
                         <Trash2 size={16} />

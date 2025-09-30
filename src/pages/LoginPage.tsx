@@ -77,8 +77,39 @@ const LoginPage: React.FC = () => {
     window.location.href = 'https://auth-service-ancient-frost-8646.fly.dev/auth/google';
   };
 
-  const handleForgotPassword = () => {
-    navigate('/forgot-password');
+  const handleForgotPassword = async () => {
+    if (!formData.usernameOrEmail) {
+      setErrors(['Please enter your email address first']);
+      return;
+    }
+    
+    setLoading(true);
+    setErrors([]);
+    
+    try {
+      const response = await fetch('https://auth-service-ancient-frost-8646.fly.dev/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          email: formData.usernameOrEmail
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setErrors([]);
+        alert(data.message);
+      } else {
+        setErrors([data.detail || 'Failed to send reset email']);
+      }
+    } catch (error) {
+      setErrors(['Network error. Please try again.']);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

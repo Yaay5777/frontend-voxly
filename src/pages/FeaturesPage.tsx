@@ -41,7 +41,8 @@ const FeaturesPage: React.FC = () => {
         "High-quality reproduction",
         "Custom voice library",
         "Voice mixing capabilities"
-      ]
+      ],
+      premium: true
     },
     {
       icon: <Zap className="text-yellow-400" size={48} />,
@@ -200,6 +201,12 @@ const FeaturesPage: React.FC = () => {
               <div className="flex items-center mb-6">
                 {feature.icon}
                 <h3 className="text-2xl font-bold ml-4">{feature.title}</h3>
+                {feature.premium && (
+                  <div className="ml-auto bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-3 py-1 rounded-full text-xs font-semibold flex items-center">
+                    <Star className="mr-1" size={12} />
+                    PREMIUM
+                  </div>
+                )}
               </div>
               <p className="text-gray-300 mb-6">{feature.description}</p>
               <ul className="space-y-2">
