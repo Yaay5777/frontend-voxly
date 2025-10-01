@@ -89,7 +89,7 @@ const RegisterPage: React.FC = () => {
       if (response.verification_email_sent) {
         show(`Registration successful! Please check your email (${formData.email}) to verify your account.`, 'success');
       } else if (response.warning) {
-        show('Registration successful! You\'re logged in, but email verification is currently unavailable.', 'warning');
+        show('Registration successful! You\'re logged in, but email verification is currently unavailable.', 'info');
       } else {
         show('Registration successful! You\'re now logged in.', 'success');
       }
