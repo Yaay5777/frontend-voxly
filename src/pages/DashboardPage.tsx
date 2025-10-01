@@ -14,13 +14,18 @@ import {
   Shield,
   Clock,
   Zap,
-  CheckCircle
+  CheckCircle,
+  RefreshCw
 } from 'lucide-react';
+import { resendVerificationEmail } from '../api';
+import { useToast } from '../components/ToastProvider';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { show } = useToast();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [resendingEmail, setResendingEmail] = useState(false);
 
   useEffect(() => {
     // Get user info from localStorage or fetch from backend
@@ -31,6 +36,19 @@ const DashboardPage: React.FC = () => {
     setLoading(false);
   }, []);
 
+  const handleResendVerification = async () => {
+    setResendingEmail(true);
+    try {
+      const response = await resendVerificationEmail();
+      show(response.message || 'Verification email sent!', 'success');
+    } catch (error: any) {
+      const errorMsg = error.detail || error.message || 'Failed to send verification email';
+      show(errorMsg, 'error');
+    } finally {
+      setResendingEmail(false);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       // Clear local storage
@@ -38,7 +56,8 @@ const DashboardPage: React.FC = () => {
       localStorage.removeItem('isAuthenticated');
       
       // Call logout endpoint to clear cookies
-      await fetch('https://auth-service-ancient-frost-8646.fly.dev/auth/logout', {
+      const authUrl = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+      await fetch(`${authUrl}/auth/logout`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -124,16 +143,26 @@ const DashboardPage: React.FC = () => {
             </div>
             <div className="text-right">
               <div className="flex items-center space-x-2 mb-2">
-                {user?.emailVerified ? (
+                {user?.emailVerified || user?.isVerified ? (
                   <>
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     <span className="text-green-600 font-medium">Verified</span>
                   </>
                 ) : (
-                  <>
-                    <Shield className="w-5 h-5 text-yellow-500" />
-                    <span className="text-yellow-600 font-medium">Pending</span>
-                  </>
+                  <div className="flex flex-col items-end space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="w-5 h-5 text-yellow-500" />
+                      <span className="text-yellow-600 font-medium">Pending</span>
+                    </div>
+                    <button
+                      onClick={handleResendVerification}
+                      disabled={resendingEmail}
+                      className="flex items-center space-x-2 px-3 py-1 text-sm bg-indigo-100 text-indigo-600 hover:bg-indigo-200 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${resendingEmail ? 'animate-spin' : ''}`} />
+                      <span>{resendingEmail ? 'Sending...' : 'Resend Email'}</span>
+                    </button>
+                  </div>
                 )}
               </div>
               <div className="flex items-center space-x-2">

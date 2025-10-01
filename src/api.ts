@@ -108,6 +108,28 @@ export async function logout() {
   }
 }
 
+export async function resendVerificationEmail() {
+  try {
+    if (!TokenManager.isAuthenticated()) {
+      throw new Error('Authentication required. Please login first.');
+    }
+    
+    console.log('Requesting to resend verification email');
+    const response = await axios.post(`${AUTH_API}/auth/resend-verification`, {}, {
+      headers: authHeaders()
+    });
+    console.log('Verification email resend successful:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('Resend verification email error:', error);
+    if (error.response?.status === 401) {
+      TokenManager.removeToken();
+      throw new Error('Authentication expired. Please login again.');
+    }
+    throw error.response?.data || error;
+  }
+}
+
 // TTS Service API Calls - All require JWT authentication
 export async function getVoices() {
   try {

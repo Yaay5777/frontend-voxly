@@ -16,10 +16,12 @@ import { User } from '../types';
 // Services
 import { register } from '../api';
 import { initiateGoogleOAuth, appleOAuth } from '../services/api';
+import { useToast } from '../components/ToastProvider';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
+  const { show } = useToast();
   
   const [formData, setFormData] = useState({
     username: '',
@@ -64,23 +66,33 @@ const RegisterPage: React.FC = () => {
       const response = await register(formData.username, formData.username, formData.email, formData.password);
       console.log('✅ Manual registration successful:', response);
       
-      // Create user object from response (backend returns {access_token, token_type, username})
+      // Create user object from response (backend returns {access_token, token_type, username, user, verification_email_sent})
       const user = {
-        id: Date.now(),
-        username: response.username || formData.username,
-        email: formData.email,
-        name: formData.username,
-        fullName: formData.username,
+        id: response.user?.id || Date.now(),
+        username: response.user?.username || response.username || formData.username,
+        email: response.user?.email || formData.email,
+        name: response.user?.fullName || formData.username,
+        fullName: response.user?.fullName || formData.username,
         is_premium: false,
-        created_at: new Date().toISOString(),
-        tier: 'free' as const,
+        created_at: response.user?.createdAt || new Date().toISOString(),
+        tier: response.user?.tier || 'free' as const,
         weekly_quota: 1000,
         weekly_used: 0,
         quota_cycle_start: new Date().toISOString(),
+        isVerified: response.user?.isVerified || false,
       };
       
       console.log('🔐 Logging in user after registration:', user);
       login(response.access_token, user);
+      
+      // Show success message with verification email info
+      if (response.verification_email_sent) {
+        show(`Registration successful! Please check your email (${formData.email}) to verify your account.`, 'success');
+      } else if (response.warning) {
+        show('Registration successful! You\'re logged in, but email verification is currently unavailable.', 'warning');
+      } else {
+        show('Registration successful! You\'re now logged in.', 'success');
+      }
       
       // Add a small delay to ensure auth state is set before navigation
       setTimeout(() => {

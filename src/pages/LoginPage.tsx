@@ -20,7 +20,8 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://auth-service-ancient-frost-8646.fly.dev/auth/login', {
+      const authUrl = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+      const response = await fetch(`${authUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +75,8 @@ const LoginPage: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'https://auth-service-ancient-frost-8646.fly.dev/auth/google';
+    const authUrl = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+    window.location.href = `${authUrl}/auth/google`;
   };
 
   const handleForgotPassword = async () => {
@@ -87,7 +89,8 @@ const LoginPage: React.FC = () => {
     setErrors([]);
     
     try {
-      const response = await fetch('https://auth-service-ancient-frost-8646.fly.dev/auth/forgot-password', {
+      const authUrl = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
+      const response = await fetch(`${authUrl}/auth/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
