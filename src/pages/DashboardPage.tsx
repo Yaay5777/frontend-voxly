@@ -17,7 +17,7 @@ import {
   CheckCircle,
   RefreshCw
 } from 'lucide-react';
-import { resendVerificationEmail } from '../api';
+import { resendVerificationEmail, TokenManager } from '../api';
 import { useToast } from '../components/ToastProvider';
 
 const DashboardPage: React.FC = () => {
@@ -37,13 +37,26 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   const handleResendVerification = async () => {
+    // Check if user is authenticated before attempting to resend
+    if (!TokenManager.isAuthenticated()) {
+      show('Please log in to resend verification email', 'error');
+      navigate('/login');
+      return;
+    }
+    
     setResendingEmail(true);
     try {
       const response = await resendVerificationEmail();
       show(response.message || 'Verification email sent!', 'success');
     } catch (error: any) {
+      console.error('Resend verification error:', error);
       const errorMsg = error.detail || error.message || 'Failed to send verification email';
       show(errorMsg, 'error');
+      
+      // If authentication error, redirect to login
+      if (error.message && error.message.includes('Authentication')) {
+        setTimeout(() => navigate('/login'), 2000);
+      }
     } finally {
       setResendingEmail(false);
     }

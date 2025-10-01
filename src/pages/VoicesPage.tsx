@@ -100,9 +100,9 @@ const VoicesPage: React.FC = () => {
       setLoading(true);
       console.log('Loading voices from API...');
       
-      // Try direct fetch first to bypass any axios issues
+      // Try direct fetch to local backend first
       try {
-        const response = await fetch('https://yaya5777-voxly-tts.hf.space/voices', {
+        const response = await fetch('/api/voices', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
