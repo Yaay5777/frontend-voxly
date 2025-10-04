@@ -110,8 +110,8 @@ const HomePage: React.FC = () => {
     },
     {
       icon: Globe,
-      title: "Multi-Language",
-      description: "Support for dozens of languages and accents",
+      title: "Multilingual Voices",
+      description: "112 authentic voices speak any language while keeping their natural accent",
       color: "from-green-500 to-teal-500"
     }
   ];

@@ -13,7 +13,9 @@ import {
   Type,
   Sparkles,
   Clock,
-  User
+  User,
+  Languages,
+  Globe
 } from 'lucide-react';
 
 // Component imports
@@ -33,6 +35,13 @@ import { synthesizeText, getQuotaInfo } from '../services/api';
 // Types
 import { Voice, AudioFile, QuotaInfo } from '../types';
 
+// Language interface
+interface Language {
+  name: string;
+  native_name: string;
+  flag: string;
+}
+
 const SynthesisPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -47,6 +56,9 @@ const SynthesisPage: React.FC = () => {
   const [quotaInfo, setQuotaInfo] = useState<QuotaInfo | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [error, setError] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [availableLanguages, setAvailableLanguages] = useState<Record<string, Language>>({});
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   // Get voice from URL params or selected voice
   const voiceId = searchParams.get('voice') || selectedVoice?.id;
@@ -73,7 +85,29 @@ const SynthesisPage: React.FC = () => {
 
     // Load quota info
     loadQuotaInfo();
+    
+    // Load available languages
+    loadAvailableLanguages();
   }, [user, token, voiceId, voices, selectedVoice]);
+
+  const loadAvailableLanguages = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_TTS_API_URL}/languages`);
+      const data = await response.json();
+      setAvailableLanguages(data.languages);
+      setSelectedLanguage(data.default_language || 'en');
+    } catch (error) {
+      console.error('Failed to load languages:', error);
+      // Fallback languages
+      setAvailableLanguages({
+        en: { name: 'English', native_name: 'English', flag: '🇺🇸' },
+        es: { name: 'Spanish', native_name: 'Español', flag: '🇪🇸' },
+        fr: { name: 'French', native_name: 'Français', flag: '🇫🇷' },
+        de: { name: 'German', native_name: 'Deutsch', flag: '🇩🇪' },
+        ar: { name: 'Arabic', native_name: 'العربية', flag: '🇸🇦' }
+      });
+    }
+  };
 
   const loadQuotaInfo = async () => {
     try {
@@ -96,7 +130,7 @@ const SynthesisPage: React.FC = () => {
       const audioBlob = await synthesizeText({
         text: text.trim(),
         voice_id: currentVoice.id,
-        language: currentVoice.languages?.[0] || 'en'
+        language: selectedLanguage
       });
 
       // Create AudioFile object from blob
@@ -280,6 +314,93 @@ const SynthesisPage: React.FC = () => {
                     <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full">
                       {currentVoice.gender}
                     </span>
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
+
+            {/* Language Selector */}
+            <GlassCard className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Languages className="w-4 h-4" />
+                    <span>Language Selection</span>
+                  </label>
+                  <div className="flex items-center space-x-2 text-xs text-gray-500">
+                    <Globe className="w-3 h-3" />
+                    <span>Voice keeps its accent</span>
+                  </div>
+                </div>
+                
+                <div className="relative">
+                  <button
+                    onClick={() => setShowLanguageSelector(!showLanguageSelector)}
+                    className="w-full p-3 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all flex items-center justify-between"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <span className="text-lg">
+                        {availableLanguages[selectedLanguage]?.flag || '🌍'}
+                      </span>
+                      <div className="text-left">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {availableLanguages[selectedLanguage]?.name || 'English'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {availableLanguages[selectedLanguage]?.native_name || 'English'}
+                        </p>
+                      </div>
+                    </div>
+                    <motion.div
+                      animate={{ rotate: showLanguageSelector ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Languages className="w-4 h-4 text-gray-400" />
+                    </motion.div>
+                  </button>
+                  
+                  {showLanguageSelector && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto"
+                    >
+                      {Object.entries(availableLanguages).map(([code, language]) => (
+                        <button
+                          key={code}
+                          onClick={() => {
+                            setSelectedLanguage(code);
+                            setShowLanguageSelector(false);
+                          }}
+                          className={`w-full p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center space-x-3 ${
+                            selectedLanguage === code ? 'bg-voxly-50 dark:bg-voxly-900/20 border-r-2 border-voxly-500' : ''
+                          }`}
+                        >
+                          <span className="text-lg">{language.flag}</span>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              {language.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {language.native_name}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </div>
+                
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                  <div className="flex items-start space-x-2">
+                    <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs text-blue-700 dark:text-blue-300">
+                      <p className="font-medium mb-1">Multilingual Voice Technology</p>
+                      <p>
+                        {currentVoice.display_name || currentVoice.name} will speak {availableLanguages[selectedLanguage]?.name || 'the selected language'} while maintaining their authentic {currentVoice.accent_region || 'accent'} and natural speaking style.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
