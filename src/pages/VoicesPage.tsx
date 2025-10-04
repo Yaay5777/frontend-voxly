@@ -76,6 +76,8 @@ const VoicesPage: React.FC = () => {
   const [playingVoice, setPlayingVoice] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [generatingDemo, setGeneratingDemo] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showTagFilter, setShowTagFilter] = useState(false);
 
   // Voice categories with icons and descriptions
   const categories = [
@@ -251,6 +253,24 @@ const VoicesPage: React.FC = () => {
     }
   };
 
+  // Get all unique tags from voices for tag filter
+  const allTags = React.useMemo(() => {
+    const tagSet = new Set<string>();
+    voices.forEach(voice => {
+      voice.tags.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  }, [voices]);
+
+  // Toggle tag selection
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
   // Advanced filtering system for the new voice library
   const filteredVoices = voices.filter(voice => {
     const matchesSearch = voice.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -265,7 +285,10 @@ const VoicesPage: React.FC = () => {
     
     const matchesAccent = selectedAccent === 'all' || voice.accent === selectedAccent;
     
-    return matchesSearch && matchesCategory && matchesGender && matchesAccent;
+    const matchesTags = selectedTags.length === 0 || 
+                       selectedTags.every(tag => voice.tags.includes(tag));
+    
+    return matchesSearch && matchesCategory && matchesGender && matchesAccent && matchesTags;
   });
 
 
@@ -342,10 +365,72 @@ const VoicesPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Results Count */}
-          <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-            Showing {filteredVoices.length} of {voices.length} voices
+          {/* Tag Filter Toggle */}
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Showing {filteredVoices.length} of {voices.length} voices
+              {selectedTags.length > 0 && (
+                <span className="ml-2 text-voxly-600 dark:text-voxly-400">
+                  · {selectedTags.length} tag{selectedTags.length > 1 ? 's' : ''} selected
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => setShowTagFilter(!showTagFilter)}
+              className="flex items-center space-x-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 rounded-lg hover:bg-voxly-100 dark:hover:bg-voxly-900 transition-all"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">Filter by Tags</span>
+              {selectedTags.length > 0 && (
+                <span className="bg-voxly-500 text-white text-xs rounded-full px-2 py-0.5">
+                  {selectedTags.length}
+                </span>
+              )}
+            </button>
           </div>
+
+          {/* Tag Filter Panel */}
+          {showTagFilter && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-voxly-500" />
+                  <span>Filter by Personality & Style</span>
+                </h3>
+                {selectedTags.length > 0 && (
+                  <button
+                    onClick={() => setSelectedTags([])}
+                    className="text-xs text-voxly-600 dark:text-voxly-400 hover:underline"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {allTags.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                      selectedTags.includes(tag)
+                        ? 'bg-voxly-500 text-white shadow-lg scale-105'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-voxly-100 dark:hover:bg-voxly-900'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                💡 Tip: Select multiple tags to find voices that match all selected traits
+              </p>
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -379,24 +464,46 @@ const VoicesPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
                   <GlassCard className="p-6 h-full group hover:scale-105 transition-transform duration-300">
-                    {/* Optimized Avatar - No WebGL */}
-                    <div className="relative h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
-                      <motion.div
-                        className={`text-6xl transition-all duration-300 ${
-                          playingVoice === voice.id ? 'animate-bounce scale-110' : ''
-                        }`}
-                        animate={playingVoice === voice.id ? {
-                          scale: [1, 1.2, 1],
-                          rotate: [0, 10, -10, 0],
-                        } : {}}
-                        transition={{
-                          duration: 2,
-                          repeat: playingVoice === voice.id ? Infinity : 0,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        {voice.flag}
-                      </motion.div>
+                    {/* AI Avatar Display */}
+                    <div className="relative h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-voxly-100 to-accent-100 dark:from-voxly-900 dark:to-accent-900 flex items-center justify-center">
+                      {(voice as any).avatar_url ? (
+                        <motion.div
+                          className="w-32 h-32 rounded-full overflow-hidden"
+                          animate={playingVoice === voice.id ? {
+                            scale: [1, 1.1, 1],
+                          } : {}}
+                          transition={{
+                            duration: 1.5,
+                            repeat: playingVoice === voice.id ? Infinity : 0,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          <img
+                            src={(voice as any).avatar_url}
+                            alt={voice.name}
+                            className={`w-full h-full object-cover transition-all duration-300 ${
+                              playingVoice === voice.id ? 'ring-4 ring-voxly-500' : ''
+                            }`}
+                          />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          className={`text-6xl transition-all duration-300 ${
+                            playingVoice === voice.id ? 'animate-bounce scale-110' : ''
+                          }`}
+                          animate={playingVoice === voice.id ? {
+                            scale: [1, 1.2, 1],
+                            rotate: [0, 10, -10, 0],
+                          } : {}}
+                          transition={{
+                            duration: 2,
+                            repeat: playingVoice === voice.id ? Infinity : 0,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          {voice.flag || '🎤'}
+                        </motion.div>
+                      )}
 
                       {/* Favorite Button */}
                       <button

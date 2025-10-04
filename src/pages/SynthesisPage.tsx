@@ -398,7 +398,7 @@ const SynthesisPage: React.FC = () => {
                     <div className="text-xs text-blue-700 dark:text-blue-300">
                       <p className="font-medium mb-1">Multilingual Voice Technology</p>
                       <p>
-                        {currentVoice.display_name || currentVoice.name} will speak {availableLanguages[selectedLanguage]?.name || 'the selected language'} while maintaining their authentic {currentVoice.accent_region || 'accent'} and natural speaking style.
+                        {currentVoice.name} will speak {availableLanguages[selectedLanguage]?.name || 'the selected language'} while maintaining their authentic {currentVoice.accent || 'accent'} and natural speaking style.
                       </p>
                     </div>
                   </div>

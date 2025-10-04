@@ -15,7 +15,7 @@ import { User } from '../types';
 
 // Services
 import { register } from '../api';
-import { initiateGoogleOAuth, appleOAuth } from '../services/api';
+import { initiateGoogleOAuth } from '../services/api';
 import { useToast } from '../components/ToastProvider';
 
 const RegisterPage: React.FC = () => {
@@ -148,34 +148,6 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  const handleAppleSignUp = async () => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      // Simulate Apple OAuth flow (in production, use Apple Sign In JS SDK)
-      console.log('🚀 Initiating Apple OAuth...');
-      
-      // For demo purposes, simulate OAuth response
-      const mockAppleUser = {
-        email: 'user@icloud.com',
-        name: 'Apple User',
-        id_token: 'mock_apple_token_' + Date.now()
-      };
-      
-      const response = await appleOAuth(mockAppleUser.id_token, mockAppleUser.email, mockAppleUser.name);
-      console.log('✅ Apple OAuth successful:', response);
-      
-      login(response.access_token, response as unknown as User);
-      navigate('/dashboard');
-    } catch (err: any) {
-      console.error('❌ Apple OAuth failed:', err);
-      const errorMessage = err.response?.data?.detail || err.message || 'Apple sign-up failed. Please try again.';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const passwordRequirements = [
     { text: 'At least 6 characters', met: formData.password.length >= 6 },
@@ -251,18 +223,6 @@ const RegisterPage: React.FC = () => {
                   <span className="ml-2">Google</span>
                 </motion.button>
 
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  onClick={handleAppleSignUp}
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                  </svg>
-                  <span className="ml-2">Apple</span>
-                </motion.button>
               </div>
 
               <div className="relative">
