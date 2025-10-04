@@ -66,16 +66,21 @@ const VoiceCloningPage: React.FC = () => {
 
   const loadVoiceClones = async () => {
     try {
+      const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/tts/premium/voice-clones', {
+      const response = await fetch(`${TTS_API_URL}/tts/premium/voice-clones`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
       
       if (response.ok) {
-        const data = await response.json();
-        setVoiceClones(data.voice_clones);
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          setVoiceClones(data.voice_clones);
+        }
       }
     } catch (err) {
       console.error('Failed to load voice clones:', err);
