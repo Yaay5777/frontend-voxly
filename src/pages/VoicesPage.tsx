@@ -102,9 +102,11 @@ const VoicesPage: React.FC = () => {
       setLoading(true);
       console.log('Loading voices from API...');
       
-      // Try direct fetch to local backend first
+      // Use the proper TTS API URL from environment variables
+      const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
+      
       try {
-        const response = await fetch('/api/voices', {
+        const response = await fetch(`${TTS_API_URL}/voices`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -113,6 +115,11 @@ const VoicesPage: React.FC = () => {
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Response is not JSON');
         }
         
         const rawData = await response.json();

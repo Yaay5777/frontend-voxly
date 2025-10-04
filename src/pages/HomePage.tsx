@@ -247,7 +247,7 @@ const HomePage: React.FC = () => {
                     </h3>
                     <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                       <Globe className="w-4 h-4" />
-                      <span>35+ Voices Available</span>
+                      <span>112 Voices Available</span>
                     </div>
                   </div>
                   
@@ -256,7 +256,7 @@ const HomePage: React.FC = () => {
                     <textarea
                       value={demoText}
                       onChange={(e) => setDemoText(e.target.value)}
-                      placeholder="Enter text to synthesize with any of our 35+ global voices..."
+                      placeholder="Enter text to synthesize with any of our 112 global voices..."
                       className="flex-1 p-4 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg resize-none focus:ring-2 focus:ring-voxly-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                       maxLength={500}
                       rows={4}
@@ -341,7 +341,7 @@ const HomePage: React.FC = () => {
                             Demo Voice: <span className="font-semibold text-voxly-600 dark:text-voxly-400">Emma (American Female)</span>
                           </span>
                           <Link to="/voices" className="text-voxly-500 hover:text-voxly-600 font-medium">
-                            Browse All 35+ Voices →
+                            Browse All 112 Voices →
                           </Link>
                         </div>
                       </div>
@@ -367,7 +367,7 @@ const HomePage: React.FC = () => {
               Meet Our Global Voice Family
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Experience the diversity of our 35+ authentic voices from around the world
+              Experience the diversity of our 112 authentic voices from around the world
             </p>
           </motion.div>
 
@@ -402,7 +402,7 @@ const HomePage: React.FC = () => {
                       🌍
                     </div>
                     <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-sm font-bold text-gray-800 dark:text-white bg-white/80 dark:bg-black/80 px-3 py-1 rounded-full">
-                      35+ Global Voices
+                      112 Global Voices
                     </div>
                   </motion.div>
                   
@@ -484,9 +484,9 @@ const HomePage: React.FC = () => {
             className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-4xl mx-auto"
           >
             {[
-              { number: '35+', label: 'Unique Voices', icon: '🎤' },
-              { number: '15+', label: 'Languages', icon: '🌍' },
-              { number: '25+', label: 'Countries', icon: '🗺️' },
+              { number: '112', label: 'Unique Voices', icon: '🎤' },
+              { number: '22', label: 'Languages', icon: '🌍' },
+              { number: '30+', label: 'Countries', icon: '🗺️' },
               { number: '100%', label: 'Authentic', icon: '✨' },
             ].map((stat, index) => (
               <div key={stat.label} className="text-center">
