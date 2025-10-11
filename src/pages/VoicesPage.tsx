@@ -125,9 +125,9 @@ const VoicesPage: React.FC = () => {
         const rawData = await response.json();
         console.log('Raw API response:', rawData);
         
-        // TTS service returns voices directly as an array, not wrapped in speakers property
-        const speakersArray = Array.isArray(rawData) ? rawData : (rawData.speakers || []);
-        console.log('Speakers array:', speakersArray);
+        // TTS service returns voices in rawData.voices array
+        const speakersArray = Array.isArray(rawData) ? rawData : (rawData.voices || rawData.speakers || []);
+        console.log('Speakers array:', speakersArray.length, 'voices found');
         
         // Transform the data to match our Voice interface
         const voicesData = speakersArray.map((speaker: any, index: number) => ({
