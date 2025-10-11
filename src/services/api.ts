@@ -153,34 +153,13 @@ class ApiService {
     return response.data;
   }
 
-  // Voice endpoints (use TTS backend)
+  // Voice endpoints (use XTTS backend - 150 voices)
   async getVoices(): Promise<Voice[]> {
     try {
-      const response = await this.ttsApi.get('/voices');
-      
-      // Handle both direct array and wrapped response formats
-      const speakersArray = Array.isArray(response.data) ? response.data : (response.data.speakers || []);
-      
-      // Transform backend response to match our Voice interface
-      return speakersArray.map((speaker: any, index: number) => ({
-        id: speaker.id || `voice-${index}`,
-        name: speaker.name || `Voice ${index + 1}`,
-        description: speaker.description || 'AI-generated voice',
-        avatar: speaker.avatar || 'sphere',
-        color: speaker.color || '#3b82f6',
-        tags: speaker.tags || ['ai', 'synthetic'],
-        sample_text: speaker.sample_text || 'Hello, this is a sample of my voice.',
-        type: speaker.type || 'preset',
-        quality: speaker.quality || 'high',
-        languages: speaker.languages || ['en'],
-        gender: speaker.gender,
-        age: speaker.age,
-        accent: speaker.accent,
-        category: speaker.category || 'general',
-        personality: speaker.personality || 'neutral',
-      }));
+      const response = await this.ttsApi.get('/xtts/voices');
+      return response.data.voices || [];
     } catch (error) {
-      console.error('Error fetching voices:', error);
+      console.error('Error fetching XTTS voices:', error);
       throw error;
     }
   }
@@ -191,15 +170,15 @@ class ApiService {
       const formData = new FormData();
       formData.append('text', request.text);
       formData.append('language', request.language);
-      formData.append('speaker_id', request.voice_id || 'emma_american_female');
+      formData.append('voice_id', request.voice_id || 'sophia_british_female');
       
       if (speakerFile) {
         formData.append('speaker_wav', speakerFile);
       }
 
-      console.log('🚀 Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
+      console.log('🚀 XTTS Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
 
-      const response = await this.ttsApi.post('/synthesize', formData, {
+      const response = await this.ttsApi.post('/xtts/synthesize', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         responseType: 'blob',
       });
