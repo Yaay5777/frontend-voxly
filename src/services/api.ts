@@ -30,10 +30,24 @@ class ApiService {
       },
     });
 
-    // Request interceptor to add auth token
+    // Helper function to get token from multiple sources
+    const getAuthToken = () => {
+      // Try Zustand store first
+      const storeToken = useAuthStore.getState().token;
+      if (storeToken) return storeToken;
+      
+      // Try cookies
+      const cookieMatch = document.cookie.match(/voxly_at=([^;]+)/);
+      if (cookieMatch) return cookieMatch[1];
+      
+      // Try localStorage as fallback
+      return localStorage.getItem('voxly_jwt_token');
+    };
+
+    // Request interceptor to add auth token (for auth API)
     this.api.interceptors.request.use(
       (config) => {
-        const token = useAuthStore.getState().token;
+        const token = getAuthToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -42,12 +56,40 @@ class ApiService {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor for error handling
+    // Request interceptor to add auth token (for TTS API)
+    this.ttsApi.interceptors.request.use(
+      (config) => {
+        const token = getAuthToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+          console.log('🔑 Adding auth token to TTS request');
+        } else {
+          console.warn('⚠️ No auth token found for TTS request');
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    // Response interceptor for error handling (auth API)
     this.api.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          // Token expired or invalid
+          console.error('❌ Auth API 401: Token expired or invalid');
+          useAuthStore.getState().logout();
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    // Response interceptor for error handling (TTS API)
+    this.ttsApi.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          console.error('❌ TTS API 401: Token expired or invalid');
           useAuthStore.getState().logout();
           window.location.href = '/login';
         }
@@ -179,15 +221,10 @@ class ApiService {
 
       console.log('🚀 Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
 
-      // Add auth token to headers
-      const token = useAuthStore.getState().token;
-      const headers: any = { 'Content-Type': 'multipart/form-data' };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
+      // The auth token is automatically added by the interceptor
+      // No need to manually add it here
       const response = await this.ttsApi.post('/synthesize', formData, {
-        headers,
+        headers: { 'Content-Type': 'multipart/form-data' },
         responseType: 'blob',
       });
 

@@ -7,6 +7,7 @@
 | Audio playback errors | ✅ Fixed | `AdvancedAudioVisualizer.tsx`, `useAudioPlayer.ts`, `VoicesPage.tsx` | Prevent duplicate source nodes, proper cleanup, autoplay handling |
 | Auth persistence | ✅ Fixed | `api.ts`, `useAuthStore.ts`, `App.tsx` | Unified token storage (cookies + localStorage), async initialization |
 | Verification email button | ✅ Fixed | `EmailVerificationPending.tsx`, `api.ts` | Proper auth check, correct endpoint, error handling |
+| **Synthesis 401 error** | ✅ **Fixed** | `services/api.ts` | Added auth interceptor to TTS API, multi-source token retrieval |
 
 ---
 
@@ -117,6 +118,61 @@ if (error.message?.includes('Authentication')) {
 ```
 
 **Result**: Button works only when authenticated, proper error handling
+
+---
+
+## 🎤 Synthesis Authentication - What Changed
+
+### Before
+```typescript
+// ❌ TTS API had NO auth interceptor
+this.ttsApi = axios.create({
+  baseURL: TTS_BASE_URL,
+  timeout: 30000,
+});
+
+// ❌ Manual token injection (inconsistent)
+const token = useAuthStore.getState().token;
+const headers: any = { 'Content-Type': 'multipart/form-data' };
+if (token) {
+  headers['Authorization'] = `Bearer ${token}`;
+}
+```
+
+### After
+```typescript
+// ✅ Multi-source token retrieval
+const getAuthToken = () => {
+  // Try store → cookies → localStorage
+  return useAuthStore.getState().token || 
+         document.cookie.match(/voxly_at=([^;]+)/)?.[1] ||
+         localStorage.getItem('voxly_jwt_token');
+};
+
+// ✅ TTS API interceptor automatically adds auth
+this.ttsApi.interceptors.request.use((config) => {
+  const token = getAuthToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+    console.log('🔑 Adding auth token to TTS request');
+  }
+  return config;
+});
+
+// ✅ 401 error handler
+this.ttsApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      useAuthStore.getState().logout();
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+**Result**: Synthesis requests automatically include auth token, no more 401 errors
 
 ---
 
