@@ -119,7 +119,9 @@ const SynthesisPage: React.FC = () => {
         current_usage: 0,
         weekly_used: 0,
         weekly_quota: 10000,
-        tier: 'free'
+        tier: 'free',
+        reset_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        percentage_used: 0
       });
     }
   };
