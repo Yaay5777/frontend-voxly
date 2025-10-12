@@ -24,6 +24,8 @@ import GlowButton from '../components/ui/GlowButton';
 import WaveformVisualizer from '../components/audio/WaveformVisualizer';
 import Avatar3D from '../3d/Avatar3D';
 import LoadingScreen from '../components/ui/LoadingScreen';
+import AIScriptGenerator from '../components/synthesis/AIScriptGenerator';
+import TemplateSelector from '../components/synthesis/TemplateSelector';
 
 // Store imports
 import { useAuthStore } from '../store/useAuthStore';
@@ -447,6 +449,12 @@ const SynthesisPage: React.FC = () => {
                   className="w-full h-32 p-4 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all resize-none text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   maxLength={remainingQuota}
                 />
+                
+                {/* AI Script Generator */}
+                <AIScriptGenerator onScriptGenerated={(script) => setText(script)} />
+                
+                {/* Template Selector */}
+                <TemplateSelector onTemplateSelected={(template) => setText(template)} />
                 
                 {error && (
                   <p className="text-sm text-red-500">{error}</p>
