@@ -67,7 +67,8 @@ const SynthesisPage: React.FC = () => {
   const currentVoice = voices.find(v => v.id === voiceId) || selectedVoice;
 
   useEffect(() => {
-    if (!user || !token) {
+    // Allow synthesis for all logged in users (verified or not)
+    if (!token) {
       navigate('/login');
       return;
     }

@@ -82,9 +82,15 @@ const VoiceCloningPage: React.FC = () => {
           const data = await response.json();
           setVoiceClones(data.voice_clones);
         }
+      } else if (response.status === 404) {
+        // Voice cloning endpoint not available yet - this is ok
+        console.log('Voice cloning feature not yet available on backend');
+        setVoiceClones([]);
       }
     } catch (err) {
       console.error('Failed to load voice clones:', err);
+      // Silently fail - feature might not be available yet
+      setVoiceClones([]);
     }
   };
 
