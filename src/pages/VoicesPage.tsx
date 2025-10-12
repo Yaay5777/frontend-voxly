@@ -196,32 +196,15 @@ const VoicesPage: React.FC = () => {
       // Use environment variable for TTS URL with fallback
       const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
       
-      // Map voice gender to available XTTS voices
-      // The backend /demo endpoint uses XTTS voices, not Edge TTS voices
-      let speakerId = voice.id;
-      
-      // If the voice ID looks like an Edge TTS ID, map it to an XTTS voice
-      if (voice.id.includes('neural') || voice.id.includes('_')) {
-        // Map based on gender and accent
-        const gender = voice.gender?.toLowerCase() || 'neutral';
-        if (gender === 'female') {
-          speakerId = 'linda_american_female'; // Default female voice
-        } else if (gender === 'male') {
-          speakerId = 'adam_american_male'; // Default male voice
-        } else {
-          speakerId = 'adam_american_male'; // Default neutral voice
-        }
-        console.log(`Mapped Edge TTS voice ${voice.id} to XTTS voice ${speakerId}`);
-      }
-      
       // Use the public /demo endpoint with Form data (no authentication required)
+      // Voice IDs now match the XTTS dataset voices directly (e.g., en_us_arianeural)
       const formData = new FormData();
       formData.append('text', voice.sample_text || "Hello, this is a sample of my voice.");
-      formData.append('speaker_id', speakerId);
+      formData.append('speaker_id', voice.id);  // Voice ID matches dataset
       formData.append('language', 'en');
       
       console.log('Sending demo request to:', `${TTS_API_URL}/demo`);
-      console.log('FormData:', { speaker_id: speakerId, text: voice.sample_text || "Hello, this is a sample of my voice." });
+      console.log('FormData:', { speaker_id: voice.id, text: voice.sample_text || "Hello, this is a sample of my voice." });
       
       const response = await fetch(`${TTS_API_URL}/demo`, {
         method: 'POST',
