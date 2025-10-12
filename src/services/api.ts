@@ -76,9 +76,16 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          console.error('❌ Auth API 401: Token expired or invalid');
-          useAuthStore.getState().logout();
-          window.location.href = '/login';
+          console.error('❌ Auth API 401: Token might be expired');
+          // Only logout on specific auth endpoints, not all 401s
+          const url = error.config?.url || '';
+          if (url.includes('/auth/me') || url.includes('/auth/login')) {
+            console.log('🚪 Logging out due to invalid credentials');
+            useAuthStore.getState().logout();
+            window.location.href = '/login';
+          } else {
+            console.log('⚠️ 401 on other endpoint, keeping session active');
+          }
         }
         return Promise.reject(error);
       }
@@ -89,9 +96,10 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          console.error('❌ TTS API 401: Token expired or invalid');
-          useAuthStore.getState().logout();
-          window.location.href = '/login';
+          console.error('❌ TTS API 401: Authentication failed');
+          console.error('⚠️ This might be a backend issue. Not logging you out.');
+          // Don't logout automatically - the token might be valid
+          // The auth backend is the source of truth, not TTS backend
         }
         return Promise.reject(error);
       }
