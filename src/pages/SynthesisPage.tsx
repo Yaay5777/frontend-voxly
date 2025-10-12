@@ -176,7 +176,18 @@ const SynthesisPage: React.FC = () => {
       
     } catch (error: any) {
       console.error('❌ Synthesis failed:', error);
-      setError(error.response?.data?.detail || error.message || 'Failed to generate audio. Please try again.');
+      
+      // Handle specific error cases
+      if (error.response?.status === 401) {
+        setError('Authentication required. Please log in to generate speech.');
+        setTimeout(() => navigate('/login'), 2000);
+      } else if (error.response?.status === 403) {
+        setError('Access denied. Please check your subscription or quota.');
+      } else if (error.response?.status === 429) {
+        setError('Rate limit exceeded. Please try again later.');
+      } else {
+        setError(error.response?.data?.detail || error.message || 'Failed to generate audio. Please try again.');
+      }
     } finally {
       setIsGenerating(false);
     }

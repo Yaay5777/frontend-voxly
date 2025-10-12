@@ -171,7 +171,7 @@ class ApiService {
       const formData = new FormData();
       formData.append('text', request.text);
       formData.append('language', request.language);
-      formData.append('voice_id', request.voice_id || 'emma_american_friendly');
+      formData.append('voice_id', request.voice_id || 'en_us_arianeural');
       
       if (speakerFile) {
         formData.append('speaker_wav', speakerFile);
@@ -179,8 +179,15 @@ class ApiService {
 
       console.log('🚀 Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
 
+      // Add auth token to headers
+      const token = useAuthStore.getState().token;
+      const headers: any = { 'Content-Type': 'multipart/form-data' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await this.ttsApi.post('/synthesize', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers,
         responseType: 'blob',
       });
 
@@ -188,6 +195,7 @@ class ApiService {
       return response.data;
     } catch (error: any) {
       console.error('❌ Synthesis failed:', error);
+      console.error('Error details:', error.response?.data, error.response?.status);
       throw error;
     }
   }
