@@ -224,13 +224,13 @@ const VoicesPage: React.FC = () => {
       
       const audioUrl = URL.createObjectURL(audioBlob);
       
-      // Create and play audio directly
-      const audio = new Audio(audioUrl);
+      // Create and play audio with better error handling
+      const audio = new Audio();
+      audio.src = audioUrl;
       
       // Set up audio event listeners
       audio.addEventListener('loadeddata', () => {
         console.log('Audio loaded successfully');
-        setPlayingVoice(voice.id);
       });
       
       audio.addEventListener('ended', () => {
@@ -239,18 +239,25 @@ const VoicesPage: React.FC = () => {
       });
       
       audio.addEventListener('error', (error) => {
-        console.error('Audio playback failed:', error);
+        console.error('Audio playback error:', error);
         setPlayingVoice(null);
+        alert('Audio playback failed. The audio was generated successfully but your browser blocked playback. Please check browser permissions.');
       });
       
-      // Play the audio
-      audio.play().then(() => {
+      // Play the audio with user interaction
+      try {
+        await audio.play();
         console.log('Audio playing successfully');
         setPlayingVoice(voice.id);
-      }).catch((error) => {
-        console.error('Audio playback failed:', error);
-        setPlayingVoice(null);
-      });
+      } catch (error) {
+        console.error('Audio play() failed:', error);
+        // Fallback: Download the audio instead
+        const link = document.createElement('a');
+        link.href = audioUrl;
+        link.download = `${voice.name}_demo.wav`;
+        link.click();
+        alert('Audio playback was blocked by your browser. The audio file has been downloaded instead.');
+      }
       
       setCurrentAudio({
         id: `demo-${voice.id}`,
@@ -263,7 +270,6 @@ const VoicesPage: React.FC = () => {
         text: voice.sample_text || "Hello, this is a sample of my voice.",
         language: 'en'
       });
-      setPlayingVoice(voice.id);
     } catch (error: any) {
       console.error('Failed to generate demo:', error);
       
