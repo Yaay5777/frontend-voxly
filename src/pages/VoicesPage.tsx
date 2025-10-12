@@ -224,9 +224,8 @@ const VoicesPage: React.FC = () => {
       
       const audioUrl = URL.createObjectURL(audioBlob);
       
-      // Create and play audio with better error handling
-      const audio = new Audio();
-      audio.src = audioUrl;
+      // Create audio element and play immediately (triggered by user click)
+      const audio = new Audio(audioUrl);
       
       // Set up audio event listeners
       audio.addEventListener('loadeddata', () => {
@@ -241,23 +240,22 @@ const VoicesPage: React.FC = () => {
       audio.addEventListener('error', (error) => {
         console.error('Audio playback error:', error);
         setPlayingVoice(null);
-        alert('Audio playback failed. The audio was generated successfully but your browser blocked playback. Please check browser permissions.');
+        alert('Audio playback failed. Please try again or check your browser audio settings.');
       });
       
-      // Play the audio with user interaction
-      try {
-        await audio.play();
-        console.log('Audio playing successfully');
-        setPlayingVoice(voice.id);
-      } catch (error) {
+      // Play the audio immediately (this is triggered by user click, so it should work)
+      setPlayingVoice(voice.id);
+      audio.play().catch((error) => {
         console.error('Audio play() failed:', error);
-        // Fallback: Download the audio instead
-        const link = document.createElement('a');
-        link.href = audioUrl;
-        link.download = `${voice.name}_demo.wav`;
-        link.click();
-        alert('Audio playback was blocked by your browser. The audio file has been downloaded instead.');
-      }
+        setPlayingVoice(null);
+        
+        // Show helpful error message
+        if (error.name === 'NotAllowedError') {
+          alert('Please click the Demo button again to play the audio. Your browser requires a direct user interaction to play audio.');
+        } else {
+          alert('Failed to play audio. Please try again.');
+        }
+      });
       
       setCurrentAudio({
         id: `demo-${voice.id}`,
