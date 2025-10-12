@@ -205,8 +205,9 @@ const VoicesPage: React.FC = () => {
   };
 
   const generateVoiceDemo = async (voice: Voice) => {
-    // Check authentication first
-    if (!isAuthenticated) {
+    // Check for token (not isAuthenticated which might be loading)
+    const { token } = useAuthStore.getState();
+    if (!token) {
       showToast.warning('Please login to play voice demos.');
       setTimeout(() => navigate('/login'), 1500);
       return;
