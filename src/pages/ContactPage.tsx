@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { showToast } from '../utils/toast';
 import { Mail, MapPin, Phone, Clock, Send, MessageCircle, HeadphonesIcon, Zap } from 'lucide-react';
 
 const ContactPage: React.FC = () => {
@@ -16,7 +17,7 @@ const ContactPage: React.FC = () => {
     // Handle form submission
     console.log('Contact form submitted:', formData);
     // In a real app, this would send to your backend
-    alert('Thank you for your message! We\'ll get back to you soon.');
+    showToast.success('Thank you for your message! We\'ll get back to you soon.', { duration: 5000 });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

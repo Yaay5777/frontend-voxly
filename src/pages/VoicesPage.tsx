@@ -39,9 +39,10 @@ import { useVoiceStore } from '../store/useVoiceStore';
 
 // Custom hooks
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
+import { showToast } from '../utils/toast';
 
 // Services
-import { getVoices, synthesizeText } from '../services/api';
+import { getVoices, synthesizeText, generateVoiceDemo as apiGenerateVoiceDemo } from '../services/api';
 import { Voice } from '../types';
 
 const VoicesPage: React.FC = () => {
@@ -90,7 +91,7 @@ const VoicesPage: React.FC = () => {
     onError: (error) => {
       console.error('Audio error:', error);
       setPlayingVoice(null);
-      alert(error.message);
+      showToast.error(error.message);
     }
   });
 
@@ -204,6 +205,13 @@ const VoicesPage: React.FC = () => {
   };
 
   const generateVoiceDemo = async (voice: Voice) => {
+    // Check authentication first
+    if (!isAuthenticated) {
+      showToast.warning('Please login to play voice demos.');
+      setTimeout(() => navigate('/login'), 1500);
+      return;
+    }
+
     // Stop any currently playing audio
     if (audioPlayer.isPlaying) {
       audioPlayer.stop();
@@ -213,31 +221,14 @@ const VoicesPage: React.FC = () => {
     try {
       console.log('Generating demo for voice:', voice.name, 'ID:', voice.id);
       
-      // Use environment variable for TTS URL with fallback
-      const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
+      // Use the API function which now uses /synthesize endpoint
+      // Authentication token is automatically added by interceptor
+      const audioBlob = await apiGenerateVoiceDemo(
+        voice.sample_text || "Hello, this is a sample of my voice.",
+        voice.id,
+        'en'
+      );
       
-      // Use the public /demo endpoint with Form data (no authentication required)
-      const formData = new FormData();
-      formData.append('text', voice.sample_text || "Hello, this is a sample of my voice.");
-      formData.append('speaker_id', voice.id);
-      formData.append('language', 'en');
-      
-      console.log('Sending demo request to:', `${TTS_API_URL}/demo`);
-      
-      const response = await fetch(`${TTS_API_URL}/demo`, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      console.log('Demo response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Demo request failed:', response.status, errorText);
-        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-      }
-      
-      const audioBlob = await response.blob();
       console.log('Audio generated successfully, size:', audioBlob.size, 'bytes');
       
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -264,9 +255,12 @@ const VoicesPage: React.FC = () => {
       
       // Show user-friendly error message
       let errorMessage = 'Failed to generate demo. ';
-      if (error.message?.includes('404')) {
+      if (error.response?.status === 401) {
+        errorMessage = 'Your session expired. Please login again.';
+        setTimeout(() => navigate('/login'), 2000);
+      } else if (error.response?.status === 404) {
         errorMessage += 'Voice not found or TTS service unavailable.';
-      } else if (error.message?.includes('500')) {
+      } else if (error.response?.status === 500) {
         errorMessage += 'Server error. Please try again.';
       } else if (error.message?.includes('Failed to fetch')) {
         errorMessage += 'Cannot connect to TTS service.';
@@ -274,7 +268,7 @@ const VoicesPage: React.FC = () => {
         errorMessage += error.message || 'Please try again.';
       }
       
-      alert(errorMessage);
+      showToast.error(errorMessage);
     } finally {
       setGeneratingDemo(null);
     }

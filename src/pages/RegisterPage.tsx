@@ -255,7 +255,7 @@ const RegisterPage: React.FC = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -277,7 +277,7 @@ const RegisterPage: React.FC = () => {
                     value={formData.username}
                     onChange={handleInputChange}
                     required
-                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     placeholder="Choose a username"
                   />
                 </div>

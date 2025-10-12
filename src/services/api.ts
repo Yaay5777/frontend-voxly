@@ -237,17 +237,19 @@ class ApiService {
     }
   }
 
-  // Voice demo generation (use TTS backend)
-  async generateVoiceDemo(text: string, voiceId: string): Promise<Blob> {
+  // Voice demo generation (use TTS backend with /synthesize endpoint)
+  async generateVoiceDemo(text: string, voiceId: string, language: string = 'en'): Promise<Blob> {
     try {
       const formData = new FormData();
       formData.append('text', text);
-      formData.append('speaker_id', voiceId);
-      formData.append('language', 'en');
+      formData.append('voice_id', voiceId);  // Changed from speaker_id to voice_id
+      formData.append('language', language);
 
-      console.log('🚀 Demo generation:', { text, voiceId });
+      console.log('🚀 Demo generation:', { text, voiceId, language });
 
-      const response = await this.ttsApi.post('/demo', formData, {
+      // Use /synthesize endpoint (backend doesn't have /demo)
+      // Auth token is automatically added by interceptor
+      const response = await this.ttsApi.post('/synthesize', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         responseType: 'blob',
       });
@@ -256,6 +258,7 @@ class ApiService {
       return response.data;
     } catch (error: any) {
       console.error('❌ Demo generation failed:', error);
+      console.error('Error details:', error.response?.data, error.response?.status);
       throw error;
     }
   }

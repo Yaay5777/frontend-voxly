@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Upload, Mic, Play, Pause, Square, Download, Trash2, Settings, Lock, Crown, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { showToast } from '../utils/toast';
 
 import { useAuthStore } from '../store/useAuthStore';
 import GlowButton from '../components/ui/GlowButton';
@@ -117,13 +118,15 @@ const VoiceCloningPage: React.FC = () => {
         setUploadFile(null);
         setCloneForm({ name: '', description: '', language: 'en', gender: 'neutral' });
         await loadVoiceClones();
-        alert('Voice clone uploaded successfully!');
+        showToast.success('Voice clone uploaded successfully!');
       } else {
         const errorData = await response.json();
         setError(errorData.detail || 'Upload failed');
+        showToast.error(errorData.detail || 'Upload failed');
       }
     } catch (err) {
       setError('Upload failed. Please try again.');
+      showToast.error('Upload failed. Please try again.');
     } finally {
       setLoading(false);
     }

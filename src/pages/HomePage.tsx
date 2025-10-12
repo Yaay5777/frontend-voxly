@@ -27,6 +27,7 @@ import OptimizedAvatarShowcase from '../components/showcase/OptimizedAvatarShowc
 // Store imports
 import { useAuthStore } from '../store/useAuthStore';
 import { useAudioStore } from '../store/useAudioStore';
+import { showToast } from '../utils/toast';
 
 // Services
 import { synthesizeText, generateVoiceDemo } from '../services/api';
@@ -46,10 +47,18 @@ const HomePage: React.FC = () => {
   const handleDemoSynthesis = async () => {
     if (!demoText.trim()) return;
     
+    // Check authentication
+    if (!isAuthenticated) {
+      showToast.warning('Please login to try voice synthesis.');
+      setTimeout(() => window.location.href = '/login', 1500);
+      return;
+    }
+    
     setIsGenerating(true);
     try {
-      // Use the new API service for demo synthesis (routes to TTS backend on port 8001)
-      const audioBlob = await generateVoiceDemo(demoText, 'emma_american_female');
+      // Use the API service which now uses /synthesize endpoint
+      // Authentication token is automatically added by interceptor
+      const audioBlob = await generateVoiceDemo(demoText, 'emma_american_female', 'en');
       
       const audioUrl = URL.createObjectURL(audioBlob);
       setDemoAudio(audioUrl);
@@ -60,10 +69,23 @@ const HomePage: React.FC = () => {
         audioRef.current.play();
         setIsPlayingDemo(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Demo synthesis failed:', error);
+      
       // Show user-friendly error message
-      alert('Voice synthesis failed. Please try again.');
+      let errorMessage = 'Voice synthesis failed. ';
+      if (error.response?.status === 401) {
+        errorMessage = 'Your session expired. Please login again.';
+        setTimeout(() => window.location.href = '/login', 2000);
+      } else if (error.response?.status === 404) {
+        errorMessage += 'TTS service unavailable.';
+      } else if (error.response?.status === 500) {
+        errorMessage += 'Server error. Please try again.';
+      } else {
+        errorMessage += 'Please try again.';
+      }
+      
+      showToast.error(errorMessage);
     } finally {
       setIsGenerating(false);
     }
@@ -257,7 +279,7 @@ const HomePage: React.FC = () => {
                       value={demoText}
                       onChange={(e) => setDemoText(e.target.value)}
                       placeholder="Enter text to synthesize with any of our 112 global voices..."
-                      className="flex-1 p-4 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg resize-none focus:ring-2 focus:ring-voxly-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                      className="flex-1 p-4 bg-white dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg resize-none focus:ring-2 focus:ring-voxly-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                       maxLength={500}
                       rows={4}
                     />

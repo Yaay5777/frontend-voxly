@@ -7,7 +7,8 @@
 | Audio playback errors | ✅ Fixed | `AdvancedAudioVisualizer.tsx`, `useAudioPlayer.ts`, `VoicesPage.tsx` | Prevent duplicate source nodes, proper cleanup, autoplay handling |
 | Auth persistence | ✅ Fixed | `api.ts`, `useAuthStore.ts`, `App.tsx` | Unified token storage (cookies + localStorage), async initialization |
 | Verification email button | ✅ Fixed | `EmailVerificationPending.tsx`, `api.ts` | Proper auth check, correct endpoint, error handling |
-| **Synthesis 401 error** | ✅ **Fixed** | `services/api.ts` | Added auth interceptor to TTS API, multi-source token retrieval |
+| Synthesis 401 error | ✅ Fixed | `services/api.ts` | Added auth interceptor to TTS API, multi-source token retrieval |
+| **Demo 404 error** | ✅ **Fixed** | `services/api.ts`, `VoicesPage.tsx`, `HomePage.tsx` | Changed `/demo` → `/synthesize`, added auth checks |
 
 ---
 
@@ -173,6 +174,55 @@ this.ttsApi.interceptors.response.use(
 ```
 
 **Result**: Synthesis requests automatically include auth token, no more 401 errors
+
+---
+
+## 🎤 Demo 404 Error - What Changed
+
+### Before
+```typescript
+// ❌ Frontend calling non-existent /demo endpoint
+const response = await fetch(`${TTS_API_URL}/demo`, {
+  method: 'POST',
+  body: formData,  // speaker_id parameter
+});
+// Backend: 404 Not Found
+
+// ❌ Three different places calling /demo
+// - services/api.ts
+// - VoicesPage.tsx (direct fetch)
+// - HomePage.tsx (via generateVoiceDemo)
+```
+
+### After
+```typescript
+// ✅ All demos now use /synthesize endpoint
+async generateVoiceDemo(text: string, voiceId: string, language: string = 'en'): Promise<Blob> {
+  const formData = new FormData();
+  formData.append('text', text);
+  formData.append('voice_id', voiceId);  // ✅ Correct parameter
+  formData.append('language', language);
+
+  // ✅ Uses /synthesize (auth added by interceptor)
+  const response = await this.ttsApi.post('/synthesize', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    responseType: 'blob',
+  });
+}
+
+// ✅ VoicesPage uses API function
+import { generateVoiceDemo as apiGenerateVoiceDemo } from '../services/api';
+const audioBlob = await apiGenerateVoiceDemo(text, voiceId, 'en');
+
+// ✅ HomePage checks auth first
+if (!isAuthenticated) {
+  alert('Please login to try voice synthesis.');
+  window.location.href = '/login';
+  return;
+}
+```
+
+**Result**: Demos work correctly using `/synthesize` endpoint with authentication
 
 ---
 

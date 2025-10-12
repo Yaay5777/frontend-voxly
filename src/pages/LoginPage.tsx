@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from 'lucide-react';
+import { showToast } from '../utils/toast';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ const LoginPage: React.FC = () => {
 
       if (response.ok) {
         setErrors([]);
-        alert(data.message);
+        showToast.success(data.message || 'Password reset email sent! Check your inbox.');
       } else {
         setErrors([data.detail || 'Failed to send reset email']);
       }
@@ -234,7 +235,7 @@ const LoginPage: React.FC = () => {
                   name="usernameOrEmail"
                   value={formData.usernameOrEmail}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400 bg-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800/80"
                   placeholder="Enter username or email"
                   disabled={loading}
                 />
@@ -253,7 +254,7 @@ const LoginPage: React.FC = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400 bg-white"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-800/80"
                   placeholder="Enter your password"
                   disabled={loading}
                 />

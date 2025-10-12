@@ -444,7 +444,7 @@ const SynthesisPage: React.FC = () => {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Enter the text you want to convert to speech..."
-                  className="w-full h-32 p-4 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all resize-none"
+                  className="w-full h-32 p-4 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all resize-none text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   maxLength={remainingQuota}
                 />
                 
