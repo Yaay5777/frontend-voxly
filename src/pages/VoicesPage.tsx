@@ -37,6 +37,9 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useAudioStore } from '../store/useAudioStore';
 import { useVoiceStore } from '../store/useVoiceStore';
 
+// Custom hooks
+import { useAudioPlayer } from '../hooks/useAudioPlayer';
+
 // Services
 import { getVoices, synthesizeText } from '../services/api';
 import { Voice } from '../types';
@@ -78,6 +81,18 @@ const VoicesPage: React.FC = () => {
   const [generatingDemo, setGeneratingDemo] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showTagFilter, setShowTagFilter] = useState(false);
+
+  // Audio player hook for demo playback
+  const audioPlayer = useAudioPlayer({
+    onEnded: () => {
+      setPlayingVoice(null);
+    },
+    onError: (error) => {
+      console.error('Audio error:', error);
+      setPlayingVoice(null);
+      alert(error.message);
+    }
+  });
 
   // Voice categories with icons and descriptions
   const categories = [
@@ -189,6 +204,11 @@ const VoicesPage: React.FC = () => {
   };
 
   const generateVoiceDemo = async (voice: Voice) => {
+    // Stop any currently playing audio
+    if (audioPlayer.isPlaying) {
+      audioPlayer.stop();
+    }
+
     setGeneratingDemo(voice.id);
     try {
       console.log('Generating demo for voice:', voice.name, 'ID:', voice.id);
@@ -197,14 +217,12 @@ const VoicesPage: React.FC = () => {
       const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
       
       // Use the public /demo endpoint with Form data (no authentication required)
-      // Voice IDs now match the XTTS dataset voices directly (e.g., en_us_arianeural)
       const formData = new FormData();
       formData.append('text', voice.sample_text || "Hello, this is a sample of my voice.");
-      formData.append('speaker_id', voice.id);  // Voice ID matches dataset
+      formData.append('speaker_id', voice.id);
       formData.append('language', 'en');
       
       console.log('Sending demo request to:', `${TTS_API_URL}/demo`);
-      console.log('FormData:', { speaker_id: voice.id, text: voice.sample_text || "Hello, this is a sample of my voice." });
       
       const response = await fetch(`${TTS_API_URL}/demo`, {
         method: 'POST',
@@ -220,43 +238,15 @@ const VoicesPage: React.FC = () => {
       }
       
       const audioBlob = await response.blob();
-      console.log('Audio generated successfully, size:', audioBlob.size);
+      console.log('Audio generated successfully, size:', audioBlob.size, 'bytes');
       
       const audioUrl = URL.createObjectURL(audioBlob);
       
-      // Create audio element and play immediately (triggered by user click)
-      const audio = new Audio(audioUrl);
-      
-      // Set up audio event listeners
-      audio.addEventListener('loadeddata', () => {
-        console.log('Audio loaded successfully');
-      });
-      
-      audio.addEventListener('ended', () => {
-        console.log('Audio playback ended');
-        setPlayingVoice(null);
-      });
-      
-      audio.addEventListener('error', (error) => {
-        console.error('Audio playback error:', error);
-        setPlayingVoice(null);
-        alert('Audio playback failed. Please try again or check your browser audio settings.');
-      });
-      
-      // Play the audio immediately (this is triggered by user click, so it should work)
+      // Play audio using the custom hook (handles all edge cases)
       setPlayingVoice(voice.id);
-      audio.play().catch((error) => {
-        console.error('Audio play() failed:', error);
-        setPlayingVoice(null);
-        
-        // Show helpful error message
-        if (error.name === 'NotAllowedError') {
-          alert('Please click the Demo button again to play the audio. Your browser requires a direct user interaction to play audio.');
-        } else {
-          alert('Failed to play audio. Please try again.');
-        }
-      });
+      await audioPlayer.play(audioUrl);
       
+      // Update audio store for global player
       setCurrentAudio({
         id: `demo-${voice.id}`,
         filename: `${voice.name} Demo`,
@@ -270,20 +260,20 @@ const VoicesPage: React.FC = () => {
       });
     } catch (error: any) {
       console.error('Failed to generate demo:', error);
+      setPlayingVoice(null);
       
       // Show user-friendly error message
       let errorMessage = 'Failed to generate demo. ';
       if (error.message?.includes('404')) {
-        errorMessage += 'Voice not found or TTS service unavailable. Please try again later.';
+        errorMessage += 'Voice not found or TTS service unavailable.';
       } else if (error.message?.includes('500')) {
-        errorMessage += 'Server error. Please try again in a moment.';
+        errorMessage += 'Server error. Please try again.';
       } else if (error.message?.includes('Failed to fetch')) {
-        errorMessage += 'Cannot connect to TTS service. Please check your internet connection.';
+        errorMessage += 'Cannot connect to TTS service.';
       } else {
         errorMessage += error.message || 'Please try again.';
       }
       
-      // You can add a toast notification here if you have a toast system
       alert(errorMessage);
     } finally {
       setGeneratingDemo(null);

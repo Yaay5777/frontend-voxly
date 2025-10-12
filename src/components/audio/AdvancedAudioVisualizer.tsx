@@ -31,7 +31,9 @@ const AdvancedAudioVisualizer: React.FC<AdvancedAudioVisualizerProps> = ({
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const animationRef = useRef<number>();
+  const isInitializedRef = useRef<boolean>(false);
   const [audioData, setAudioData] = useState<number[]>([]);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -40,27 +42,48 @@ const AdvancedAudioVisualizer: React.FC<AdvancedAudioVisualizerProps> = ({
   // Initialize audio context and analyser
   const initializeAudio = useCallback(async () => {
     if (!audioUrl || !audioRef.current) return;
+    
+    // Prevent multiple initializations on the same audio element
+    if (isInitializedRef.current) {
+      console.log('Audio already initialized, skipping...');
+      return;
+    }
 
     try {
-      // Create audio context
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // Create audio context if it doesn't exist
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
       const audioContext = audioContextRef.current;
 
-      // Create analyser
-      analyserRef.current = audioContext.createAnalyser();
-      analyserRef.current.fftSize = 256;
-      analyserRef.current.smoothingTimeConstant = 0.8;
+      // Create analyser if it doesn't exist
+      if (!analyserRef.current) {
+        analyserRef.current = audioContext.createAnalyser();
+        analyserRef.current.fftSize = 256;
+        analyserRef.current.smoothingTimeConstant = 0.8;
+      }
 
-      // Connect audio source to analyser
-      const source = audioContext.createMediaElementSource(audioRef.current);
-      source.connect(analyserRef.current);
-      analyserRef.current.connect(audioContext.destination);
+      // Only create source node if it doesn't exist
+      // This prevents the "InvalidStateError" from creating multiple sources
+      if (!sourceNodeRef.current) {
+        sourceNodeRef.current = audioContext.createMediaElementSource(audioRef.current);
+        sourceNodeRef.current.connect(analyserRef.current);
+        analyserRef.current.connect(audioContext.destination);
+        console.log('✅ Audio source node created and connected');
+      }
 
       // Set audio properties
       audioRef.current.crossOrigin = 'anonymous';
       audioRef.current.volume = volume;
+      
+      isInitializedRef.current = true;
     } catch (error) {
       console.error('Error initializing audio:', error);
+      // If error is about existing source, that's ok - we can continue
+      if (error instanceof Error && error.message.includes('already')) {
+        console.log('Audio element already has a source node, continuing...');
+        isInitializedRef.current = true;
+      }
     }
   }, [audioUrl, volume]);
 
@@ -203,30 +226,100 @@ const AdvancedAudioVisualizer: React.FC<AdvancedAudioVisualizerProps> = ({
     }
   };
 
+  // Cleanup function
+  const cleanupAudio = useCallback(() => {
+    console.log('🧹 Cleaning up audio resources...');
+    
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+    
+    // Disconnect source node if it exists
+    if (sourceNodeRef.current) {
+      try {
+        sourceNodeRef.current.disconnect();
+        sourceNodeRef.current = null;
+      } catch (error) {
+        console.log('Source already disconnected');
+      }
+    }
+    
+    // Close audio context if it exists
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      try {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      } catch (error) {
+        console.log('Audio context already closed');
+      }
+    }
+    
+    analyserRef.current = null;
+    isInitializedRef.current = false;
+  }, []);
+
   // Effects
   useEffect(() => {
     if (audioUrl) {
       initializeAudio();
     }
+    
+    // Cleanup on unmount or when audioUrl changes
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, [audioUrl, initializeAudio]);
 
   useEffect(() => {
-    if (isPlaying && audioContextRef.current?.state === 'suspended') {
-      audioContextRef.current.resume();
-    }
+    const handlePlayback = async () => {
+      if (!audioRef.current) return;
 
-    if (isPlaying) {
-      drawVisualizer();
-    } else if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
+      if (isPlaying) {
+        try {
+          // Resume audio context if suspended (fixes autoplay issues)
+          if (audioContextRef.current?.state === 'suspended') {
+            await audioContextRef.current.resume();
+            console.log('✅ Audio context resumed');
+          }
+
+          // Play audio with user interaction handling
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                console.log('✅ Audio playback started');
+                drawVisualizer();
+              })
+              .catch((error) => {
+                console.error('Audio play() failed:', error);
+                if (error.name === 'NotAllowedError') {
+                  console.warn('⚠️ Autoplay blocked. User interaction required.');
+                  // Notify parent component via callback if needed
+                  onPlayPause?.();
+                }
+              });
+          }
+        } catch (error) {
+          console.error('Error during playback:', error);
+        }
+      } else {
+        audioRef.current.pause();
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+        }
+      }
+    };
+
+    handlePlayback();
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isPlaying, drawVisualizer]);
+  }, [isPlaying, drawVisualizer, onPlayPause]);
 
   // Format time
   const formatTime = (time: number) => {

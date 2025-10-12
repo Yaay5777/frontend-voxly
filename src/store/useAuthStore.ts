@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { User } from '../types';
 
 // Cookie utility functions
@@ -11,6 +12,11 @@ const getCookie = (name: string): string | null => {
 
 const deleteCookie = (name: string) => {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+};
+
+const setCookie = (name: string, value: string, days = 7) => {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
 };
 
 interface AuthState {
@@ -26,7 +32,8 @@ interface AuthState {
   initializeAuth: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>()((set, get) => ({
+export const useAuthStore = create<AuthState>()(persist(
+  (set, get) => ({
   user: null,
   token: null,
   isAuthenticated: false,
@@ -34,6 +41,10 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   login: (token: string, user: User) => {
     console.log('✅ Logging in user:', user.email);
+    
+    // Store token in cookies
+    setCookie('voxly_at', token, 7);
+    
     set({
       token,
       user,
@@ -146,8 +157,29 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   initializeAuth: async () => {
     console.log('🔄 Initializing authentication...');
+    set({ isLoading: true });
 
-    // Try to login from cookies (this will verify tokens with backend)
-    await get().loginFromCookies();
+    try {
+      // Try to login from cookies (this will verify tokens with backend)
+      const success = await get().loginFromCookies();
+      
+      if (success) {
+        console.log('✅ Authentication initialized successfully');
+      } else {
+        console.log('ℹ️ No valid session found');
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize auth:', error);
+      set({ isLoading: false });
+    }
   },
+}), {
+  name: 'voxly-auth-storage',
+  // Only persist user data, not tokens (tokens stay in cookies)
+  partialize: (state) => ({ 
+    user: state.user,
+    isAuthenticated: state.isAuthenticated 
+  }),
+  // Skip hydration initially, rely on initializeAuth
+  skipHydration: false,
 }));

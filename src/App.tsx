@@ -128,25 +128,34 @@ const App: React.FC = () => {
 
   // Initialize stores on app start
   useEffect(() => {
-    console.log('🚀 Initializing Voxly app...');
-    initializeTheme();
-    initializeAuth();
+    const initialize = async () => {
+      console.log('🚀 Initializing Voxly app...');
+      
+      // Initialize theme (synchronous)
+      initializeTheme();
+      
+      // Initialize auth (asynchronous - waits for backend verification)
+      await initializeAuth();
+      
+      // Check for OAuth success (when redirected back from Google)
+      const urlParams = new URLSearchParams(window.location.search);
+      const error = urlParams.get('error');
+      const message = urlParams.get('message');
+      
+      if (error) {
+        console.error('❌ OAuth error:', error, message);
+        // Clean up URL parameters
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      } else if (window.location.pathname === '/dashboard') {
+        // User was redirected to dashboard after OAuth success
+        console.log('✅ OAuth success - user redirected to dashboard');
+      }
+      
+      console.log('✅ Voxly app initialized');
+    };
     
-    // Check for OAuth success (when redirected back from Google)
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
-    const message = urlParams.get('message');
-    
-    if (error) {
-      console.error('❌ OAuth error:', error, message);
-      // Clean up URL parameters
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-    } else if (window.location.pathname === '/dashboard') {
-      // User was redirected to dashboard after OAuth success
-      // The auth store should automatically detect JWT cookies
-      console.log('✅ OAuth success - user redirected to dashboard');
-    }
+    initialize();
   }, [initializeTheme, initializeAuth]);
 
   return (
