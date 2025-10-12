@@ -6,7 +6,7 @@ const AUTH_API = import.meta.env.VITE_AUTH_URL || "https://yaya5777-voxly-auth.h
 const TTS_API = import.meta.env.VITE_TTS_URL || "https://yaya5777-voxly-tts.hf.space";
 
 // Configure axios defaults
-axios.defaults.timeout = 30000; // 30 second timeout
+axios.defaults.timeout = 120000; // 120 second timeout for XTTS synthesis
 axios.defaults.withCredentials = true;
 
 // Cookie utility functions for token management

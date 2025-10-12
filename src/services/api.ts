@@ -15,7 +15,7 @@ class ApiService {
     // Auth API instance (port 8000)
     this.api = axios.create({
       baseURL: AUTH_BASE_URL,
-      timeout: 30000,
+      timeout: 60000, // Increased to 60s for slow connections
       headers: {
         'Content-Type': 'application/json',
       },
@@ -24,7 +24,7 @@ class ApiService {
     // TTS API instance (port 8001)
     this.ttsApi = axios.create({
       baseURL: TTS_BASE_URL,
-      timeout: 30000,
+      timeout: 120000, // Increased to 120s for XTTS voice cloning (can take time)
       headers: {
         'Content-Type': 'application/json',
       },
