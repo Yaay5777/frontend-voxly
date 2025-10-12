@@ -153,13 +153,14 @@ class ApiService {
     return response.data;
   }
 
-  // Voice endpoints (use XTTS backend - 150 voices)
+  // Voice endpoints (use TTS backend)
   async getVoices(): Promise<Voice[]> {
     try {
-      const response = await this.ttsApi.get('/xtts/voices');
-      return response.data.voices || [];
+      const response = await this.ttsApi.get('/voices');
+      // Backend returns { speakers: [...] }
+      return response.data.speakers || response.data.voices || [];
     } catch (error) {
-      console.error('Error fetching XTTS voices:', error);
+      console.error('Error fetching voices:', error);
       throw error;
     }
   }
@@ -170,15 +171,15 @@ class ApiService {
       const formData = new FormData();
       formData.append('text', request.text);
       formData.append('language', request.language);
-      formData.append('voice_id', request.voice_id || 'sophia_british_female');
+      formData.append('voice_id', request.voice_id || 'emma_american_friendly');
       
       if (speakerFile) {
         formData.append('speaker_wav', speakerFile);
       }
 
-      console.log('🚀 XTTS Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
+      console.log('🚀 Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
 
-      const response = await this.ttsApi.post('/xtts/synthesize', formData, {
+      const response = await this.ttsApi.post('/synthesize', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         responseType: 'blob',
       });
@@ -241,17 +242,31 @@ class ApiService {
 
   // User quota and usage
   async getQuotaInfo(): Promise<QuotaInfo> {
-    const quotaResponse = await this.api.get('/quota');
-    const quotaInfo: QuotaInfo = {
-      current_usage: quotaResponse.data.current_usage,
-      weekly_used: quotaResponse.data.weekly_limit - quotaResponse.data.current_usage,
-      weekly_quota: quotaResponse.data.weekly_limit,
-      weekly_limit: quotaResponse.data.weekly_limit,
-      reset_date: quotaResponse.data.reset_date,
-      tier: quotaResponse.data.tier,
-      percentage_used: quotaResponse.data.percentage_used,
-    };
-    return quotaInfo;
+    try {
+      const quotaResponse = await this.api.get('/auth/quota');
+      const quotaInfo: QuotaInfo = {
+        current_usage: quotaResponse.data.current_usage || 0,
+        weekly_used: quotaResponse.data.weekly_used || 0,
+        weekly_quota: quotaResponse.data.weekly_quota || 10000,
+        weekly_limit: quotaResponse.data.weekly_limit || 10000,
+        reset_date: quotaResponse.data.reset_date || new Date().toISOString(),
+        tier: quotaResponse.data.tier || 'free',
+        percentage_used: quotaResponse.data.percentage_used || 0,
+      };
+      return quotaInfo;
+    } catch (error) {
+      console.warn('Quota endpoint not available, using defaults');
+      // Return default quota info if endpoint doesn't exist
+      return {
+        current_usage: 0,
+        weekly_used: 0,
+        weekly_quota: 10000,
+        weekly_limit: 10000,
+        reset_date: new Date().toISOString(),
+        tier: 'free',
+        percentage_used: 0,
+      };
+    }
   }
 
   // Admin endpoints (for development/testing)

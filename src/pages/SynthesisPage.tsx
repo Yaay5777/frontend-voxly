@@ -92,7 +92,8 @@ const SynthesisPage: React.FC = () => {
 
   const loadAvailableLanguages = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_TTS_API_URL}/languages`);
+      const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
+      const response = await fetch(`${TTS_API_URL}/languages`);
       const data = await response.json();
       setAvailableLanguages(data.languages);
       setSelectedLanguage(data.default_language || 'en');

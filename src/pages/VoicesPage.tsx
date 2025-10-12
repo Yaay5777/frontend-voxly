@@ -544,8 +544,8 @@ const VoicesPage: React.FC = () => {
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                           {voice.name}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                          {voice.description}
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 min-h-[40px]">
+                          {voice.description || 'A unique AI-generated voice with natural intonation and clarity.'}
                         </p>
                       </div>
 
@@ -568,8 +568,13 @@ const VoicesPage: React.FC = () => {
 
                       {/* Voice Details */}
                       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>{voice.languages.join(', ')}</span>
-                        <span>{voice.gender} • {voice.age}</span>
+                        <span className="font-medium">{voice.languages?.join(', ') || 'Multi-language'}</span>
+                        <span className="capitalize">{voice.gender || 'Neutral'} • {voice.age || 'Adult'}</span>
+                      </div>
+
+                      {/* Character Count Info */}
+                      <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                        <span className="font-semibold">✨ Sample:</span> {voice.sample_text?.length || 0} characters
                       </div>
 
                       {/* Action Buttons */}
