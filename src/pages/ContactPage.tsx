@@ -17,7 +17,7 @@ const ContactPage: React.FC = () => {
     // Handle form submission
     console.log('Contact form submitted:', formData);
     // In a real app, this would send to your backend
-    showToast.success('Thank you for your message! We\'ll get back to you soon.', { duration: 5000 });
+    showToast.success('Thank you for your message! We\'ll get back to you soon.');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

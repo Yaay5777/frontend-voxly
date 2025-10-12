@@ -191,9 +191,13 @@ export const showToast = {
    */
   quota: {
     warning: (remaining: number) => {
-      toast.warning(`Only ${remaining.toLocaleString()} characters remaining in your quota`, {
+      toast(`Only ${remaining.toLocaleString()} characters remaining in your quota`, {
         icon: '⚠️',
         duration: 5000,
+        style: {
+          background: '#f59e0b',
+          color: '#fff',
+        },
       });
     },
     

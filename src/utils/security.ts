@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import Filter from 'bad-words';
+import { Filter } from 'bad-words';
 
 // Initialize profanity filter
 const profanityFilter = new Filter();
