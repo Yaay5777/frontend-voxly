@@ -191,21 +191,33 @@ const VoicesPage: React.FC = () => {
   const generateVoiceDemo = async (voice: Voice) => {
     setGeneratingDemo(voice.id);
     try {
-      console.log('Generating demo for voice:', voice.name);
+      console.log('Generating demo for voice:', voice.name, 'ID:', voice.id);
       
-      // Use the new demo endpoint that doesn't require authentication
+      // Use environment variable for TTS URL with fallback
+      const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
+      
+      // Use synthesize endpoint (since /demo endpoint is not deployed yet)
       const formData = new FormData();
       formData.append('text', voice.sample_text || "Hello, this is a sample of my voice.");
-      formData.append('speaker_id', voice.id);  // Fixed: use speaker_id instead of speaker_idx
+      formData.append('voice_id', voice.id);
       formData.append('language', 'en');
+      formData.append('speed', '1.0');
+      formData.append('pitch', '1.0');
       
-      const response = await fetch('https://yaya5777-voxly-tts.hf.space/demo', {
+      console.log('Sending synthesis request to:', `${TTS_API_URL}/synthesize`);
+      console.log('FormData:', { voice_id: voice.id, text: voice.sample_text || "Hello, this is a sample of my voice." });
+      
+      const response = await fetch(`${TTS_API_URL}/synthesize`, {
         method: 'POST',
         body: formData,
       });
       
+      console.log('Synthesis response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Synthesis request failed:', response.status, errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
       
       const audioBlob = await response.blob();
@@ -253,8 +265,23 @@ const VoicesPage: React.FC = () => {
         language: 'en'
       });
       setPlayingVoice(voice.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to generate demo:', error);
+      
+      // Show user-friendly error message
+      let errorMessage = 'Failed to generate demo. ';
+      if (error.message?.includes('404')) {
+        errorMessage += 'Voice not found or TTS service unavailable. Please try again later.';
+      } else if (error.message?.includes('500')) {
+        errorMessage += 'Server error. Please try again in a moment.';
+      } else if (error.message?.includes('Failed to fetch')) {
+        errorMessage += 'Cannot connect to TTS service. Please check your internet connection.';
+      } else {
+        errorMessage += error.message || 'Please try again.';
+      }
+      
+      // You can add a toast notification here if you have a toast system
+      alert(errorMessage);
     } finally {
       setGeneratingDemo(null);
     }
