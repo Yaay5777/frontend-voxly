@@ -91,23 +91,20 @@ const SynthesisPage: React.FC = () => {
   }, [user, token, voiceId, voices, selectedVoice]);
 
   const loadAvailableLanguages = async () => {
-    try {
-      const TTS_API_URL = import.meta.env.VITE_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
-      const response = await fetch(`${TTS_API_URL}/languages`);
-      const data = await response.json();
-      setAvailableLanguages(data.languages);
-      setSelectedLanguage(data.default_language || 'en');
-    } catch (error) {
-      console.error('Failed to load languages:', error);
-      // Fallback languages
-      setAvailableLanguages({
-        en: { name: 'English', native_name: 'English', flag: '🇺🇸' },
-        es: { name: 'Spanish', native_name: 'Español', flag: '🇪🇸' },
-        fr: { name: 'French', native_name: 'Français', flag: '🇫🇷' },
-        de: { name: 'German', native_name: 'Deutsch', flag: '🇩🇪' },
-        ar: { name: 'Arabic', native_name: 'العربية', flag: '🇸🇦' }
-      });
-    }
+    // Use fallback languages directly (no API call needed)
+    setAvailableLanguages({
+      en: { name: 'English', native_name: 'English', flag: '🇺🇸' },
+      es: { name: 'Spanish', native_name: 'Español', flag: '🇪🇸' },
+      fr: { name: 'French', native_name: 'Français', flag: '🇫🇷' },
+      de: { name: 'German', native_name: 'Deutsch', flag: '🇩🇪' },
+      ar: { name: 'Arabic', native_name: 'العربية', flag: '🇸🇦' },
+      zh: { name: 'Chinese', native_name: '中文', flag: '🇨🇳' },
+      ja: { name: 'Japanese', native_name: '日本語', flag: '🇯🇵' },
+      ko: { name: 'Korean', native_name: '한국어', flag: '🇰🇷' },
+      hi: { name: 'Hindi', native_name: 'हिन्दी', flag: '🇮🇳' },
+      ru: { name: 'Russian', native_name: 'Русский', flag: '🇷🇺' }
+    });
+    setSelectedLanguage('en');
   };
 
   const loadQuotaInfo = async () => {
@@ -116,6 +113,14 @@ const SynthesisPage: React.FC = () => {
       setQuotaInfo(quota);
     } catch (error) {
       console.error('Failed to load quota info:', error);
+      // Set default quota if API fails
+      setQuotaInfo({
+        weekly_limit: 10000,
+        current_usage: 0,
+        weekly_used: 0,
+        weekly_quota: 10000,
+        tier: 'free'
+      });
     }
   };
 
@@ -212,8 +217,8 @@ const SynthesisPage: React.FC = () => {
 
   const characterCount = text.length;
   // Calculate remaining quota based on the QuotaInfo properties
-  const remainingQuota = quotaInfo ? quotaInfo.weekly_limit - quotaInfo.current_usage : 0;
-  const canGenerate = characterCount > 0 && characterCount <= remainingQuota;
+  const remainingQuota = quotaInfo ? (quotaInfo.weekly_limit || 10000) - (quotaInfo.current_usage || 0) : 10000;
+  const canGenerate = characterCount > 0 && characterCount <= 5000; // Max 5000 chars per request
 
   if (!currentVoice) {
     return (
