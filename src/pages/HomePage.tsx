@@ -58,7 +58,7 @@ const HomePage: React.FC = () => {
     try {
       // Use the API service which now uses /synthesize endpoint
       // Authentication token is automatically added by interceptor
-      const audioBlob = await generateVoiceDemo(demoText, 'emma_american_female', 'en');
+      const audioBlob = await generateVoiceDemo(demoText, 'en_us_arianeural', 'en');
       
       const audioUrl = URL.createObjectURL(audioBlob);
       setDemoAudio(audioUrl);
