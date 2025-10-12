@@ -182,8 +182,8 @@ const SynthesisPage: React.FC = () => {
       
       // Handle specific error cases
       if (error.response?.status === 401) {
-        setError('Authentication required. Please log in to generate speech.');
-        setTimeout(() => navigate('/login'), 2000);
+        setError('TTS backend authentication issue. The backend is not accepting tokens. Please contact support.');
+        // Don't redirect - it's a backend configuration issue, not a session issue
       } else if (error.response?.status === 403) {
         setError('Access denied. Please check your subscription or quota.');
       } else if (error.response?.status === 429) {

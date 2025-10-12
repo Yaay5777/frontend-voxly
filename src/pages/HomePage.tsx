@@ -75,8 +75,8 @@ const HomePage: React.FC = () => {
       // Show user-friendly error message
       let errorMessage = 'Voice synthesis failed. ';
       if (error.response?.status === 401) {
-        errorMessage = 'Your session expired. Please login again.';
-        setTimeout(() => window.location.href = '/login', 2000);
+        errorMessage = 'TTS backend authentication issue. Please contact support.';
+        // Don't redirect - it's a backend configuration issue
       } else if (error.response?.status === 404) {
         errorMessage += 'TTS service unavailable.';
       } else if (error.response?.status === 500) {

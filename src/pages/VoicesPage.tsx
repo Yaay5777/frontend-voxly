@@ -257,8 +257,8 @@ const VoicesPage: React.FC = () => {
       // Show user-friendly error message
       let errorMessage = 'Failed to generate demo. ';
       if (error.response?.status === 401) {
-        errorMessage = 'Your session expired. Please login again.';
-        setTimeout(() => navigate('/login'), 2000);
+        errorMessage = 'Authentication error with TTS backend. You are still logged in.';
+        // Don't redirect - it's a backend issue, not a session issue
       } else if (error.response?.status === 404) {
         errorMessage += 'Voice not found or TTS service unavailable.';
       } else if (error.response?.status === 500) {
