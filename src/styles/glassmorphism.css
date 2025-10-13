@@ -48,6 +48,96 @@
   --glass-opacity: 0.15;
 }
 
+/* === BODY STYLING FOR EACH THEME === */
+
+/* Light Theme Body */
+.theme-light,
+[data-theme="light"] body,
+body[data-theme="light"] {
+  background: linear-gradient(135deg, 
+    #ffffff 0%, 
+    #f0f9ff 25%, 
+    #e0e7ff 50%, 
+    #fae8ff 75%,
+    #fef3c7 100%) !important;
+  background-attachment: fixed !important;
+  color: #0f172a !important;
+  min-height: 100vh;
+  transition: background 0.5s ease, color 0.3s ease;
+}
+
+[data-theme="light"] * {
+  color: var(--text-primary);
+}
+
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3 {
+  color: #0f172a !important;
+}
+
+/* Dark Theme Body */
+.theme-dark,
+[data-theme="dark"] body,
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, 
+    #0f172a 0%, 
+    #1e293b 50%, 
+    #334155 100%) !important;
+  background-attachment: fixed !important;
+  color: #f1f5f9 !important;
+  min-height: 100vh;
+  transition: background 0.5s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] * {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3 {
+  color: #ffffff !important;
+}
+
+/* Vibey Theme Body - THE STAR! ✨ */
+.theme-vibey,
+[data-theme="vibey"] body,
+body[data-theme="vibey"] {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(236, 72, 153, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%) !important;
+  background-attachment: fixed !important;
+  color: #ffffff !important;
+  min-height: 100vh;
+  animation: vibeyShift 15s ease-in-out infinite;
+  transition: background 0.5s ease, color 0.3s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+
+[data-theme="vibey"] * {
+  color: var(--text-primary);
+}
+
+[data-theme="vibey"] h1,
+[data-theme="vibey"] h2,
+[data-theme="vibey"] h3 {
+  color: #ffffff !important;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+@keyframes vibeyShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 /* === GLASSMORPHISM BASE === */
 .glass-card {
   background: var(--glass-bg);
@@ -67,6 +157,60 @@
     0 12px 48px var(--glass-shadow),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Light Theme Glass Cards */
+[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .glass-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+/* Dark Theme Glass Cards */
+[data-theme="dark"] .glass-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .glass-card:hover {
+  background: rgba(30, 41, 59, 0.85);
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(139, 92, 246, 0.6);
+}
+
+/* Vibey Theme Glass Cards - EXTRA GLOWY! */
+[data-theme="vibey"] .glass-card {
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(236, 72, 153, 0.4);
+  box-shadow: 
+    0 8px 32px rgba(139, 92, 246, 0.3),
+    0 0 20px rgba(236, 72, 153, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="vibey"] .glass-card:hover {
+  background: rgba(139, 92, 246, 0.25);
+  box-shadow: 
+    0 12px 48px rgba(139, 92, 246, 0.5),
+    0 0 40px rgba(236, 72, 153, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  border-color: rgba(236, 72, 153, 0.8);
+  transform: translateY(-4px) scale(1.02);
 }
 
 /* === GRADIENT ACCENTS === */

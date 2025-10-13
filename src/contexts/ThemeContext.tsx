@@ -18,12 +18,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    // Apply theme to document
+    // Apply theme to ALL elements
     document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
     localStorage.setItem('voxly-theme', theme);
     
-    // Add theme class to body for additional styling
-    document.body.className = `theme-${theme}`;
+    // Remove all theme classes first
+    document.body.classList.remove('theme-light', 'theme-dark', 'theme-vibey');
+    document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-vibey');
+    
+    // Add current theme class to both html and body
+    document.body.classList.add(`theme-${theme}`);
+    document.documentElement.classList.add(`theme-${theme}`);
+    
+    console.log(`🎨 Theme switched to: ${theme}`);
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
