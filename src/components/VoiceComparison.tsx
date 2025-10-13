@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Pause, Download, X, Plus, Loader } from 'lucide-react';
-import { showToast } from './Toast';
+import { showToast } from '../utils/toast';
 
 interface Voice {
   id: string;

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Mic, X, Play, Pause, Check, Loader, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { showToast } from '../components/Toast';
+import { showToast } from '../utils/toast';
 import '../styles/glassmorphism.css';
 
 interface ClonedVoice {
