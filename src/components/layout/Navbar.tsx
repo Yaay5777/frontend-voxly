@@ -22,6 +22,7 @@ import { useThemeStore } from '../../store/useThemeStore';
 // Component imports
 import GlassCard from '../ui/GlassCard';
 import GlowButton from '../ui/GlowButton';
+import { ThemeToggle } from '../ThemeToggle'; // NEW: 3-mode theme toggle
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -116,38 +117,10 @@ const Navbar: React.FC = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
-            {/* Theme Toggle */}
-            <motion.button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-glass-100 hover:bg-glass-200 transition-colors"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              aria-label="Toggle theme"
-            >
-              <AnimatePresence initial={false}>
-                {isDark ? (
-                  <motion.div
-                    key="sun"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Sun className="w-5 h-5 text-yellow-500" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="moon"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Moon className="w-5 h-5 text-gray-600" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+            {/* NEW: 3-Mode Theme Toggle (Light/Dark/Vibey) - Positioned in navbar instead of fixed */}
+            <div className="theme-toggle-navbar" style={{ position: 'relative' }}>
+              <ThemeToggle />
+            </div>
 
             {/* User Menu or Auth Buttons */}
             {isAuthenticated ? (

@@ -54,7 +54,8 @@ export interface SynthesisRequest {
   language: string;
   speed?: number;
   pitch?: number;
-  emotion?: 'neutral' | 'happy' | 'sad' | 'excited' | 'calm';
+  emotion?: 'neutral' | 'happy' | 'sad' | 'angry' | 'excited';
+  stability?: number; // NEW: Voice consistency (0.0-1.0)
 }
 
 export interface SynthesisResponse {

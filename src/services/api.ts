@@ -223,11 +223,33 @@ class ApiService {
       formData.append('language', request.language);
       formData.append('voice_id', request.voice_id || 'en_us_arianeural');
       
+      // NEW: Advanced voice controls
+      if (request.speed !== undefined) {
+        formData.append('speed', request.speed.toString());
+      }
+      if (request.pitch !== undefined) {
+        formData.append('pitch', request.pitch.toString());
+      }
+      if (request.emotion) {
+        formData.append('emotion', request.emotion);
+      }
+      if (request.stability !== undefined) {
+        formData.append('stability', request.stability.toString());
+      }
+      
       if (speakerFile) {
         formData.append('speaker_wav', speakerFile);
       }
 
-      console.log('🚀 Synthesis request:', { text: request.text, voice_id: request.voice_id, language: request.language });
+      console.log('🚀 Synthesis request:', { 
+        text: request.text, 
+        voice_id: request.voice_id, 
+        language: request.language,
+        speed: request.speed,
+        pitch: request.pitch,
+        emotion: request.emotion,
+        stability: request.stability
+      });
 
       // The auth token is automatically added by the interceptor
       // No need to manually add it here

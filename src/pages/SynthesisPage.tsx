@@ -26,6 +26,8 @@ import Avatar3D from '../3d/Avatar3D';
 import LoadingScreen from '../components/ui/LoadingScreen';
 import AIScriptGenerator from '../components/synthesis/AIScriptGenerator';
 import TemplateSelector from '../components/synthesis/TemplateSelector';
+import { AdvancedControls, VoiceControls } from '../components/AdvancedControls'; // NEW
+import { VoiceComparison } from '../components/VoiceComparison'; // NEW
 
 // Store imports
 import { useAuthStore } from '../store/useAuthStore';
@@ -61,6 +63,15 @@ const SynthesisPage: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [availableLanguages, setAvailableLanguages] = useState<Record<string, Language>>({});
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+  
+  // NEW: Advanced voice controls
+  const [voiceControls, setVoiceControls] = useState<VoiceControls>({
+    speed: 1.0,
+    pitch: 0,
+    emotion: 'neutral',
+    stability: 0.5,
+  });
+  const [showComparison, setShowComparison] = useState(false);
 
   // Get voice from URL params or selected voice
   const voiceId = searchParams.get('voice') || selectedVoice?.id;
@@ -137,11 +148,17 @@ const SynthesisPage: React.FC = () => {
 
     try {
       console.log('🚀 Starting synthesis for voice:', currentVoice.name);
+      console.log('🎛️ Voice controls:', voiceControls);
       
       const audioBlob = await synthesizeText({
         text: text.trim(),
         voice_id: currentVoice.id,
-        language: selectedLanguage
+        language: selectedLanguage,
+        // NEW: Advanced controls
+        speed: voiceControls.speed,
+        pitch: voiceControls.pitch,
+        emotion: voiceControls.emotion,
+        stability: voiceControls.stability
       });
 
       // Create AudioFile object from blob
@@ -463,6 +480,9 @@ const SynthesisPage: React.FC = () => {
               </div>
             </GlassCard>
 
+            {/* NEW: Advanced Voice Controls */}
+            <AdvancedControls onControlsChange={setVoiceControls} />
+
             {/* Generate Button */}
             <GlowButton
               onClick={handleSynthesize}
@@ -568,6 +588,20 @@ const SynthesisPage: React.FC = () => {
               </GlassCard>
             )}
           </motion.div>
+        </div>
+
+        {/* NEW: Voice Comparison Tool */}
+        <div className="mt-12">
+          <VoiceComparison
+            availableVoices={voices.map(v => ({
+              id: v.id,
+              name: v.name,
+              gender: v.gender || 'unknown',
+              accent: v.accent || v.languages?.[0] || 'en'
+            }))}
+            testText={text}
+            onTextChange={setText}
+          />
         </div>
       </div>
     </div>
