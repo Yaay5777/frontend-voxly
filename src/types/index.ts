@@ -77,7 +77,7 @@ export interface QuotaInfo {
 }
 
 export interface Theme {
-  mode: 'light' | 'dark' | 'vibey';
+  mode: 'light' | 'dark' | 'vibes';
   primary: string;
   secondary: string;
   accent: string;
