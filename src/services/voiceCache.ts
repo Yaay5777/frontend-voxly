@@ -58,7 +58,7 @@ class VoiceCacheService {
         size: audioBlob.size,
       };
 
-      await this.db.put(this.storeName, entry);
+      await this.db.put('voice-previews', entry);
       logger.debug(`🎵 Cached voice preview: ${voiceId} (${(audioBlob.size / 1024).toFixed(1)}KB)`);
 
       // Check cache size and clean if needed
@@ -76,7 +76,7 @@ class VoiceCacheService {
     if (!this.db) return null;
 
     try {
-      const entry = await this.db.get(this.storeName, voiceId);
+      const entry = await this.db.get('voice-previews', voiceId);
       
       if (!entry) {
         logger.debug(`❌ Voice not in cache: ${voiceId}`);
@@ -107,7 +107,7 @@ class VoiceCacheService {
     if (!this.db) return;
 
     try {
-      await this.db.delete(this.storeName, voiceId);
+      await this.db.delete('voice-previews', voiceId);
       logger.debug(`🗑️ Deleted voice from cache: ${voiceId}`);
     } catch (error) {
       logger.error(`Failed to delete voice ${voiceId}:`, error);
@@ -122,7 +122,7 @@ class VoiceCacheService {
     if (!this.db) return;
 
     try {
-      await this.db.clear(this.storeName);
+      await this.db.clear('voice-previews');
       logger.info('🗑️ Voice cache cleared');
     } catch (error) {
       logger.error('Failed to clear voice cache:', error);
@@ -137,7 +137,7 @@ class VoiceCacheService {
     if (!this.db) return { count: 0, size: 0 };
 
     try {
-      const entries = await this.db.getAll(this.storeName);
+      const entries = await this.db.getAll('voice-previews');
       const count = entries.length;
       const size = entries.reduce((total, entry) => total + entry.size, 0);
       
@@ -155,7 +155,7 @@ class VoiceCacheService {
     if (!this.db) return;
 
     try {
-      const entries = await this.db.getAll(this.storeName);
+      const entries = await this.db.getAll('voice-previews');
       const now = Date.now();
       let cleaned = 0;
 
@@ -188,7 +188,7 @@ class VoiceCacheService {
         logger.warn(`⚠️ Cache size ${(stats.size / 1024 / 1024).toFixed(1)}MB exceeds limit, cleaning...`);
         
         // Get all entries sorted by timestamp
-        const entries = await this.db.getAll(this.storeName);
+        const entries = await this.db.getAll('voice-previews');
         entries.sort((a, b) => a.timestamp - b.timestamp);
         
         // Delete oldest entries until under limit
