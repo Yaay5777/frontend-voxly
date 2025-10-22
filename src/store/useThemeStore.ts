@@ -10,6 +10,7 @@ interface ThemeState {
   isDark: boolean;
   setThemeMode: (mode: ThemeMode) => void;
   setTheme: (theme: Partial<Theme>) => void;
+  toggleTheme: () => void;
   initializeTheme: () => void;
 }
 
@@ -87,6 +88,12 @@ export const useThemeStore = create<ThemeState>()(
         set({
           theme: { ...currentTheme, ...themeData },
         });
+      },
+
+      toggleTheme: () => {
+        const { mode, setThemeMode } = get();
+        const nextMode = mode === 'light' ? 'dark' : mode === 'dark' ? 'vibes' : 'light';
+        setThemeMode(nextMode);
       },
 
       initializeTheme: () => {

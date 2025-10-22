@@ -40,7 +40,7 @@ export const ThemeToggle: React.FC = () => {
       whileTap={{ scale: 0.95 }}
       title={`Switch to ${mode === 'light' ? 'Dark' : mode === 'dark' ? 'Vibes' : 'Light'} Mode`}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.div
           key={mode}
           initial={{ rotate: -180, opacity: 0 }}

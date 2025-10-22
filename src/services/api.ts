@@ -149,7 +149,7 @@ class ApiService {
     try {
       console.log('🚀 Initiating Google OAuth flow');
       // Redirect directly to backend Google OAuth endpoint
-      window.location.href = `${API_BASE_URL}/auth/google`;
+      window.location.href = `${ENV.AUTH_URL}/auth/google`;
     } catch (error: any) {
       console.error('❌ Google OAuth initiation failed:', error);
       throw new Error('Failed to initiate Google OAuth');
@@ -298,7 +298,7 @@ class ApiService {
     return response.data.map((file: any) => ({
       id: file.id || file.filename,
       filename: file.filename,
-      url: `${TTS_BASE_URL}/outputs/${file.filename}`,
+      url: `${ENV.TTS_URL}/outputs/${file.filename}`,
       duration: file.duration || 0,
       size: file.size || 0,
       created_at: file.created_at || new Date().toISOString(),
