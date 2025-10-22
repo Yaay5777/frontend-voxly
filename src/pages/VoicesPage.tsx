@@ -46,6 +46,7 @@ import { showToast } from '../utils/toast';
 
 // Services
 import { getVoices, synthesizeText, generateVoiceDemo as apiGenerateVoiceDemo } from '../services/api';
+import { voiceCache } from '../services/voiceCache';
 import { Voice } from '../types';
 
 const VoicesPage: React.FC = () => {
@@ -227,23 +228,42 @@ const VoicesPage: React.FC = () => {
 
     setGeneratingDemo(voice.id);
     try {
-      console.log('Generating demo for voice:', voice.name, 'ID:', voice.id);
+      console.log('🎵 Demo requested for:', voice.name, 'ID:', voice.id);
       
-      // Use the API function which now uses /synthesize endpoint
-      // Authentication token is automatically added by interceptor
-      const audioBlob = await apiGenerateVoiceDemo(
-        voice.sample_text || "Hello, this is a sample of my voice.",
-        voice.id,
-        'en'
-      );
+      // Try to load from cache first for instant playback
+      const cachedBlob = await voiceCache.get(voice.id);
+      let audioBlob: Blob;
+      let fromCache = false;
       
-      console.log('Audio generated successfully, size:', audioBlob.size, 'bytes');
+      if (cachedBlob) {
+        console.log('✅ Loaded from cache:', voice.id);
+        audioBlob = cachedBlob;
+        fromCache = true;
+      } else {
+        console.log('⏳ Generating new demo (20s)...');
+        // Use the API function which now uses /synthesize endpoint
+        // Authentication token is automatically added by interceptor
+        audioBlob = await apiGenerateVoiceDemo(
+          voice.sample_text || "Hello, this is a sample of my voice.",
+          voice.id,
+          'en'
+        );
+        
+        console.log('✅ Audio generated, size:', audioBlob.size, 'bytes');
+        
+        // Cache the audio for future instant playback
+        await voiceCache.set(voice.id, audioBlob);
+      }
       
       const audioUrl = URL.createObjectURL(audioBlob);
       
       // Play audio using the custom hook (handles all edge cases)
       setPlayingVoice(voice.id);
       await audioPlayer.play(audioUrl);
+      
+      if (fromCache) {
+        showToast.success(`🚀 ${voice.name} (cached - instant playback)`);
+      }
       
       // Update audio store for global player
       setCurrentAudio({
@@ -258,7 +278,7 @@ const VoicesPage: React.FC = () => {
         language: 'en'
       });
     } catch (error: any) {
-      console.error('Failed to generate demo:', error);
+      console.error('❌ Demo generation failed:', error);
       setPlayingVoice(null);
       
       // Show user-friendly error message
@@ -602,6 +622,12 @@ const VoicesPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
+                  onMouseEnter={() => {
+                    // Auto-play demo on hover if authenticated
+                    if (isAuthenticated && !generatingDemo && playingVoice !== voice.id) {
+                      generateVoiceDemo(voice);
+                    }
+                  }}
                 >
                   <GlassCard className="p-6 h-full group hover:scale-105 transition-transform duration-300">
                     {/* AI Avatar Display */}
