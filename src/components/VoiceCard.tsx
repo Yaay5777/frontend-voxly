@@ -1,6 +1,9 @@
 // frontend/src/components/VoiceCard.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { voiceCache } from '../services/voiceCache';
+import { trackEvent } from '../services/analytics';
+import { logger } from '../utils/logger';
 
 export type VoiceObject = {
   id: string | number;
@@ -23,8 +26,11 @@ export type VoiceCardProps = {
 const VoiceCard: React.FC<VoiceCardProps> = ({ v, onSelect, onAudition }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -39,6 +45,13 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ v, onSelect, onAudition }) => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
+      }
+      if (hoverAudioRef.current) {
+        hoverAudioRef.current.pause();
+        hoverAudioRef.current = null;
+      }
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
       }
     };
   }, []);
@@ -63,11 +76,35 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ v, onSelect, onAudition }) => {
         audioRef.current = null;
       }
 
-      // Generate demo audio URL
-      const demoUrl = `https://yaya5777-voxly-tts.hf.space/demo/${v.id}`;
+      // Try to get audio from cache first
+      let audioBlob = await voiceCache.get(String(v.id));
+      let fromCache = !!audioBlob;
       
-      // Create new audio element
-      const audio = new Audio(demoUrl);
+      if (!audioBlob) {
+        // Not in cache, fetch from API
+        logger.debug(`Downloading voice demo: ${v.name ?? v.id}`);
+        const demoUrl = `https://yaya5777-voxly-tts.hf.space/demo/${v.id}`;
+        
+        const response = await fetch(demoUrl);
+        if (!response.ok) {
+          throw new Error('Failed to load audio');
+        }
+        
+        audioBlob = await response.blob();
+        
+        // Store in cache for next time
+        await voiceCache.set(String(v.id), audioBlob);
+        logger.debug(`Cached voice demo: ${v.name ?? v.id}`);
+      } else {
+        logger.debug(`Playing from cache: ${v.name ?? v.id}`);
+      }
+      
+      // Track the event
+      trackEvent.voiceDemoPlayed(String(v.id), v.name ?? String(v.id));
+      
+      // Create audio URL from blob
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
       audioRef.current = audio;
 
       // Set up audio event listeners
@@ -77,12 +114,14 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ v, onSelect, onAudition }) => {
       audio.onpause = () => setIsPlaying(false);
       audio.onended = () => {
         setIsPlaying(false);
+        URL.revokeObjectURL(audioUrl); // Clean up blob URL
         audioRef.current = null;
       };
       audio.onerror = () => {
         setError('Failed to load audio');
         setIsLoading(false);
         setIsPlaying(false);
+        URL.revokeObjectURL(audioUrl);
         audioRef.current = null;
       };
 
@@ -90,10 +129,89 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ v, onSelect, onAudition }) => {
       await audio.play();
       
     } catch (err) {
-      console.error('Audio playback error:', err);
+      logger.error('Audio playback error:', err);
       setError('Playback failed');
       setIsLoading(false);
       setIsPlaying(false);
+      
+      // Track error
+      trackEvent.errorOccurred(
+        err instanceof Error ? err.message : 'Unknown error',
+        'Voice Playback',
+        'VoiceCard'
+      );
+    }
+  };
+
+  // Hover preview handler
+  const handleMouseEnter = async () => {
+    setIsHovering(true);
+    
+    // Don't preview if already playing full audio
+    if (isPlaying) return;
+    
+    // Wait 500ms before starting preview (prevents accidental triggers)
+    hoverTimeoutRef.current = setTimeout(async () => {
+      try {
+        // Try to get audio from cache first
+        let audioBlob = await voiceCache.get(String(v.id));
+        
+        if (!audioBlob) {
+          // Not in cache, fetch from API
+          const demoUrl = `https://yaya5777-voxly-tts.hf.space/demo/${v.id}`;
+          const response = await fetch(demoUrl);
+          if (!response.ok) return;
+          
+          audioBlob = await response.blob();
+          await voiceCache.set(String(v.id), audioBlob);
+        }
+        
+        // Create audio URL from blob
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        hoverAudioRef.current = audio;
+        audio.volume = 0.6; // Lower volume for preview
+        
+        // Stop preview after 2 seconds
+        const stopTimeout = setTimeout(() => {
+          if (hoverAudioRef.current) {
+            hoverAudioRef.current.pause();
+            URL.revokeObjectURL(audioUrl);
+            hoverAudioRef.current = null;
+          }
+        }, 2000);
+        
+        audio.onended = () => {
+          clearTimeout(stopTimeout);
+          URL.revokeObjectURL(audioUrl);
+          hoverAudioRef.current = null;
+        };
+        
+        // Play preview
+        await audio.play();
+        
+        // Track hover preview
+        trackEvent.voiceDemoPlayed(String(v.id), `${v.name ?? String(v.id)} (hover preview)`);
+        
+      } catch (err) {
+        logger.debug('Hover preview failed:', err);
+      }
+    }, 500);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    
+    // Cancel pending preview
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    
+    // Stop any playing preview
+    if (hoverAudioRef.current) {
+      hoverAudioRef.current.pause();
+      hoverAudioRef.current = null;
     }
   };
 
@@ -103,8 +221,12 @@ const VoiceCard: React.FC<VoiceCardProps> = ({ v, onSelect, onAudition }) => {
     <MotionDiv
       whileHover={{ scale: 1.02, y: -6, rotateX: 3 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className="bg-white/6 backdrop-blur rounded-xl p-3 shadow-lg cursor-pointer"
+      className={`bg-white/6 backdrop-blur rounded-xl p-3 shadow-lg cursor-pointer transition-all ${
+        isHovering ? 'ring-2 ring-purple-500/50' : ''
+      }`}
       onClick={() => onSelect?.(v)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       role="button"
       tabIndex={0}
       onKeyDown={handleKey}

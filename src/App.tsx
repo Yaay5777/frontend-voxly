@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 // Removed WebGL imports to prevent context overflow
 
@@ -8,6 +8,12 @@ import { useAuthStore } from './store/useAuthStore';
 import { useThemeStore } from './store/useThemeStore';
 import { useAudioStore } from './store/useAudioStore';
 import ToastProvider from './components/ui/ToastProvider';
+
+// Performance & Analytics
+import { analytics, trackEvent } from './services/analytics';
+import { webVitals } from './services/webVitals';
+import { voiceCache } from './services/voiceCache';
+import { logger } from './utils/logger';
 
 // Component imports
 import GlassCard from './components/ui/GlassCard';
@@ -45,6 +51,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import LoadingScreen from './components/ui/LoadingScreen';
 import ParticleBackground from './components/effects/ParticleBackground';
+import PerformanceButton from './components/PerformanceButton';
 
 // Hooks
 import { useAudioAnalyzer } from './hooks/useAudioAnalyzer';
@@ -130,13 +137,21 @@ const App: React.FC = () => {
   // Initialize stores on app start
   useEffect(() => {
     const initialize = async () => {
-      console.log('🚀 Initializing Voxly app...');
+      logger.info('🚀 Initializing Voxly app...');
       
       // Initialize theme (synchronous)
       initializeTheme();
       
+      // Initialize analytics & monitoring
+      analytics.init();
+      webVitals.init();
+      voiceCache.init();
+      
       // Initialize auth (asynchronous - waits for backend verification)
       await initializeAuth();
+      
+      // Track initial page view
+      trackEvent.pageViewed('App Start', window.location.pathname);
       
       // Check for OAuth success (when redirected back from Google)
       const urlParams = new URLSearchParams(window.location.search);
@@ -144,26 +159,70 @@ const App: React.FC = () => {
       const message = urlParams.get('message');
       
       if (error) {
-        console.error('❌ OAuth error:', error, message);
+        logger.error('❌ OAuth error:', error, message);
+        trackEvent.errorOccurred(error, 'OAuth', 'App');
         // Clean up URL parameters
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
       } else if (window.location.pathname === '/dashboard') {
         // User was redirected to dashboard after OAuth success
-        console.log('✅ OAuth success - user redirected to dashboard');
+        logger.info('✅ OAuth success - user redirected to dashboard');
       }
       
-      console.log('✅ Voxly app initialized');
+      logger.info('✅ Voxly app initialized');
     };
     
     initialize();
   }, [initializeTheme, initializeAuth]);
 
+  const { mode } = useThemeStore();
+  
+  const getBackgroundClass = () => {
+    switch(mode) {
+      case 'light':
+        return 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50';
+      case 'dark':
+        return 'bg-gradient-to-br from-purple-950 via-violet-950 to-fuchsia-950';
+      case 'vibes':
+        return 'bg-[#0a0a0a]';
+      default:
+        return 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50';
+    }
+  };
+
   return (
     <AdvancedErrorBoundary>
       <ToastProvider />
       <div className={`min-h-screen ${isDark ? 'dark' : ''}`}>
-        <div className="min-h-screen">
+        <div className={`min-h-screen transition-all duration-700 ${getBackgroundClass()} relative overflow-hidden`}>
+          {/* Vibes mode - CRAZY COLOR BOMB */}
+          {mode === 'vibes' && (
+            <>
+              {/* Animated gradient orbs */}
+              <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-pink-500 to-rose-500 rounded-full blur-[120px] opacity-50 animate-blob pointer-events-none" />
+              <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full blur-[120px] opacity-50 animate-blob animation-delay-2000 pointer-events-none" />
+              <div className="fixed bottom-0 left-1/2 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full blur-[120px] opacity-50 animate-blob animation-delay-4000 pointer-events-none" />
+              <div className="fixed bottom-0 right-1/4 w-[400px] h-[400px] bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full blur-[100px] opacity-40 animate-blob animation-delay-6000 pointer-events-none" />
+              <div className="fixed top-1/2 left-1/4 w-[450px] h-[450px] bg-gradient-to-br from-green-500 to-emerald-500 rounded-full blur-[110px] opacity-40 animate-blob animation-delay-8000 pointer-events-none" />
+              
+              {/* Floating particles */}
+              <div className="fixed inset-0 pointer-events-none">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-2 h-2 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full animate-float-random"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDelay: `${i * 0.5}s`,
+                      animationDuration: `${5 + Math.random() * 5}s`
+                    }}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          
           <Router>
           {/* Particle Background */}
           <ParticleBackground />
@@ -234,6 +293,9 @@ const App: React.FC = () => {
             <AnimatePresence>
               {currentAudio && <GlobalAudioPlayer />}
             </AnimatePresence>
+            
+            {/* Performance Dashboard (Dev Only) */}
+            <PerformanceButton />
           </div>
 
           {/* Development Tools removed to prevent WebGL context overflow */}

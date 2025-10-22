@@ -1,46 +1,56 @@
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
 import { Sun, Moon, Sparkles } from 'lucide-react';
+import { useThemeStore } from '../store/useThemeStore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { trackEvent } from '../services/analytics';
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, setTheme } = useTheme();
+  const { mode, setThemeMode } = useThemeStore();
+
+  const cycleTheme = () => {
+    const nextMode = mode === 'light' ? 'dark' : mode === 'dark' ? 'vibes' : 'light';
+    setThemeMode(nextMode);
+    trackEvent.themeChanged(nextMode);
+  };
+
+  const getIcon = () => {
+    switch(mode) {
+      case 'light': return <Sun className="w-5 h-5" />;
+      case 'dark': return <Moon className="w-5 h-5" />;
+      case 'vibes': return <Sparkles className="w-5 h-5" />;
+    }
+  };
+
+  const getButtonStyle = () => {
+    switch(mode) {
+      case 'light':
+        return 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white shadow-lg';
+      case 'dark':
+        return 'bg-gradient-to-br from-purple-600 via-violet-600 to-fuchsia-600 text-white shadow-lg shadow-purple-500/50';
+      case 'vibes':
+        return 'bg-gradient-to-r from-pink-500 via-purple-500 via-cyan-500 to-yellow-500 text-white shadow-lg shadow-pink-500/50 bg-[length:200%_100%] animate-gradient-x';
+    }
+  };
 
   return (
-    <div className="theme-toggle">
-      <button
-        className={`theme-option ${theme === 'light' ? 'active' : ''}`}
-        onClick={() => setTheme('light')}
-        title="Light Mode"
-        style={{
-          background: theme === 'light' ? 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)' : 'transparent'
-        }}
-      >
-        <Sun size={20} color={theme === 'light' ? '#fff' : '#fbbf24'} />
-      </button>
-
-      <button
-        className={`theme-option ${theme === 'dark' ? 'active' : ''}`}
-        onClick={() => setTheme('dark')}
-        title="Dark Mode"
-        style={{
-          background: theme === 'dark' ? 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' : 'transparent'
-        }}
-      >
-        <Moon size={20} color={theme === 'dark' ? '#fff' : '#6366f1'} />
-      </button>
-
-      <button
-        className={`theme-option ${theme === 'vibey' ? 'active neon-glow' : ''}`}
-        onClick={() => setTheme('vibey')}
-        title="Vibey Mode 🔥"
-        style={{
-          background: theme === 'vibey' 
-            ? 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%)' 
-            : 'transparent'
-        }}
-      >
-        <Sparkles size={20} color={theme === 'vibey' ? '#fff' : '#ec4899'} />
-      </button>
-    </div>
+    <motion.button
+      onClick={cycleTheme}
+      className={`p-3 rounded-xl transition-all duration-300 backdrop-blur-sm ${getButtonStyle()}`}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      title={`Switch to ${mode === 'light' ? 'Dark' : mode === 'dark' ? 'Vibes' : 'Light'} Mode`}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={mode}
+          initial={{ rotate: -180, opacity: 0 }}
+          animate={{ rotate: 0, opacity: 1 }}
+          exit={{ rotate: 180, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {getIcon()}
+        </motion.div>
+      </AnimatePresence>
+    </motion.button>
   );
 };

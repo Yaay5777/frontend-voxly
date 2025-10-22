@@ -252,6 +252,13 @@ const SynthesisPage: React.FC = () => {
   // Calculate remaining quota based on the QuotaInfo properties
   const remainingQuota = quotaInfo ? (quotaInfo.weekly_limit || 10000) - (quotaInfo.current_usage || 0) : 10000;
   const canGenerate = characterCount > 0 && characterCount <= 5000; // Max 5000 chars per request
+  
+  // Calculate estimated duration (average speaking rate: ~150 words per minute, ~5 chars per word)
+  const estimatedWords = Math.ceil(characterCount / 5);
+  const estimatedMinutes = estimatedWords / 150;
+  const estimatedDuration = estimatedMinutes < 1 
+    ? `${Math.ceil(estimatedMinutes * 60)}s` 
+    : `${Math.floor(estimatedMinutes)}m ${Math.ceil((estimatedMinutes % 1) * 60)}s`;
 
   if (!currentVoice) {
     return (
@@ -453,11 +460,6 @@ const SynthesisPage: React.FC = () => {
                     <Type className="w-4 h-4" />
                     <span>Text to Synthesize</span>
                   </label>
-                  <div className="flex items-center space-x-2 text-xs">
-                    <span className={`${characterCount > remainingQuota ? 'text-red-500' : 'text-gray-500'}`}>
-                      {characterCount.toLocaleString()} / {remainingQuota.toLocaleString()}
-                    </span>
-                  </div>
                 </div>
                 
                 <textarea
@@ -467,6 +469,29 @@ const SynthesisPage: React.FC = () => {
                   className="w-full h-32 p-4 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all resize-none text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   maxLength={remainingQuota}
                 />
+                
+                {/* Real-Time Character Counter with Stats */}
+                <div className="grid grid-cols-2 gap-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Characters</p>
+                    <p className={`text-2xl font-bold ${characterCount > remainingQuota ? 'text-red-500' : characterCount > remainingQuota * 0.8 ? 'text-orange-500' : 'text-green-500'}`}>
+                      {characterCount.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      / {remainingQuota.toLocaleString()} ({quotaInfo?.tier === 'free' ? 'Free' : 'Pro'} Plan)
+                    </p>
+                  </div>
+                  
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Estimated Duration</p>
+                    <p className="text-2xl font-bold text-blue-500">
+                      {characterCount > 0 ? estimatedDuration : '--'}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      ~{estimatedWords} words
+                    </p>
+                  </div>
+                </div>
                 
                 {/* AI Script Generator */}
                 <AIScriptGenerator onScriptGenerated={(script) => setText(script)} />

@@ -1,0 +1,741 @@
+/* ============================================
+   🎙️ VOXLY - AWARD-WINNING DESIGN SYSTEM
+   "Voice Made Visual" - Where Sound Becomes Light
+   ============================================ */
+
+/* ============================================
+   ☀️ LIGHT MODE - Elegant Clarity
+   Clean, minimal, professional
+   ============================================ */
+
+[data-theme="light"] {
+  /* Core Colors */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8FAFB;
+  --bg-gradient: linear-gradient(135deg, 
+    #FFFFFF 0%, 
+    #F0F4FF 50%, 
+    #E8F0FE 100%);
+  
+  /* Text Colors */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --text-inverse: #FFFFFF;
+  
+  /* Accent Colors - Soft Blues & Lilac */
+  --accent-primary: #6366F1;
+  --accent-secondary: #8B5CF6;
+  --accent-tertiary: #06B6D4;
+  --accent-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #06B6D4 100%);
+  
+  /* Glass Morphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(99, 102, 241, 0.15);
+  --glass-shadow: rgba(99, 102, 241, 0.1);
+  --blur-strength: 20px;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.12);
+  --shadow-xl: 0 16px 48px rgba(15, 23, 42, 0.16);
+  
+  /* Interactive States */
+  --hover-lift: translateY(-4px);
+  --hover-scale: scale(1.02);
+}
+
+[data-theme="light"] body,
+[data-theme="light"] html {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   🌙 DARK MODE - Cinematic Depth
+   Deep navy with glowing neon accents
+   ============================================ */
+
+[data-theme="dark"] {
+  /* Core Colors */
+  --bg-primary: #0F172A;
+  --bg-secondary: #1E293B;
+  --bg-gradient: linear-gradient(135deg, 
+    #0F172A 0%, 
+    #1E293B 30%,
+    #0F172A 70%,
+    #1E3A8A 100%);
+  
+  /* Text Colors */
+  --text-primary: #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-inverse: #0F172A;
+  
+  /* Neon Accent Colors */
+  --accent-primary: #3B82F6;
+  --accent-secondary: #A78BFA;
+  --accent-tertiary: #06B6D4;
+  --accent-gradient: linear-gradient(135deg, #3B82F6 0%, #A78BFA 50%, #06B6D4 100%);
+  
+  /* Glass Morphism with Glow */
+  --glass-bg: rgba(30, 41, 59, 0.6);
+  --glass-border: rgba(59, 130, 246, 0.3);
+  --glass-shadow: rgba(59, 130, 246, 0.2);
+  --glow-primary: 0 0 20px rgba(59, 130, 246, 0.4);
+  --glow-secondary: 0 0 30px rgba(167, 139, 250, 0.3);
+  --blur-strength: 24px;
+  
+  /* Shadows with Glow */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4), var(--glow-primary);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5), var(--glow-primary);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6), var(--glow-secondary);
+  
+  /* Interactive States */
+  --hover-lift: translateY(-6px);
+  --hover-scale: scale(1.03);
+}
+
+[data-theme="dark"] body,
+[data-theme="dark"] html {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-primary);
+}
+
+/* Animated background glow for dark mode */
+[data-theme="dark"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 70% 60%, rgba(167, 139, 250, 0.12) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+  animation: darkGlow 15s ease-in-out infinite;
+}
+
+@keyframes darkGlow {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ============================================
+   🔮 VIBES MODE - Never-Before-Seen
+   Holographic, fluid, audio-reactive
+   ============================================ */
+
+[data-theme="vibes"] {
+  /* Core Colors - Shifting Hues */
+  --bg-primary: #0A0E27;
+  --bg-secondary: #1A0B2E;
+  --bg-gradient: linear-gradient(135deg, 
+    #0A0E27 0%, 
+    #1A0B2E 25%,
+    #2D1B4E 50%,
+    #1E0836 75%,
+    #0A0E27 100%);
+  
+  /* Text Colors with Holographic Effect */
+  --text-primary: #FFFFFF;
+  --text-secondary: #F0ABFC;
+  --text-muted: #C084FC;
+  --text-inverse: #0A0E27;
+  
+  /* Holographic Gradient Accents */
+  --accent-primary: #EC4899;
+  --accent-secondary: #A78BFA;
+  --accent-tertiary: #06B6D4;
+  --accent-quaternary: #10B981;
+  --accent-gradient: linear-gradient(135deg, 
+    #EC4899 0%, 
+    #A78BFA 25%, 
+    #06B6D4 50%, 
+    #10B981 75%,
+    #EC4899 100%);
+  --accent-gradient-alt: linear-gradient(90deg,
+    #FF0080 0%,
+    #7928CA 20%,
+    #4A00E0 40%,
+    #00D4FF 60%,
+    #7F00FF 80%,
+    #FF0080 100%);
+  
+  /* Glass with Holographic Shimmer */
+  --glass-bg: rgba(26, 11, 46, 0.4);
+  --glass-border: rgba(236, 72, 153, 0.4);
+  --glass-shadow: rgba(236, 72, 153, 0.3);
+  --glow-multi: 0 0 30px rgba(236, 72, 153, 0.5),
+                0 0 60px rgba(167, 139, 250, 0.3),
+                0 0 90px rgba(6, 182, 212, 0.2);
+  --blur-strength: 32px;
+  
+  /* Animated Shadows */
+  --shadow-sm: 0 2px 8px rgba(236, 72, 153, 0.3);
+  --shadow-md: var(--glow-multi);
+  --shadow-lg: var(--glow-multi), 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-xl: var(--glow-multi), 0 16px 64px rgba(0, 0, 0, 0.8);
+  
+  /* Interactive States */
+  --hover-lift: translateY(-8px);
+  --hover-scale: scale(1.05);
+}
+
+[data-theme="vibes"] body,
+[data-theme="vibes"] html {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  background-size: 400% 400%;
+  color: var(--text-primary);
+  animation: vibesFlow 20s ease-in-out infinite;
+}
+
+@keyframes vibesFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg) saturate(1.2);
+  }
+  25% {
+    background-position: 50% 0%;
+    filter: hue-rotate(10deg) saturate(1.4);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: hue-rotate(-10deg) saturate(1.1);
+  }
+  75% {
+    background-position: 50% 100%;
+    filter: hue-rotate(5deg) saturate(1.3);
+  }
+}
+
+/* Floating gradient orbs */
+.vibes-gradient-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+  animation: vibesFloat 25s ease-in-out infinite;
+}
+
+.vibes-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.4) 0%, transparent 70%);
+  top: -250px;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.vibes-orb-2 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.35) 0%, transparent 70%);
+  top: 40%;
+  right: 10%;
+  animation-delay: 8s;
+}
+
+.vibes-orb-3 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+  bottom: -200px;
+  left: 40%;
+  animation-delay: 16s;
+}
+
+@keyframes vibesFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translate(100px, -100px) scale(1.2) rotate(90deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50px, 80px) scale(0.9) rotate(180deg);
+    opacity: 0.7;
+  }
+  75% {
+    transform: translate(80px, 90px) scale(1.1) rotate(270deg);
+    opacity: 0.9;
+  }
+}
+
+/* Particle effect */
+.vibes-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 60% 70%, rgba(167, 139, 250, 0.4), transparent),
+    radial-gradient(3px 3px at 50% 50%, rgba(6, 182, 212, 0.3), transparent),
+    radial-gradient(2px 2px at 80% 10%, rgba(236, 72, 153, 0.4), transparent);
+  background-size: 200px 200px, 300px 300px, 250px 250px, 280px 280px;
+  background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
+  pointer-events: none;
+  z-index: 0;
+  animation: particleShift 40s linear infinite;
+}
+
+@keyframes particleShift {
+  to {
+    background-position: 200px 200px, 240px 260px, 330px 470px, 270px 300px;
+  }
+}
+
+/* ============================================
+   🎨 UNIVERSAL COMPONENTS
+   ============================================ */
+
+/* Typography */
+body {
+  font-family: 'Inter', 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 { font-size: 3.5rem; font-weight: 800; }
+h2 { font-size: 2.5rem; }
+h3 { font-size: 2rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p { color: var(--text-secondary); font-size: 1.125rem; }
+small { color: var(--text-muted); font-size: 0.875rem; }
+
+/* Gradient text for headlines */
+.gradient-headline {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Glass Card - Universal */
+.glass-card,
+.voice-card-glass,
+.voxly-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--blur-strength)) saturate(180%);
+  border: 2px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  opacity: 0.6;
+}
+
+.glass-card:hover {
+  transform: var(--hover-lift) var(--hover-scale);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--accent-primary);
+}
+
+/* Buttons */
+.voxly-btn,
+button.primary-btn {
+  background: var(--accent-gradient);
+  background-size: 200% 200%;
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.voxly-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.voxly-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--shadow-xl);
+  background-position: 100% 50%;
+}
+
+.voxly-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.voxly-btn:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* Secondary Button */
+.voxly-btn-secondary {
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--glass-border);
+}
+
+.voxly-btn-secondary:hover {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border-color: var(--accent-primary);
+}
+
+/* Input Fields */
+input, textarea, select {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength));
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), var(--shadow-md);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Waveform Visualizer (Audio Reactive) */
+.waveform-container {
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.waveform-bar {
+  width: 4px;
+  background: var(--accent-gradient);
+  border-radius: 4px;
+  animation: waveform 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.waveform-bar:nth-child(1) { animation-delay: 0s; }
+.waveform-bar:nth-child(2) { animation-delay: 0.1s; }
+.waveform-bar:nth-child(3) { animation-delay: 0.2s; }
+.waveform-bar:nth-child(4) { animation-delay: 0.3s; }
+.waveform-bar:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes waveform {
+  0%, 100% { height: 20px; opacity: 0.6; }
+  50% { height: 60px; opacity: 1; }
+}
+
+/* Floating Action Elements */
+.floating {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Pulse Effect for Active States */
+.pulse-active {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* ============================================
+   🎙️ THEME TOGGLE COMPONENT
+   ============================================ */
+
+.voxly-theme-toggle {
+  display: flex;
+  gap: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength));
+  border: 2px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.theme-btn:hover {
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.theme-btn.active {
+  color: var(--accent-primary);
+}
+
+[data-theme="vibes"] .theme-btn.vibes-glow {
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
+  animation: vibesButtonGlow 3s ease-in-out infinite;
+}
+
+@keyframes vibesButtonGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(236, 72, 153, 0.6),
+                 0 0 20px rgba(167, 139, 250, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(236, 72, 153, 0.9),
+                 0 0 40px rgba(167, 139, 250, 0.6),
+                 0 0 60px rgba(6, 182, 212, 0.4);
+  }
+}
+
+.theme-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Hide labels on mobile */
+@media (max-width: 768px) {
+  .theme-label { display: none; }
+  .theme-btn { padding: 12px; }
+}
+
+/* ============================================
+   📱 RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.75rem; }
+  
+  .glass-card { padding: 1.5rem; }
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  
+  .glass-card { padding: 1rem; border-radius: 16px; }
+  .voxly-btn { padding: 12px 24px; font-size: 1rem; }
+}
+
+/* ============================================
+   ✨ ACCESSIBILITY & UTILITY
+   ============================================ */
+
+/* Smooth Transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure content is above background effects */
+#root, main, section, article {
+  position: relative;
+  z-index: 1;
+}
+
+/* Selection Highlight */
+::selection {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-gradient);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   🎯 FORCE THEME BACKGROUNDS
+   ============================================ */
+
+/* Override any hardcoded backgrounds */
+[data-theme] #root,
+[data-theme] .min-h-screen,
+[data-theme] main {
+  background: transparent !important;
+}
+
+/* Ensure text visibility */
+[data-theme="vibes"] h1,
+[data-theme="vibes"] h2,
+[data-theme="vibes"] h3 {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8),
+               0 0 40px rgba(236, 72, 153, 0.4);
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2 {
+  text-shadow: 0 2px 20px rgba(59, 130, 246, 0.3);
+}
+
+/* ============================================
+   🏆 AWARD-WINNING MICRO-INTERACTIONS
+   ============================================ */
+
+/* Ripple effect on click */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Magnetic hover effect */
+.magnetic {
+  transition: transform 0.2s ease-out;
+}
+
+.magnetic:hover {
+  transform: scale(1.05);
+}
+
+/* Glow on hover for vibes mode */
+[data-theme="vibes"] .glass-card:hover {
+  box-shadow: var(--glow-multi), 0 16px 64px rgba(0, 0, 0, 0.8);
+  animation: vibesCardPulse 2s ease-in-out infinite;
+}
+
+@keyframes vibesCardPulse {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+/* Sound wave reaction on hover */
+.sound-reactive:hover .waveform-bar {
+  animation-play-state: running;
+}
+
+.sound-reactive .waveform-bar {
+  animation-play-state: paused;
+}

@@ -3,12 +3,22 @@
 @tailwind utilities;
 
 /* base / theme */
-:root { --accent: #00E5FF; --bg-top:#0b1220; --bg-bottom:#0f1b2b; }
+:root { 
+  --accent: #00E5FF; 
+  --bg-top:#0b1220; 
+  --bg-bottom:#0f1b2b; 
+}
 
-html,body,#root { height:100% }
+html,body,#root { 
+  height:100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  @apply bg-gradient-to-br from-[#0B1220] via-[#0D1730] to-[#071226] text-white;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  /* Background controlled by Tailwind classes in App.tsx */
 }
 
 /* glass card */
@@ -31,4 +41,146 @@ body {
 /* reduced motion respect */
 @media (prefers-reduced-motion: reduce) {
   .wave-anim { animation: none !important; }
+}
+
+/* Enhanced theme animations */
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease infinite;
+}
+
+/* Blob animation for vibes mode */
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(20px, -50px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(50px, 50px) scale(1.05);
+  }
+}
+
+.animate-blob {
+  animation: blob 20s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+  animation-delay: 6s;
+}
+
+.animation-delay-8000 {
+  animation-delay: 8s;
+}
+
+/* Float random animation */
+@keyframes float-random {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px);
+    opacity: 0;
+  }
+}
+
+.animate-float-random {
+  animation: float-random 10s linear infinite;
+}
+
+/* Vibes mode text glow */
+.vibes .text-glow {
+  text-shadow: 0 0 20px rgba(236, 72, 153, 0.8),
+               0 0 40px rgba(167, 139, 250, 0.6),
+               0 0 60px rgba(6, 182, 212, 0.4);
+}
+
+/* Dark mode enhanced gradients */
+.dark .glass {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.3),
+              0 0 20px rgba(167, 139, 250, 0.2);
+}
+
+/* Vibes mode - CRAZY COLORFUL GLASS */
+.vibes .glass {
+  background: linear-gradient(135deg, 
+    rgba(236, 72, 153, 0.15) 0%,
+    rgba(167, 139, 250, 0.15) 25%,
+    rgba(6, 182, 212, 0.15) 50%,
+    rgba(245, 158, 11, 0.15) 75%,
+    rgba(16, 185, 129, 0.15) 100%
+  );
+  background-size: 400% 400%;
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, 
+    #ec4899 0%,
+    #a78bfa 25%,
+    #06b6d4 50%,
+    #f59e0b 75%,
+    #10b981 100%
+  ) 1;
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.5),
+              0 0 40px rgba(167, 139, 250, 0.4),
+              0 0 60px rgba(6, 182, 212, 0.3),
+              0 8px 30px rgba(0, 0, 0, 0.5);
+  animation: vibes-pulse 3s ease-in-out infinite, gradient-rotate 8s linear infinite;
+}
+
+@keyframes vibes-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.5),
+                0 0 40px rgba(167, 139, 250, 0.4),
+                0 0 60px rgba(6, 182, 212, 0.3),
+                0 8px 30px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.7),
+                0 0 60px rgba(167, 139, 250, 0.6),
+                0 0 90px rgba(6, 182, 212, 0.5),
+                0 12px 40px rgba(0, 0, 0, 0.6);
+  }
+}
+
+@keyframes gradient-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

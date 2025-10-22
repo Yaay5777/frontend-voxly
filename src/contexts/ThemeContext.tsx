@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Theme = 'light' | 'dark' | 'vibey';
+type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
@@ -12,26 +12,27 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Get saved theme from localStorage or default to 'dark'
     const saved = localStorage.getItem('voxly-theme') as Theme;
     return saved || 'dark';
   });
 
   useEffect(() => {
-    // Apply theme to ALL elements
+    // Apply theme to DOM
     document.documentElement.setAttribute('data-theme', theme);
     document.body.setAttribute('data-theme', theme);
+    
+    // Save to localStorage
     localStorage.setItem('voxly-theme', theme);
     
-    // Remove all theme classes first
-    document.body.classList.remove('theme-light', 'theme-dark', 'theme-vibey');
-    document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-vibey');
+    // Remove old theme classes
+    document.body.classList.remove('theme-light', 'theme-dark');
+    document.documentElement.classList.remove('theme-light', 'theme-dark');
     
-    // Add current theme class to both html and body
+    // Add new theme class
     document.body.classList.add(`theme-${theme}`);
     document.documentElement.classList.add(`theme-${theme}`);
     
-    console.log(`🎨 Theme switched to: ${theme}`);
+    console.log(`🎨 Theme: ${theme}`);
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
@@ -39,23 +40,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const toggleTheme = () => {
-    const themes: Theme[] = ['light', 'dark', 'vibey'];
-    const currentIndex = themes.indexOf(theme);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    setTheme(themes[nextIndex]);
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
-      {/* Vibey mode background */}
-      {theme === 'vibey' && (
-        <>
-          <div className="vibey-bg" />
-          <div className="particle particle-1" />
-          <div className="particle particle-2" />
-          <div className="particle particle-3" />
-        </>
-      )}
       {children}
     </ThemeContext.Provider>
   );

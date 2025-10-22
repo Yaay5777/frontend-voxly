@@ -1,74 +1,71 @@
-/* 🎨 NEXT-LEVEL GLASSMORPHISM - ULTRA MODERN UI */
+/* 🎨 VOXLY GLASSMORPHISM DESIGN SYSTEM */
 
 /* === ROOT VARIABLES === */
 :root {
-  /* ✨ LIGHT MODE - Crystal Clear Glass */
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-bg-hover: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(200, 220, 255, 0.5);
-  --glass-shadow: rgba(100, 120, 200, 0.15);
-  --glass-highlight: rgba(255, 255, 255, 0.9);
+  /* ✨ LIGHT MODE */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-hover: rgba(255, 255, 255, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: rgba(31, 38, 135, 0.37);
   
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --text-on-glass: #1e293b;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
   
-  --accent-primary: #6366f1;
+  --accent-primary: #3b82f6;
   --accent-secondary: #8b5cf6;
-  --accent-tertiary: #ec4899;
-  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-  --accent-gradient-intense: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+  --accent-tertiary: #d946ef;
+  --accent-gradient: linear-gradient(45deg, #667eea, #764ba2);
   
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
-  --bg-gradient: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
-                  linear-gradient(180deg, #ffffff 0%, #f1f5f9 50%, #e0e7ff 100%);
   
-  --blur-strength: 16px;
-  --blur-strong: 24px;
-  --glass-opacity: 0.75;
+  --blur-strength: 10px;
+  --blur-strong: 20px;
 }
 
 [data-theme="dark"] {
-  /* 🌊 DARK MODE - Deep Ocean Abyss */
-  --glass-bg: rgba(15, 35, 85, 0.5);
-  --glass-bg-hover: rgba(30, 55, 120, 0.7);
-  --glass-border: rgba(59, 130, 246, 0.4);
-  --glass-shadow: rgba(6, 182, 212, 0.3);
-  --glass-highlight: rgba(96, 165, 250, 0.2);
+  /* 🌙 DARK MODE */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-hover: rgba(255, 255, 255, 0.2);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.37);
   
-  --text-primary: #f0f9ff;
-  --text-secondary: #bfdbfe;
-  --text-muted: #93c5fd;
-  --text-on-glass: #e0f2fe;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
   
-  --accent-primary: #3b82f6;
-  --accent-secondary: #06b6d4;
-  --accent-tertiary: #8b5cf6;
-  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #8b5cf6 100%);
-  --accent-gradient-intense: linear-gradient(135deg, #2563eb 0%, #0891b2 50%, #7c3aed 100%);
+  --accent-primary: #60a5fa;
+  --accent-secondary: #a78bfa;
+  --accent-tertiary: #f472b6;
+  --accent-gradient: linear-gradient(45deg, #667eea, #764ba2);
   
-  --bg-primary: #0a1628;
-  --bg-secondary: #0f1e3a;
-  --bg-gradient: radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.25) 0%, transparent 45%),
-                  radial-gradient(circle at 85% 75%, rgba(6, 182, 212, 0.2) 0%, transparent 45%),
-                  radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                  linear-gradient(180deg, #0a1628 0%, #0c2847 30%, #0f1e3a 70%, #1e3a8a 100%);
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
   
-  --blur-strength: 20px;
-  --blur-strong: 32px;
-  --glass-opacity: 0.5;
+  --blur-strength: 10px;
+  --blur-strong: 20px;
 }
 
-[data-theme="vibey"] {
-  /* 🔥 FUNKY MODE - Neon Cyberpunk Paradise */
-  --glass-bg: rgba(88, 28, 135, 0.35);
-  --glass-bg-hover: rgba(126, 34, 206, 0.55);
-  --glass-border: rgba(236, 72, 153, 0.6);
-  --glass-shadow: rgba(236, 72, 153, 0.4);
-  --glass-highlight: rgba(240, 171, 252, 0.3);
+/* === BODY BACKGROUNDS === */
+
+/* Light Theme Body */
+html[data-theme="light"],
+body[data-theme="light"],
+.theme-light {
+  background: linear-gradient(to bottom right, #dbeafe 0%, #f3e8ff 50%, #fce7f3 100%) !important;
+  color: var(--text-primary) !important;
+  min-height: 100vh;
+}
+
+/* Dark Theme Body */
+html[data-theme="dark"],
+body[data-theme="dark"],
+.theme-dark {
+  background: #111827 !important;
+  color: var(--text-primary) !important;
+  min-height: 100vh;
+}
   
   --text-primary: #fdf4ff;
   --text-secondary: #fae8ff;
@@ -1192,4 +1189,448 @@ article,
 .content {
   position: relative;
   z-index: 1;
+}
+
+/* ============================================
+   💪 FORCE THEME BACKGROUNDS EVERYWHERE
+   ============================================ */
+
+/* Override ALL hardcoded backgrounds */
+[data-theme="light"] #root,
+[data-theme="light"] .min-h-screen,
+[data-theme="light"] main,
+[data-theme="light"] section,
+[data-theme="light"] div.min-h-screen {
+  background: var(--bg-gradient) !important;
+}
+
+[data-theme="dark"] #root,
+[data-theme="dark"] .min-h-screen,
+[data-theme="dark"] main,
+[data-theme="dark"] section,
+[data-theme="dark"] div.min-h-screen {
+  background: var(--bg-gradient) !important;
+}
+
+[data-theme="vibey"] #root,
+[data-theme="vibey"] .min-h-screen,
+[data-theme="vibey"] main,
+[data-theme="vibey"] section,
+[data-theme="vibey"] div.min-h-screen {
+  background: var(--bg-gradient) !important;
+}
+
+/* Force theme colors on common elements */
+[data-theme="light"] div[class*="bg-white"],
+[data-theme="light"] div[class*="bg-gray-50"],
+[data-theme="light"] div[class*="bg-slate-50"] {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] div[class*="bg-white"],
+[data-theme="dark"] div[class*="bg-gray"],
+[data-theme="dark"] div[class*="bg-slate"] {
+  background: rgba(15, 35, 85, 0.5) !important;
+  backdrop-filter: blur(10px);
+  color: var(--text-primary) !important;
+}
+
+[data-theme="vibey"] div[class*="bg-white"],
+[data-theme="vibey"] div[class*="bg-gray"],
+[data-theme="vibey"] div[class*="bg-slate"] {
+  background: rgba(88, 28, 135, 0.35) !important;
+  backdrop-filter: blur(10px);
+  color: var(--text-primary) !important;
+}
+
+/* Force readable text on all backgrounds */
+[data-theme="light"] textarea,
+[data-theme="light"] .text-gray-900,
+[data-theme="light"] .text-gray-800,
+[data-theme="light"] .text-slate-900 {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] textarea,
+[data-theme="dark"] .text-gray-900,
+[data-theme="dark"] .text-gray-800,
+[data-theme="dark"] .text-white {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="vibey"] textarea,
+[data-theme="vibey"] .text-gray-900,
+[data-theme="vibey"] .text-gray-800,
+[data-theme="vibey"] .text-white {
+  color: var(--text-primary) !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Fix placeholder text visibility */
+[data-theme="light"] ::placeholder {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] ::placeholder {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="vibey"] ::placeholder {
+  color: var(--text-muted) !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Ensure background never reverts to white */
+[data-theme="light"] body,
+[data-theme="light"] html {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+}
+
+[data-theme="dark"] body,
+[data-theme="dark"] html {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+}
+
+[data-theme="vibey"] body,
+[data-theme="vibey"] html {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+}
+
+/* Override Tailwind dark mode classes */
+.dark\:bg-gray-900,
+.dark\:bg-gray-800,
+.dark\:bg-slate-900 {
+  background: transparent !important;
+}
+
+/* Ensure hero sections inherit theme */
+[data-theme="light"] section[class*="min-h"],
+[data-theme="light"] div[class*="min-h-screen"] {
+  background: transparent !important;
+}
+
+[data-theme="dark"] section[class*="min-h"],
+[data-theme="dark"] div[class*="min-h-screen"] {
+  background: transparent !important;
+}
+
+[data-theme="vibey"] section[class*="min-h"],
+[data-theme="vibey"] div[class*="min-h-screen"] {
+  background: transparent !important;
+}
+
+/* Fix gradient backgrounds that might interfere */
+[data-theme="light"] .bg-gradient-to-br,
+[data-theme="light"] .bg-gradient-to-r {
+  background: transparent !important;
+}
+
+[data-theme="dark"] .bg-gradient-to-br,
+[data-theme="dark"] .bg-gradient-to-r {
+  background: transparent !important;
+}
+
+[data-theme="vibey"] .bg-gradient-to-br,
+[data-theme="vibey"] .bg-gradient-to-r {
+  background: transparent !important;
+}
+
+/* ============================================
+   🔥 SPECIAL FIXES FOR FUNKY/VIBEY MODE
+   ============================================ */
+
+/* Force ALL text to be white with shadow in vibey mode */
+[data-theme="vibey"] h1,
+[data-theme="vibey"] h2,
+[data-theme="vibey"] h3,
+[data-theme="vibey"] h4,
+[data-theme="vibey"] h5,
+[data-theme="vibey"] h6,
+[data-theme="vibey"] p,
+[data-theme="vibey"] span,
+[data-theme="vibey"] div,
+[data-theme="vibey"] label,
+[data-theme="vibey"] button,
+[data-theme="vibey"] a {
+  color: var(--text-primary) !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 4px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Specific overrides for vibey text classes */
+[data-theme="vibey"] .text-gray-600,
+[data-theme="vibey"] .text-gray-700,
+[data-theme="vibey"] .text-gray-800,
+[data-theme="vibey"] .text-gray-900,
+[data-theme="vibey"] .text-slate-600,
+[data-theme="vibey"] .text-slate-700 {
+  color: var(--text-secondary) !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Override any pink/purple text that would be invisible */
+[data-theme="vibey"] [class*="text-pink"],
+[data-theme="vibey"] [class*="text-purple"],
+[data-theme="vibey"] [class*="text-fuchsia"] {
+  color: var(--text-primary) !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Ensure buttons are visible in vibey */
+[data-theme="vibey"] button:not(.glass-button):not(.theme-option) {
+  background: rgba(88, 28, 135, 0.5) !important;
+  border: 2px solid rgba(236, 72, 153, 0.6) !important;
+  color: var(--text-primary) !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ============================================
+   🌊 SPECIAL FIXES FOR DARK MODE
+   ============================================ */
+
+/* Ensure all text is bright enough in dark mode */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: var(--text-primary) !important;
+  text-shadow: 0 2px 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(6, 182, 212, 0.3) !important;
+}
+
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div:not(.glass-card) {
+  color: var(--text-secondary) !important;
+}
+
+/* Override dark gray text classes */
+[data-theme="dark"] .text-gray-300,
+[data-theme="dark"] .text-gray-400,
+[data-theme="dark"] .text-gray-500 {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-gray-600,
+[data-theme="dark"] .text-gray-700 {
+  color: var(--text-muted) !important;
+}
+
+/* ============================================
+   ✨ SPECIAL FIXES FOR LIGHT MODE
+   ============================================ */
+
+/* Ensure all text is dark enough in light mode */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6 {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="light"] p,
+[data-theme="light"] span,
+[data-theme="light"] div:not(.glass-card) {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .text-gray-400,
+[data-theme="light"] .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+/* ============================================
+   🎯 INPUT/TEXTAREA SPECIFIC FIXES
+   ============================================ */
+
+/* Light mode inputs */
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="password"],
+[data-theme="light"] textarea {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Dark mode inputs */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] textarea {
+  background: rgba(15, 35, 85, 0.7) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid rgba(59, 130, 246, 0.5) !important;
+}
+
+/* Vibey mode inputs */
+[data-theme="vibey"] input[type="text"],
+[data-theme="vibey"] input[type="email"],
+[data-theme="vibey"] input[type="password"],
+[data-theme="vibey"] textarea {
+  background: rgba(88, 28, 135, 0.6) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid rgba(236, 72, 153, 0.7) !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Override specific background classes in all modes */
+[data-theme="light"] .dark\:bg-gray-800\/50,
+[data-theme="light"] .bg-gray-50 {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+[data-theme="dark"] .dark\:bg-gray-800\/50,
+[data-theme="dark"] .bg-white {
+  background: rgba(15, 35, 85, 0.6) !important;
+}
+
+[data-theme="vibey"] .dark\:bg-gray-800\/50,
+[data-theme="vibey"] .bg-white,
+[data-theme="vibey"] .bg-gray-50 {
+  background: rgba(88, 28, 135, 0.5) !important;
+}
+
+/* ============================================
+   🚀 NUCLEAR OVERRIDES - LAST RESORT
+   ============================================ */
+
+/* Override EVERY possible background class */
+[data-theme="light"] [class*="bg-"][class*="white"],
+[data-theme="light"] [class*="bg-"][class*="gray-"][class*="00"],
+[data-theme="light"] [class*="bg-"][class*="slate-"][class*="00"] {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+[data-theme="dark"] [class*="bg-"][class*="white"],
+[data-theme="dark"] [class*="bg-"][class*="gray"],
+[data-theme="dark"] [class*="bg-"][class*="slate"] {
+  background: rgba(15, 35, 85, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="vibey"] [class*="bg-"][class*="white"],
+[data-theme="vibey"] [class*="bg-"][class*="gray"],
+[data-theme="vibey"] [class*="bg-"][class*="slate"] {
+  background: rgba(88, 28, 135, 0.5) !important;
+  backdrop-filter: blur(12px) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Force container backgrounds to be transparent */
+[data-theme="light"] .container,
+[data-theme="light"] .max-w-7xl,
+[data-theme="light"] .max-w-6xl,
+[data-theme="light"] .max-w-5xl {
+  background: transparent !important;
+}
+
+[data-theme="dark"] .container,
+[data-theme="dark"] .max-w-7xl,
+[data-theme="dark"] .max-w-6xl,
+[data-theme="dark"] .max-w-5xl {
+  background: transparent !important;
+}
+
+[data-theme="vibey"] .container,
+[data-theme="vibey"] .max-w-7xl,
+[data-theme="vibey"] .max-w-6xl,
+[data-theme="vibey"] .max-w-5xl {
+  background: transparent !important;
+}
+
+/* Ensure SVG icons are visible */
+[data-theme="light"] svg {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] svg {
+  color: var(--text-secondary);
+}
+
+[data-theme="vibey"] svg {
+  color: var(--text-primary);
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+}
+
+/* Fix any remaining text visibility issues */
+[data-theme="vibey"] * {
+  color: var(--text-primary);
+}
+
+/* Override tailwind text utilities in vibey */
+[data-theme="vibey"] .text-indigo-600,
+[data-theme="vibey"] .text-purple-600,
+[data-theme="vibey"] .text-pink-600,
+[data-theme="vibey"] .text-blue-600 {
+  color: var(--text-primary) !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Ensure proper z-index layering */
+[data-theme="light"] .relative,
+[data-theme="light"] main > *,
+[data-theme="light"] section > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="dark"] .relative,
+[data-theme="dark"] main > *,
+[data-theme="dark"] section > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="vibey"] .relative,
+[data-theme="vibey"] main > *,
+[data-theme="vibey"] section > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Final catch-all for body and root */
+body[data-theme="light"],
+html[data-theme="light"],
+#root[data-theme="light"] {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="dark"],
+html[data-theme="dark"],
+#root[data-theme="dark"] {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="vibey"],
+html[data-theme="vibey"],
+#root[data-theme="vibey"] {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+  color: var(--text-primary) !important;
+}
+
+/* Override React root div specifically */
+div#root {
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+/* Prevent white flashes during theme transitions */
+* {
+  transition-property: background-color, color, border-color, opacity, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
 }

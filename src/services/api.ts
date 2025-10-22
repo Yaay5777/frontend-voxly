@@ -1,30 +1,27 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { User, Voice, AudioFile, SynthesisRequest, SynthesisResponse, QuotaInfo } from '../types';
 import { useAuthStore } from '../store/useAuthStore';
-
-// API Configuration - Dual Backend Architecture
-const AUTH_BASE_URL = import.meta.env.VITE_AUTH_URL || import.meta.env.NEXT_PUBLIC_AUTH_URL || 'https://yaya5777-voxly-auth.hf.space';
-const TTS_BASE_URL = import.meta.env.VITE_TTS_URL || import.meta.env.NEXT_PUBLIC_TTS_URL || 'https://yaya5777-voxly-tts.hf.space';
-const API_BASE_URL = AUTH_BASE_URL; // Default for auth endpoints
+import { ENV, TIMEOUTS } from '../config/env';
+import { logger } from '../utils/logger';
 
 class ApiService {
   private api: AxiosInstance;
   private ttsApi: AxiosInstance;
 
   constructor() {
-    // Auth API instance (port 8000)
+    // Auth API instance
     this.api = axios.create({
-      baseURL: AUTH_BASE_URL,
-      timeout: 60000, // Increased to 60s for slow connections
+      baseURL: ENV.AUTH_URL,
+      timeout: TIMEOUTS.AUTH,
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    // TTS API instance (port 8001)
+    // TTS API instance
     this.ttsApi = axios.create({
-      baseURL: TTS_BASE_URL,
-      timeout: 120000, // Increased to 120s for XTTS voice cloning (can take time)
+      baseURL: ENV.TTS_URL,
+      timeout: TIMEOUTS.TTS_CLONE,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -62,9 +59,9 @@ class ApiService {
         const token = getAuthToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
-          console.log('🔑 Adding auth token to TTS request');
+          logger.debug('🔑 Adding auth token to TTS request');
         } else {
-          console.warn('⚠️ No auth token found for TTS request');
+          logger.warn('⚠️ No auth token found for TTS request');
         }
         return config;
       },
@@ -76,15 +73,15 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          console.error('❌ Auth API 401: Token might be expired');
+          logger.error('❌ Auth API 401: Token might be expired');
           // Only logout on specific auth endpoints, not all 401s
           const url = error.config?.url || '';
           if (url.includes('/auth/me') || url.includes('/auth/login')) {
-            console.log('🚪 Logging out due to invalid credentials');
+            logger.info('🚪 Logging out due to invalid credentials');
             useAuthStore.getState().logout();
             window.location.href = '/login';
           } else {
-            console.log('⚠️ 401 on other endpoint, keeping session active');
+            logger.info('⚠️ 401 on other endpoint, keeping session active');
           }
         }
         return Promise.reject(error);
@@ -96,8 +93,8 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          console.error('❌ TTS API 401: Authentication failed');
-          console.error('⚠️ This might be a backend issue. Not logging you out.');
+          logger.error('❌ TTS API 401: Authentication failed');
+          logger.warn('⚠️ This might be a backend issue. Not logging you out.');
           // Don't logout automatically - the token might be valid
           // The auth backend is the source of truth, not TTS backend
         }
@@ -113,13 +110,13 @@ class ApiService {
       password: password
     };
 
-    console.log('🚀 Login attempt:', { username, url: `${API_BASE_URL}/auth/login` });
+    logger.api('POST', '/auth/login', { username });
 
     const response = await this.api.post('/auth/login', loginData, {
       headers: { "Content-Type": "application/json" },
     });
     
-    console.log('✅ Login successful:', response.data);
+    logger.info('✅ Login successful');
     return response.data;
   }
 
@@ -132,17 +129,17 @@ class ApiService {
         password
       };
 
-      console.log('🚀 Registration attempt:', { username, email, url: `${API_BASE_URL}/auth/register` });
+      logger.api('POST', '/auth/register', { username, email });
 
       const response = await this.api.post('/auth/register', registrationData, {
         headers: { "Content-Type": "application/json" },
       });
       
-      console.log('✅ Registration successful:', response.data);
+      logger.info('✅ Registration successful');
       return response.data;
     } catch (error: any) {
-      console.error('❌ Registration failed:', error);
-      console.error('Error details:', error.response?.data);
+      logger.error('❌ Registration failed:', error);
+      logger.error('Error details:', error.response?.data);
       throw error;
     }
   }

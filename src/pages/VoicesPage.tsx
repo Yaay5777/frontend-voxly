@@ -23,7 +23,8 @@ import {
   Settings,
   Crown,
   Zap,
-  Languages
+  Languages,
+  Clock
 } from 'lucide-react';
 
 // Component imports
@@ -31,6 +32,7 @@ import GlassCard from '../components/ui/GlassCard';
 import GlowButton from '../components/ui/GlowButton';
 import Avatar3D from '../3d/Avatar3D';
 import LoadingScreen from '../components/ui/LoadingScreen';
+import { VoiceHistoryPanel } from '../components/VoiceHistoryPanel';
 
 // Store imports
 import { useAuthStore } from '../store/useAuthStore';
@@ -39,6 +41,7 @@ import { useVoiceStore } from '../store/useVoiceStore';
 
 // Custom hooks
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
+import { useVoiceHistory } from '../hooks/useVoiceHistory';
 import { showToast } from '../utils/toast';
 
 // Services
@@ -82,6 +85,10 @@ const VoicesPage: React.FC = () => {
   const [generatingDemo, setGeneratingDemo] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showTagFilter, setShowTagFilter] = useState(false);
+  const [showHistoryPanel, setShowHistoryPanel] = useState(false);
+
+  // Voice history hook
+  const voiceHistory = useVoiceHistory();
 
   // Audio player hook for demo playback
   const audioPlayer = useAudioPlayer({
@@ -293,17 +300,29 @@ const VoicesPage: React.FC = () => {
     );
   };
 
+  // Get voices for history panel
+  const recentVoiceIds = voiceHistory.getRecentVoiceIds();
+  const recentVoices = voices.filter(v => recentVoiceIds.includes(v.id));
+  const favoriteVoices = voices.filter(v => favorites.includes(v.id));
+  const mostUsedVoices = voiceHistory.getMostUsed(5);
+
   // Advanced filtering system for the new voice library
   const filteredVoices = voices.filter(voice => {
-    const matchesSearch = voice.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         voice.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         voice.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    // Enhanced search: name, description, tags, gender, accent
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = searchQuery === '' || 
+                         voice.name.toLowerCase().includes(searchLower) ||
+                         voice.description.toLowerCase().includes(searchLower) ||
+                         voice.tags.some(tag => tag.toLowerCase().includes(searchLower)) ||
+                         (voice.gender && voice.gender.toLowerCase().includes(searchLower)) ||
+                         (voice.accent && voice.accent.toLowerCase().includes(searchLower));
     
     const matchesCategory = selectedCategory === 'all' || 
-                           selectedCategory === 'favorites' && favorites.includes(voice.id) ||
+                           (selectedCategory === 'favorites' && favorites.includes(voice.id)) ||
+                           (selectedCategory === 'recent' && recentVoiceIds.includes(voice.id)) ||
                            voice.category === selectedCategory;
     
-    const matchesGender = selectedGender === 'all' || voice.gender === selectedGender;
+    const matchesGender = selectedGender === 'all' || voice.gender?.toLowerCase() === selectedGender.toLowerCase();
     
     const matchesAccent = selectedAccent === 'all' || voice.accent === selectedAccent;
     
@@ -347,44 +366,143 @@ const VoicesPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
             {/* Search Bar */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 max-w-2xl">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search voices..."
+                placeholder="Search by name, accent, gender, style... (e.g., 'British female', 'professional', 'Australian')"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all"
+                className="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-voxly-500 focus:border-transparent outline-none transition-all text-sm"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <span className="text-xl">×</span>
+                </button>
+              )}
             </div>
 
-            {/* Filter Buttons */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => {
-                const Icon = category.icon;
-                const isActive = selectedCategory === category.id;
-                
-                return (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
-                      isActive
-                        ? 'bg-voxly-500 text-white shadow-lg'
-                        : 'bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 hover:bg-voxly-100 dark:hover:bg-voxly-900'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{category.name}</span>
-                    {category.id === 'favorites' && favorites.length > 0 && (
-                      <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                        {favorites.length}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
+            {/* View Toggle & Quick Access */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-lg transition-all ${
+                  viewMode === 'grid'
+                    ? 'bg-voxly-500 text-white'
+                    : 'bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded-lg transition-all ${
+                  viewMode === 'list'
+                    ? 'bg-voxly-500 text-white'
+                    : 'bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <List className="w-5 h-5" />
+              </button>
+              
+              {/* Quick Access Button */}
+              <button
+                onClick={() => setShowHistoryPanel(!showHistoryPanel)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                  showHistoryPanel
+                    ? 'bg-purple-500 text-white shadow-lg'
+                    : 'bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900/20'
+                }`}
+              >
+                <Clock className="w-5 h-5" />
+                <span className="text-sm font-medium hidden sm:inline">Quick Access</span>
+                {(recentVoices.length > 0 || favoriteVoices.length > 0) && (
+                  <span className="bg-purple-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {recentVoices.length + favoriteVoices.length}
+                  </span>
+                )}
+              </button>
             </div>
+          </div>
+          
+          {/* Advanced Filters Row */}
+          <div className="mt-4 flex flex-wrap gap-3">
+            {/* Category Filter */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-2 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 outline-none"
+            >
+              <option value="all">All Categories</option>
+              {categories.slice(1).map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+            
+            {/* Gender Filter */}
+            <select
+              value={selectedGender}
+              onChange={(e) => setSelectedGender(e.target.value)}
+              className="px-4 py-2 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 outline-none"
+            >
+              <option value="all">All Genders</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="neutral">Neutral</option>
+            </select>
+            
+            {/* Accent Filter */}
+            <select
+              value={selectedAccent}
+              onChange={(e) => setSelectedAccent(e.target.value)}
+              className="px-4 py-2 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-voxly-500 outline-none"
+            >
+              <option value="all">All Accents</option>
+              {Array.from(new Set(voices.map(v => v.accent).filter(Boolean))).sort().map(accent => (
+                <option key={accent} value={accent}>{accent}</option>
+              ))}
+            </select>
+            
+            {/* Favorites Button */}
+            <button
+              onClick={() => setSelectedCategory(selectedCategory === 'favorites' ? 'all' : 'favorites')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                selectedCategory === 'favorites'
+                  ? 'bg-red-500 text-white shadow-lg'
+                  : 'bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 hover:bg-red-100'
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${selectedCategory === 'favorites' ? 'fill-current' : ''}`} />
+              <span className="text-sm font-medium">Favorites</span>
+              {favorites.length > 0 && (
+                <span className={`text-xs rounded-full px-2 py-0.5 ${
+                  selectedCategory === 'favorites'
+                    ? 'bg-red-600 text-white'
+                    : 'bg-red-500 text-white'
+                }`}>
+                  {favorites.length}
+                </span>
+              )}
+            </button>
+            
+            {/* Clear Filters Button */}
+            {(searchQuery || selectedCategory !== 'all' || selectedGender !== 'all' || selectedAccent !== 'all' || selectedTags.length > 0) && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('all');
+                  setSelectedGender('all');
+                  setSelectedAccent('all');
+                  setSelectedTags([]);
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
+              >
+                <span className="text-sm font-medium">Clear All Filters</span>
+              </button>
+            )}
           </div>
 
           {/* Tag Filter Toggle */}
@@ -621,6 +739,7 @@ const VoicesPage: React.FC = () => {
                           <GlowButton
                             size="sm"
                             onClick={() => {
+                              voiceHistory.addToHistory(voice.id, voice.name);
                               setSelectedVoice(voice);
                               navigate(`/synthesis?voice=${voice.id}`);
                             }}
@@ -671,6 +790,22 @@ const VoicesPage: React.FC = () => {
             </motion.div>
           </div>
         </section>
+      )}
+      
+      {/* Voice History Panel */}
+      {showHistoryPanel && (
+        <VoiceHistoryPanel
+          recentVoices={recentVoices}
+          favoriteVoices={favoriteVoices}
+          mostUsedVoices={mostUsedVoices}
+          onVoiceSelect={(voice) => {
+            voiceHistory.addToHistory(voice.id, voice.name);
+            setSelectedVoice(voice);
+            setShowHistoryPanel(false);
+            navigate(`/synthesis?voice=${voice.id}`);
+          }}
+          onClose={() => setShowHistoryPanel(false)}
+        />
       )}
     </div>
   );

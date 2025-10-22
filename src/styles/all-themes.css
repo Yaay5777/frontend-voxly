@@ -1,0 +1,675 @@
+/* ============================================
+   🎨 VOXLY - 6 COMPLETE DESIGN SYSTEMS
+   18 Total Theme Combinations (6 designs × 3 modes each)
+   ============================================ */
+
+/* ============================================
+   ✨ DESIGN 1: MINIMALIST PREMIUM (Apple-inspired)
+   ============================================ */
+
+/* Mode 1: Pure Light */
+[data-design="premium"][data-mode="mode1"] {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent-primary: #000000;
+  --accent-secondary: #666666;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.05);
+  --blur-strength: 20px;
+}
+
+[data-design="premium"][data-mode="mode1"] body,
+[data-design="premium"][data-mode="mode1"] html {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Mode 2: Deep Space (OLED Black) */
+[data-design="premium"][data-mode="mode2"] {
+  --bg-primary: #000000;
+  --bg-secondary: #1A1A1A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --text-muted: #888888;
+  --accent-primary: #FFFFFF;
+  --accent-secondary: #CCCCCC;
+  --glass-bg: rgba(26, 26, 26, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(255, 255, 255, 0.05);
+  --blur-strength: 20px;
+}
+
+[data-design="premium"][data-mode="mode2"] body,
+[data-design="premium"][data-mode="mode2"] html {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+/* Mode 3: Accent Mode (Electric Blue) */
+[data-design="premium"][data-mode="mode3"] {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent-primary: #0071E3;
+  --accent-secondary: #0055B8;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 113, 227, 0.2);
+  --glass-shadow: rgba(0, 113, 227, 0.1);
+  --blur-strength: 20px;
+}
+
+[data-design="premium"][data-mode="mode3"] body,
+[data-design="premium"][data-mode="mode3"] html {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* ============================================
+   🎮 DESIGN 2: GAMER/STREAMER
+   ============================================ */
+
+/* Mode 1: Creator Light */
+[data-design="gamer"][data-mode="mode1"] {
+  --bg-primary: #F5F1E8;
+  --bg-secondary: #E8E4DA;
+  --text-primary: #1A0F2E;
+  --text-secondary: #5A4F6E;
+  --text-muted: #8A7F9E;
+  --accent-primary: #8B5CF6;
+  --accent-secondary: #EC4899;
+  --glass-bg: rgba(245, 241, 232, 0.85);
+  --glass-border: rgba(139, 92, 246, 0.3);
+  --glass-shadow: rgba(139, 92, 246, 0.2);
+  --blur-strength: 16px;
+}
+
+[data-design="gamer"][data-mode="mode1"] body,
+[data-design="gamer"][data-mode="mode1"] html {
+  background: linear-gradient(135deg, #F5F1E8 0%, #E8E4DA 100%) !important;
+  color: #1A0F2E !important;
+}
+
+/* Mode 2: Midnight Gaming */
+[data-design="gamer"][data-mode="mode2"] {
+  --bg-primary: #18181B;
+  --bg-secondary: #27272A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A1AA;
+  --text-muted: #71717A;
+  --accent-primary: #00FF88;
+  --accent-secondary: #00CC6A;
+  --glass-bg: rgba(39, 39, 42, 0.7);
+  --glass-border: rgba(0, 255, 136, 0.4);
+  --glass-shadow: rgba(0, 255, 136, 0.3);
+  --blur-strength: 20px;
+}
+
+[data-design="gamer"][data-mode="mode2"] body,
+[data-design="gamer"][data-mode="mode2"] html {
+  background: linear-gradient(135deg, #18181B 0%, #27272A 100%) !important;
+  color: #FFFFFF !important;
+}
+
+/* Mode 3: Streamer */
+[data-design="gamer"][data-mode="mode3"] {
+  --bg-primary: #1E1E2E;
+  --bg-secondary: #2E2E3E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #F5D0FE;
+  --text-muted: #A5B4FC;
+  --accent-primary: #FF007F;
+  --accent-secondary: #00D9FF;
+  --glass-bg: rgba(46, 46, 62, 0.7);
+  --glass-border: rgba(255, 0, 127, 0.5);
+  --glass-shadow: rgba(255, 0, 127, 0.4);
+  --blur-strength: 24px;
+}
+
+[data-design="gamer"][data-mode="mode3"] body,
+[data-design="gamer"][data-mode="mode3"] html {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(255, 0, 127, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(0, 217, 255, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, #1E1E2E 0%, #2E2E3E 100%) !important;
+  color: #FFFFFF !important;
+}
+
+/* ============================================
+   🌿 DESIGN 3: CALM PRODUCTIVITY
+   ============================================ */
+
+/* Mode 1: Cloud */
+[data-design="calm"][data-mode="mode1"] {
+  --bg-primary: #F8FAFB;
+  --bg-secondary: #EDF2F7;
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --accent-primary: #0EA5E9;
+  --accent-secondary: #06B6D4;
+  --glass-bg: rgba(248, 250, 251, 0.9);
+  --glass-border: rgba(14, 165, 233, 0.2);
+  --glass-shadow: rgba(14, 165, 233, 0.1);
+  --blur-strength: 18px;
+}
+
+[data-design="calm"][data-mode="mode1"] body,
+[data-design="calm"][data-mode="mode1"] html {
+  background: linear-gradient(180deg, #F8FAFB 0%, #EDF2F7 100%) !important;
+  color: #1A202C !important;
+}
+
+/* Mode 2: Moonlight */
+[data-design="calm"][data-mode="mode2"] {
+  --bg-primary: #2B2D31;
+  --bg-secondary: #36383D;
+  --text-primary: #FFF8E7;
+  --text-secondary: #E4D5B7;
+  --text-muted: #BBA98A;
+  --accent-primary: #F59E0B;
+  --accent-secondary: #EAB308;
+  --glass-bg: rgba(54, 56, 61, 0.8);
+  --glass-border: rgba(245, 158, 11, 0.3);
+  --glass-shadow: rgba(245, 158, 11, 0.2);
+  --blur-strength: 18px;
+}
+
+[data-design="calm"][data-mode="mode2"] body,
+[data-design="calm"][data-mode="mode2"] html {
+  background: linear-gradient(180deg, #2B2D31 0%, #36383D 100%) !important;
+  color: #FFF8E7 !important;
+}
+
+/* Mode 3: Nature */
+[data-design="calm"][data-mode="mode3"] {
+  --bg-primary: #F4F8F5;
+  --bg-secondary: #E8F5EC;
+  --text-primary: #064E3B;
+  --text-secondary: #047857;
+  --text-muted: #10B981;
+  --accent-primary: #10B981;
+  --accent-secondary: #059669;
+  --glass-bg: rgba(244, 248, 245, 0.9);
+  --glass-border: rgba(16, 185, 129, 0.3);
+  --glass-shadow: rgba(16, 185, 129, 0.15);
+  --blur-strength: 18px;
+}
+
+[data-design="calm"][data-mode="mode3"] body,
+[data-design="calm"][data-mode="mode3"] html {
+  background: linear-gradient(180deg, #F4F8F5 0%, #E8F5EC 100%) !important;
+  color: #064E3B !important;
+}
+
+/* ============================================
+   🔮 DESIGN 4: FUTURE TECH
+   ============================================ */
+
+/* Mode 1: Matrix */
+[data-design="future"][data-mode="mode1"] {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F0FFF4;
+  --text-primary: #00FF41;
+  --text-secondary: #00CC34;
+  --text-muted: #009928;
+  --accent-primary: #00FF41;
+  --accent-secondary: #00CC34;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 255, 65, 0.4);
+  --glass-shadow: rgba(0, 255, 65, 0.2);
+  --blur-strength: 16px;
+}
+
+[data-design="future"][data-mode="mode1"] body,
+[data-design="future"][data-mode="mode1"] html {
+  background: #FFFFFF !important;
+  color: #00FF41 !important;
+  font-family: 'Courier New', monospace !important;
+}
+
+/* Mode 2: Cyberpunk */
+[data-design="future"][data-mode="mode2"] {
+  --bg-primary: #0A0E27;
+  --bg-secondary: #12162E;
+  --text-primary: #00FFFF;
+  --text-secondary: #00CCCC;
+  --text-muted: #009999;
+  --accent-primary: #00FFFF;
+  --accent-secondary: #FF00FF;
+  --glass-bg: rgba(18, 22, 46, 0.7);
+  --glass-border: rgba(0, 255, 255, 0.5);
+  --glass-shadow: rgba(0, 255, 255, 0.3);
+  --blur-strength: 24px;
+}
+
+[data-design="future"][data-mode="mode2"] body,
+[data-design="future"][data-mode="mode2"] html {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #0A0E27 0%, #12162E 100%) !important;
+  color: #00FFFF !important;
+}
+
+/* Mode 3: Quantum */
+[data-design="future"][data-mode="mode3"] {
+  --bg-primary: #1A0B2E;
+  --bg-secondary: #2D1B4E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #F0ABFC;
+  --text-muted: #C084FC;
+  --accent-primary: #A78BFA;
+  --accent-secondary: #F0ABFC;
+  --glass-bg: rgba(45, 27, 78, 0.6);
+  --glass-border: rgba(167, 139, 250, 0.5);
+  --glass-shadow: rgba(167, 139, 250, 0.4);
+  --blur-strength: 28px;
+}
+
+[data-design="future"][data-mode="mode3"] body,
+[data-design="future"][data-mode="mode3"] html {
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(167, 139, 250, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(240, 171, 252, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(14, 165, 233, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #1A0B2E 0%, #2D1B4E 100%) !important;
+  color: #FFFFFF !important;
+}
+
+/* ============================================
+   🎯 DESIGN 5: BRUTALIST MODERN
+   ============================================ */
+
+/* Mode 1: Newspaper */
+[data-design="brutalist"][data-mode="mode1"] {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --accent-primary: #000000;
+  --accent-secondary: #333333;
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(0, 0, 0, 1);
+  --glass-shadow: none;
+  --blur-strength: 0px;
+}
+
+[data-design="brutalist"][data-mode="mode1"] body,
+[data-design="brutalist"][data-mode="mode1"] html {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Mode 2: High Contrast */
+[data-design="brutalist"][data-mode="mode2"] {
+  --bg-primary: #000000;
+  --bg-secondary: #0A0A0A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #EEEEEE;
+  --text-muted: #CCCCCC;
+  --accent-primary: #FFFFFF;
+  --accent-secondary: #EEEEEE;
+  --glass-bg: rgba(0, 0, 0, 0.95);
+  --glass-border: rgba(255, 255, 255, 1);
+  --glass-shadow: none;
+  --blur-strength: 0px;
+}
+
+[data-design="brutalist"][data-mode="mode2"] body,
+[data-design="brutalist"][data-mode="mode2"] html {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+/* Mode 3: Color Block */
+[data-design="brutalist"][data-mode="mode3"] {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --accent-primary: #FF0000;
+  --accent-secondary: #0000FF;
+  --accent-tertiary: #FFFF00;
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(0, 0, 0, 2);
+  --glass-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+  --blur-strength: 0px;
+}
+
+[data-design="brutalist"][data-mode="mode3"] body,
+[data-design="brutalist"][data-mode="mode3"] html {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* ============================================
+   🎙️ DESIGN 6: AUDIO STUDIO PROFESSIONAL
+   ============================================ */
+
+/* Mode 1: Studio Light */
+[data-design="studio"][data-mode="mode1"] {
+  --bg-primary: #FAF9F6;
+  --bg-secondary: #F5F3EF;
+  --text-primary: #2C1810;
+  --text-secondary: #6B4423;
+  --text-muted: #9A6B3F;
+  --accent-primary: #14B8A6;
+  --accent-secondary: #F97316;
+  --glass-bg: rgba(250, 249, 246, 0.85);
+  --glass-border: rgba(20, 184, 166, 0.3);
+  --glass-shadow: rgba(20, 184, 166, 0.15);
+  --blur-strength: 18px;
+}
+
+[data-design="studio"][data-mode="mode1"] body,
+[data-design="studio"][data-mode="mode1"] html {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #FAF9F6 0%, #F5F3EF 100%) !important;
+  color: #2C1810 !important;
+}
+
+/* Mode 2: Listening Dark */
+[data-design="studio"][data-mode="mode2"] {
+  --bg-primary: #0B1437;
+  --bg-secondary: #131D4E;
+  --text-primary: #E0F2FE;
+  --text-secondary: #BAE6FD;
+  --text-muted: #7DD3FC;
+  --accent-primary: #06B6D4;
+  --accent-secondary: #38BDF8;
+  --glass-bg: rgba(19, 29, 78, 0.7);
+  --glass-border: rgba(6, 182, 212, 0.4);
+  --glass-shadow: rgba(6, 182, 212, 0.3);
+  --blur-strength: 22px;
+}
+
+[data-design="studio"][data-mode="mode2"] body,
+[data-design="studio"][data-mode="mode2"] html {
+  background: 
+    radial-gradient(circle at 25% 35%, rgba(6, 182, 212, 0.2) 0%, transparent 45%),
+    radial-gradient(circle at 75% 65%, rgba(56, 189, 248, 0.15) 0%, transparent 45%),
+    linear-gradient(135deg, #0B1437 0%, #131D4E 70%, #1E40AF 100%) !important;
+  color: #E0F2FE !important;
+}
+
+/* Mode 3: Performance */
+[data-design="studio"][data-mode="mode3"] {
+  --bg-primary: #2D1B4E;
+  --bg-secondary: #3D2B5E;
+  --text-primary: #FEF3C7;
+  --text-secondary: #FDE68A;
+  --text-muted: #FCD34D;
+  --accent-primary: #FCD34D;
+  --accent-secondary: #F472B6;
+  --glass-bg: rgba(61, 43, 94, 0.7);
+  --glass-border: rgba(252, 211, 77, 0.4);
+  --glass-shadow: rgba(252, 211, 77, 0.3);
+  --blur-strength: 20px;
+}
+
+[data-design="studio"][data-mode="mode3"] body,
+[data-design="studio"][data-mode="mode3"] html {
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(252, 211, 77, 0.2) 0%, transparent 45%),
+    radial-gradient(circle at 70% 60%, rgba(244, 114, 182, 0.2) 0%, transparent 45%),
+    linear-gradient(135deg, #2D1B4E 0%, #3D2B5E 50%, #4C1D95 100%) !important;
+  color: #FEF3C7 !important;
+}
+
+/* ============================================
+   🎨 UNIVERSAL GLASS CARD STYLING
+   ============================================ */
+
+.glass-card,
+.voice-card-glass {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(var(--blur-strength)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--blur-strength)) saturate(180%);
+  border: 2px solid var(--glass-border) !important;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px var(--glass-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-primary) !important;
+}
+
+.glass-card:hover,
+.voice-card-glass:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 48px var(--glass-shadow);
+  border-color: var(--accent-primary);
+}
+
+/* Brutalist mode: Sharp edges, no blur */
+[data-design="brutalist"] .glass-card,
+[data-design="brutalist"] .voice-card-glass {
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-width: 3px !important;
+}
+
+[data-design="brutalist"][data-mode="mode3"] .glass-card,
+[data-design="brutalist"][data-mode="mode3"] .voice-card-glass {
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 1) !important;
+}
+
+[data-design="brutalist"] .glass-card:hover,
+[data-design="brutalist"] .voice-card-glass:hover {
+  transform: none !important;
+}
+
+/* ============================================
+   🎯 TEXT VISIBILITY ACROSS ALL THEMES
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+  font-weight: 700;
+}
+
+p, span, div {
+  color: var(--text-secondary) !important;
+}
+
+label, small, .text-sm {
+  color: var(--text-muted) !important;
+}
+
+/* Brutalist: Bold, heavy typography */
+[data-design="brutalist"] h1,
+[data-design="brutalist"] h2,
+[data-design="brutalist"] h3 {
+  font-weight: 900 !important;
+  letter-spacing: -0.05em !important;
+}
+
+/* Future: Glowing text effects */
+[data-design="future"] h1,
+[data-design="future"] h2,
+[data-design="future"] h3 {
+  text-shadow: 0 0 20px var(--accent-primary);
+}
+
+/* ============================================
+   🎨 THEME SELECTOR STYLING
+   ============================================ */
+
+.theme-selector-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.design-selector {
+  position: relative;
+}
+
+.design-selector-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength));
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.design-selector-button:hover {
+  transform: scale(1.05);
+  border-color: var(--accent-primary);
+}
+
+.design-emoji {
+  font-size: 20px;
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.design-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength));
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 8px;
+  z-index: 1000;
+  box-shadow: 0 12px 40px var(--glass-shadow);
+}
+
+.design-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.design-option:hover {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.design-option.active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.design-icon {
+  font-size: 18px;
+}
+
+.design-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.check {
+  font-size: 16px;
+  color: white;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength));
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.mode-option {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-primary);
+}
+
+.mode-option:hover {
+  background: var(--accent-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.mode-option.active {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 12px var(--accent-primary);
+}
+
+/* ============================================
+   🚀 FORCE BACKGROUNDS EVERYWHERE
+   ============================================ */
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+#root,
+.min-h-screen,
+main,
+section {
+  background: transparent !important;
+}
+
+input, textarea, select {
+  background: var(--glass-bg) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--glass-border) !important;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+button:not(.design-selector-button):not(.mode-option):not(.design-option) {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px var(--accent-primary);
+}

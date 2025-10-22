@@ -2,10 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Theme } from '../types';
 
+type ThemeMode = 'light' | 'dark' | 'vibes';
+
 interface ThemeState {
   theme: Theme;
+  mode: ThemeMode;
   isDark: boolean;
-  toggleTheme: () => void;
+  setThemeMode: (mode: ThemeMode) => void;
   setTheme: (theme: Partial<Theme>) => void;
   initializeTheme: () => void;
 }
@@ -22,31 +25,57 @@ const lightTheme: Theme = {
 
 const darkTheme: Theme = {
   mode: 'dark',
-  primary: '#60a5fa',
+  primary: '#a78bfa',
+  secondary: '#c084fc',
+  accent: '#e879f9',
+  background: '#581c87',
+  surface: '#6b21a8',
+  text: '#faf5ff',
+};
+
+const vibesTheme: Theme = {
+  mode: 'vibes',
+  primary: '#ec4899',
   secondary: '#a78bfa',
-  accent: '#f472b6',
-  background: '#0f172a',
-  surface: '#1e293b',
-  text: '#f1f5f9',
+  accent: '#06b6d4',
+  background: '#0a0a0a',
+  surface: '#1a1a1a',
+  text: '#ffffff',
 };
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
       theme: lightTheme,
+      mode: 'light',
       isDark: false,
 
-      toggleTheme: () => {
-        const currentIsDark = get().isDark;
-        const newTheme = currentIsDark ? lightTheme : darkTheme;
+      setThemeMode: (mode: ThemeMode) => {
+        let newTheme: Theme;
+        
+        switch(mode) {
+          case 'light':
+            newTheme = lightTheme;
+            break;
+          case 'dark':
+            newTheme = darkTheme;
+            break;
+          case 'vibes':
+            newTheme = vibesTheme;
+            break;
+        }
         
         set({
           theme: newTheme,
-          isDark: !currentIsDark,
+          mode,
+          isDark: mode === 'dark' || mode === 'vibes',
         });
 
-        // Update document class for Tailwind dark mode
-        if (!currentIsDark) {
+        // Update document classes
+        document.documentElement.classList.remove('light', 'dark', 'vibes');
+        document.documentElement.classList.add(mode);
+        
+        if (mode === 'dark' || mode === 'vibes') {
           document.documentElement.classList.add('dark');
         } else {
           document.documentElement.classList.remove('dark');
@@ -61,12 +90,11 @@ export const useThemeStore = create<ThemeState>()(
       },
 
       initializeTheme: () => {
-        const { isDark } = get();
+        const { mode } = get();
         // Apply theme class to document on initialization
-        if (isDark) {
+        document.documentElement.classList.add(mode);
+        if (mode === 'dark' || mode === 'vibes') {
           document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
         }
       },
     }),
@@ -74,10 +102,11 @@ export const useThemeStore = create<ThemeState>()(
       name: 'voxly-theme',
       onRehydrateStorage: () => (state) => {
         // Apply theme on hydration
-        if (state?.isDark) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+        if (state?.mode) {
+          document.documentElement.classList.add(state.mode);
+          if (state.mode === 'dark' || state.mode === 'vibes') {
+            document.documentElement.classList.add('dark');
+          }
         }
       },
     }
